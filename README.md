@@ -20,3 +20,8 @@ If you want to use this app, please follow the instruction:
 "Withdraw from Home" in order to get locked coins from HomeBridge to your address
 
 
+# Running the app
+```bash
+npm install
+npm start
+```
