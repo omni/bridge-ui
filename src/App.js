@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Web3 from 'web3';
+import ERC20ABI from './erc20.abi';
 
 const FOREGIGN_WEB_SOCKETS_PARITY_URL =process.env.REACT_APP_FOREGIGN_WEB_SOCKETS_PARITY_URL
 const HOME_WEB_SOCKETS_PARITY_URL=process.env.REACT_APP_HOME_WEB_SOCKETS_PARITY_URL
 const kovan_foreign = new Web3.providers.WebsocketProvider(FOREGIGN_WEB_SOCKETS_PARITY_URL);
 // const sokol_home = new Web3.providers.HttpProvider(HOME_RPC_URL);
 const sokol_home = new Web3.providers.WebsocketProvider(HOME_WEB_SOCKETS_PARITY_URL);
+
+
 
 const web3_kovan_foreign = new Web3(kovan_foreign);
 const web3_sokol_home = new Web3(sokol_home);
@@ -33,7 +36,6 @@ function signatureToVRS(signature) {
   }
 }
 const Row = ({params}) => {
-  console.log(params);
   let log;
   if(params.event === "CollectedSignatures"){
     log = (
@@ -95,9 +97,10 @@ class App extends Component {
   onSendHome(e) {
     e.preventDefault();
     const metamaskAcc = window.web3.eth.defaultAccount;
+    
     foreignBridge.methods.balanceOf(metamaskAcc).call().then((balance) => {
-      const oneGwei = web3_kovan_foreign.utils.toWei('1', 'gwei');
-      const data = foreignBridge.methods.transferHomeViaRelay(window.web3.eth.defaultAccount, new window.web3.BigNumber(balance), oneGwei).encodeABI()
+      // const oneGwei = web3_kovan_foreign.utils.toWei('1', 'gwei');
+      const data = foreignBridge.methods.transferHomeViaRelay(window.web3.eth.defaultAccount, new window.web3.BigNumber(balance)).encodeABI()
       console.log(data);
       let web3_metamask = new Web3(window.web3.currentProvider);
       web3_metamask.eth.sendTransaction({
@@ -110,20 +113,22 @@ class App extends Component {
     })
     
   }
-  getEvents(){
-    homeBridge.getPastEvents({fromBlock: 1169193}, (e, homeEvents) => {
+  async getEvents(){
+    homeBridge.getPastEvents({fromBlock: 1171848}, (e, homeEvents) => {
       // console.log(homeEvents);
       this.setState({
         homeEvents
       })
     })
-    foreignBridge.getPastEvents({fromBlock: 5985279}).then((foreignEvents) => {
+    foreignBridge.getPastEvents({fromBlock: 5986761}).then((foreignEvents) => {
       console.log(foreignEvents);
       this.setState({
         foreignEvents
       })
     })
-    foreignBridge.methods.totalSupply().call().then((balance) => {
+    const erc20_address = await foreignBridge.methods.erc20token().call();
+    const ERC20 = new web3_kovan_foreign.eth.Contract(ERC20ABI, erc20_address);
+    ERC20.methods.totalSupply().call().then((balance) => {
       this.setState({
         foreignBalance: web3_kovan_foreign.utils.fromWei(balance)
       });
@@ -157,8 +162,8 @@ class App extends Component {
           <h1 className="App-title">Welcome to Scalable Ethereum</h1>
         </header>
         <input ref="withdraw" type="text"/>
-        <button onClick={this.onSendHome}>Generate Signature to Home</button>
-        <button onClick={this.onWithdrawal}>Withdraw from Home</button>
+        {/* <button onClick={this.onSendHome}>Generate Signature to Home</button>
+        <button onClick={this.onWithdrawal}>Withdraw from Home</button> */}
         <div className="row">
           <div className="col-md-6 events">
             <b>POA Network</b>
