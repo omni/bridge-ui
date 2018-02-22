@@ -20,6 +20,7 @@ If you want to use this app, please follow the instruction:
 "Withdraw from Home" in order to get locked coins from HomeBridge to your address
 
 # .env file
+(see example in `example.env`)
 ```
 REACT_APP_HOME_BRIDGE_ADDRESS=0x8001194b6a8a386a0dc83d63e54842b0cd37e8de
 REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x4cfadf1d34f9f85a6b47a6a1b403c52cc6038a70
