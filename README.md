@@ -1,5 +1,5 @@
 # Bridge UI app to show cross chain transactions
-
+![](./example.png)
 This UI app provides an ability for a user to watch for events that is 
 happening on both sides of the bridge.
 
