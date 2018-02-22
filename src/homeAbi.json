@@ -2,54 +2,7 @@
 	{
 		"constant": true,
 		"inputs": [],
-		"name": "requiredSignatures",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "message",
-				"type": "bytes"
-			}
-		],
-		"name": "isMessageValueSufficientToCoverRelay",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "getWithdrawRelayCost",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "estimatedGasCostOfWithdraw",
+		"name": "maxTotalHomeContractBalance",
 		"outputs": [
 			{
 				"name": "",
@@ -78,6 +31,106 @@
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "maxSingleDepositValue",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "estimatedGasCostOfWithdraw",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "requiredSignatures",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "vs",
+				"type": "uint8[]"
+			},
+			{
+				"name": "rs",
+				"type": "bytes32[]"
+			},
+			{
+				"name": "ss",
+				"type": "bytes32[]"
+			},
+			{
+				"name": "message",
+				"type": "bytes"
+			}
+		],
+		"name": "withdraw",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"name": "requiredSignaturesParam",
+				"type": "uint256"
+			},
+			{
+				"name": "authoritiesParam",
+				"type": "address[]"
+			},
+			{
+				"name": "estimatedGasCostOfWithdrawParam",
+				"type": "uint256"
+			},
+			{
+				"name": "maxTotalHomeContractBalanceParam",
+				"type": "uint256"
+			},
+			{
+				"name": "maxSingleDepositValueParam",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "fallback"
 	},
 	{
 		"anonymous": false,
@@ -112,55 +165,5 @@
 		],
 		"name": "Withdraw",
 		"type": "event"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "v",
-				"type": "uint8[]"
-			},
-			{
-				"name": "r",
-				"type": "bytes32[]"
-			},
-			{
-				"name": "s",
-				"type": "bytes32[]"
-			},
-			{
-				"name": "message",
-				"type": "bytes"
-			}
-		],
-		"name": "withdraw",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"name": "requiredSignaturesParam",
-				"type": "uint256"
-			},
-			{
-				"name": "authoritiesParam",
-				"type": "address[]"
-			},
-			{
-				"name": "estimatedGasCostOfWithdrawParam",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "fallback"
 	}
 ]

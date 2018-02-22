@@ -3,27 +3,26 @@ import logo from './logo.svg';
 import './App.css';
 import Web3 from 'web3';
 
-const FOREIGN_RPC_URL = 'https://kovan.infura.io/metamask';
-const F_WSS = 'ws://localhost:8547';
-const H_WS= 'ws://localhost:8111'
-const HOME_RPC_URL = 'https://core.poa.network';
-const kovan_foreign = new Web3.providers.WebsocketProvider(F_WSS);
+const FOREGIGN_WEB_SOCKETS_PARITY_URL =process.env.REACT_APP_FOREGIGN_WEB_SOCKETS_PARITY_URL
+const HOME_WEB_SOCKETS_PARITY_URL=process.env.REACT_APP_HOME_WEB_SOCKETS_PARITY_URL
+const kovan_foreign = new Web3.providers.WebsocketProvider(FOREGIGN_WEB_SOCKETS_PARITY_URL);
 // const sokol_home = new Web3.providers.HttpProvider(HOME_RPC_URL);
-const sokol_home = new Web3.providers.WebsocketProvider(H_WS);
+const sokol_home = new Web3.providers.WebsocketProvider(HOME_WEB_SOCKETS_PARITY_URL);
 
 const web3_kovan_foreign = new Web3(kovan_foreign);
 const web3_sokol_home = new Web3(sokol_home);
 
 const foreignAbi = require('./foreignAbi');
 const homeAbi = require('./homeAbi');
-const HOME_BRIDGE_ADDRESS = '0x1aef87c8a7e1de8b1796b8d706cce25a9a947172';
-const FOREIGN_BRIDGE_ADDRESS = '0xe60cf5001b3e360a279f4392169a0d039f71c195';
+const HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
+const FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
 
 const homeBridge = new web3_sokol_home.eth.Contract(homeAbi, HOME_BRIDGE_ADDRESS);
 const foreignBridge = new web3_kovan_foreign.eth.Contract(foreignAbi, FOREIGN_BRIDGE_ADDRESS);
 function strip0x(input) {
   return input.replace(/^0x/, "");
 }
+
 function signatureToVRS(signature) {
   if(signature.length === 2 + 32 * 2 + 32 * 2 + 2){
     signature = strip0x(signature);
@@ -33,7 +32,6 @@ function signatureToVRS(signature) {
     return {v: v, r: r, s: s};
   }
 }
-window.signatureToVRS = signatureToVRS;
 const Row = ({params}) => {
   console.log(params);
   let log;
@@ -81,7 +79,7 @@ class App extends Component {
     let signature = await foreignBridge.methods.signature(msgHash,0).call()
     const vrs = signatureToVRS(signature)
     const msg = await foreignBridge.methods.message(msgHash).call();
-
+    console.log(vrs, msg);
     const data = homeBridge.methods.withdraw([vrs.v], [vrs.r], [vrs.s], msg).encodeABI()
 
     let web3_metamask = new Web3(window.web3.currentProvider);
@@ -93,15 +91,13 @@ class App extends Component {
       console.log(e,a)
     })
 
-      // this.setState({
-      //   foreignBalance: web3_kovan_foreign.utils.fromWei(balance)
-      // });
   }
   onSendHome(e) {
     e.preventDefault();
     const metamaskAcc = window.web3.eth.defaultAccount;
     foreignBridge.methods.balanceOf(metamaskAcc).call().then((balance) => {
-      const data = foreignBridge.methods.transferHomeViaRelay(window.web3.eth.defaultAccount, new window.web3.BigNumber(balance)).encodeABI()
+      const oneGwei = web3_kovan_foreign.utils.toWei('1', 'gwei');
+      const data = foreignBridge.methods.transferHomeViaRelay(window.web3.eth.defaultAccount, new window.web3.BigNumber(balance), oneGwei).encodeABI()
       console.log(data);
       let web3_metamask = new Web3(window.web3.currentProvider);
       web3_metamask.eth.sendTransaction({
@@ -115,13 +111,13 @@ class App extends Component {
     
   }
   getEvents(){
-    homeBridge.getPastEvents({fromBlock: 1088894}, (e, homeEvents) => {
+    homeBridge.getPastEvents({fromBlock: 1169193}, (e, homeEvents) => {
       // console.log(homeEvents);
       this.setState({
         homeEvents
       })
     })
-    foreignBridge.getPastEvents({fromBlock: 5926862}).then((foreignEvents) => {
+    foreignBridge.getPastEvents({fromBlock: 5985279}).then((foreignEvents) => {
       console.log(foreignEvents);
       this.setState({
         foreignEvents
@@ -165,15 +161,15 @@ class App extends Component {
         <button onClick={this.onWithdrawal}>Withdraw from Home</button>
         <div className="row">
           <div className="col-md-6 events">
-            <b>HomeBridge</b>
-            <div>RPC URL: {HOME_RPC_URL}</div>
+            <b>POA Network</b>
+            <div>RPC URL: {HOME_WEB_SOCKETS_PARITY_URL}</div>
             <div>Home Address: {HOME_BRIDGE_ADDRESS}</div>
             <div>Balance: {this.state.homeBalance}</div>
             { this.state.homeEvents.map((params, index) => <Row params={ params } key={ index }/> ) }
           </div>
           <div className="col-md-6 events foreign">
-            <b>ForeignBridge</b>
-            <div>RPC URL: {FOREIGN_RPC_URL}</div>
+            <b>Ethereum Network (Kovan)</b>
+            <div>RPC URL: {FOREGIGN_WEB_SOCKETS_PARITY_URL}</div>
             <div>Foreign Address: {FOREIGN_BRIDGE_ADDRESS}</div>
             <div>Balance: {this.state.foreignBalance}</div>
             { this.state.foreignEvents.map((params, index) => <Row params={ params } key={ index }/> ) }
