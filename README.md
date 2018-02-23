@@ -26,7 +26,7 @@ REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x4cfadf1d34f9f85a6b47a6a1b403c52cc6038a70
 REACT_APP_FOREGIGN_WEB_SOCKETS_PARITY_URL=ws://localhost:8547
 REACT_APP_HOME_WEB_SOCKETS_PARITY_URL=ws://localhost:8111
 ```
-
+(see example in `example.env`)
 # Running the app
 ```bash
 npm install
