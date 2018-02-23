@@ -43,7 +43,7 @@ const Row = ({params}) => {
         <div className="Rtable-cell">authorityResponsibleForRelay: {params.returnValues.authorityResponsibleForRelay}</div>
         <div className="Rtable-cell">messageHash: {params.returnValues.messageHash}</div>
       </div>
-    ) 
+    )
   } else {
     log = (
     <div id={params.id} className="collapse">
@@ -70,7 +70,7 @@ class App extends Component {
       foreignEvents: [],
       homeBridgeAddress: '',
       foreignBridgeAddress: '',
-      homeBalance: '', 
+      homeBalance: '',
       foreignBalance: ''
     }
   }
@@ -97,7 +97,7 @@ class App extends Component {
   onSendHome(e) {
     e.preventDefault();
     const metamaskAcc = window.web3.eth.defaultAccount;
-    
+
     foreignBridge.methods.balanceOf(metamaskAcc).call().then((balance) => {
       // const oneGwei = web3_kovan_foreign.utils.toWei('1', 'gwei');
       const data = foreignBridge.methods.transferHomeViaRelay(window.web3.eth.defaultAccount, new window.web3.BigNumber(balance)).encodeABI()
@@ -111,16 +111,16 @@ class App extends Component {
         console.log(e,a)
       })
     })
-    
+
   }
   async getEvents(){
-    homeBridge.getPastEvents({fromBlock: 1171848}, (e, homeEvents) => {
+    homeBridge.getPastEvents({fromBlock: 0}, (e, homeEvents) => {
       // console.log(homeEvents);
       this.setState({
         homeEvents
       })
     })
-    foreignBridge.getPastEvents({fromBlock: 5986761}).then((foreignEvents) => {
+    foreignBridge.getPastEvents({fromBlock: 0}).then((foreignEvents) => {
       console.log(foreignEvents);
       this.setState({
         foreignEvents
@@ -146,7 +146,7 @@ class App extends Component {
     }).on('data', (e) => {
       this.getEvents()
     })
-    
+
     foreignBridge.events.allEvents({
       fromBlock: 0
     }).on('data', (e) => {
@@ -179,7 +179,7 @@ class App extends Component {
             <div>Balance: {this.state.foreignBalance}</div>
             { this.state.foreignEvents.map((params, index) => <Row params={ params } key={ index }/> ) }
           </div>
-          
+
         </div>
       </div>
     );
