@@ -1,0 +1,179 @@
+.bridge {
+  @extend %flex-between;
+  margin-bottom: 40px;
+
+  @media screen and (max-width: 650px) {
+    flex-direction: column;
+  }
+
+  &-network {
+    max-width: 40%;
+
+    @media screen and (max-width: 650px) {
+      max-width: 100%;
+    }
+
+    &_left {
+      text-align: left;
+
+      img {
+        margin-right: 10px;
+      }
+
+      .description {
+        padding-right: 20px;
+      }
+    }
+
+    &_right {
+      text-align: right;
+
+      @media screen and (max-width: 650px) {
+        text-align: left;
+      }
+
+      img {
+        order: 2;
+        margin-left: 10px;
+
+        @media screen and (max-width: 650px) {
+          order: 0;
+          margin-left: 0;
+          margin-right: 10px;
+        }
+      }
+
+      .description {
+        padding-left: 20px;
+
+        @media screen and (max-width: 650px) {
+          padding-left: 0;
+          padding-right: 20px;
+        }
+      }
+    }
+
+    &-name {
+      text-transform: uppercase;
+      font-size: 18px;
+      font-weight: bold;
+
+      &-container {
+        display: flex;
+        align-items: center;
+      }
+
+      img {
+        display: block;
+        width: 50px;
+        height: 50px;
+      }
+    }
+  }
+
+  &-form {
+    flex-shrink: 0;
+    position: relative;
+    width: 268px;
+    height: 90px;
+    margin-top: 110px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    border: 4px solid #642f9c;
+    box-shadow: 0px 10px 0 0 fade-out(#642f9c, 0.8);
+
+    @media screen and (max-width: 650px) {
+      width: 100%;
+      margin: 30px 0;
+    }
+
+    &:before {
+      @include image-2x('../images/bridge@2x.png');
+      content: '';
+      position: absolute;
+      left: 0;
+      top: -103px;
+      width: 268px;
+      height: 103px;
+      background-image: url(../images/bridge.png);
+
+      @media screen and (max-width: 650px) {
+        display: none;
+      }
+    }
+
+    &-controls {
+      @extend %flex-between;
+      padding: 8px 8px 8px 0;
+    }
+
+    &-input {
+      min-width: 0;
+      height: 36px;
+      padding-left: 8px;
+      background-color: transparent;
+      color: #333;
+
+      @media screen and (max-width: 650px) {
+        flex-grow: 1;
+      }
+
+      &,
+      &::placeholder {
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      &::placeholder {
+        opacity: 0.5;
+      }
+    }
+
+    &-label {
+      margin: 0 10px;
+      color: #8197a2;
+      text-transform: uppercase;
+      font-size: 24px;
+    }
+
+    &-button {
+      transition: 0.3s opacity,
+                  0.3s transform;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: block;
+      width: 36px;
+      height: 36px;
+      border-radius: 3px;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAUCAMAAACgaw2xAAAAMFBMVEX///////////////////////////////////////////////////////////////9Or7hAAAAAD3RSTlMAPT5BSUpRUt3f5ufp6vUxUI2NAAAASUlEQVR42rWROw7AMAxC3abN3+b+t80WZYAxb/STsAR2kr0+xnAgEhMVwryhTLpjvg5CFOugTCXc/sGj1PM7d12irl0Plb3taRdkbQmzeFkz0wAAAABJRU5ErkJggg==);
+      background-size: 12px 10px;
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-color: #08b3f2;
+
+      &_reverse {
+        transform: rotateX(180deg);
+      }
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+
+    &-footer {
+      @extend %flex-between;
+      padding: 4px 8px;
+      border-top: 1px solid #d0c1e0;
+
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      a {
+        margin-left: 5px;
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+.header {
+  width: 100%;
+  margin-bottom: 40px;
+  padding: 22px 0;
+  background-image: url(../images/bg.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+
+  &-logo {
+    @extend %logos;
+    width: 182px;
+  	height: 35px;
+  	background-position: 0 -24px;
+  }
+}
