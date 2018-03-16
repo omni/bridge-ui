@@ -94,6 +94,15 @@
 
       #{$this}-body {
         display: block;
+        visibility: visible;
+        height: 13.5em;
+        -moz-transition: height 0.5s;
+        -ms-transition: height 0.5s;
+        -o-transition: height 0.5s;
+        -webkit-transition: height 0.5s;
+        transition: height 0.5s;
+        padding: 0 20px 20px;
+        background-color: #fcfcfc;
       }
     }
 
@@ -116,10 +125,16 @@
     }
 
     &-body {
-      display: none;
+      height: 0;
+      display: block;
+      visibility: hidden;
       border-top: 1px solid #eee;
-      padding: 0 20px 20px;
-      background-color: #fcfcfc;
+      -moz-transition: height 0.1s;
+      -ms-transition: height 0.1s;
+      -o-transition: height 0.1s;
+      -webkit-transition: height 0.1s;
+      transition: height 0.1s;
+      word-wrap: break-word;
     }
 
     &-switcher {

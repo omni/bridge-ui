@@ -1,47 +1,135 @@
 import React from 'react';
+import { inject, observer } from "mobx-react";
 import poa from '../assets/images/poa@2x.png';
 import eth from '../assets/images/eth@2x.png';
+import { CSSTransition } from 'react-transition-group'
+import Web3Utils from 'web3-utils'
+import swal from 'sweetalert'
+import BN from 'bignumber.js'
 
-export const Bridge = () => (
-  <div className="bridge">
-    <div className="bridge-network bridge-network_left">
-      <h1 className="bridge-network-name-container">
-        <img src={poa} width="50" height="50" />
-        <div className="bridge-network-name">
-          Poa network
-        </div>
-      </h1>
-      <p className="label">Rpc url</p>
-      <p className="description">ws:localhost:8541</p>
-      <p className="label">Home address</p>
-      <p className="description break-all">0x513efa14a9f526205b8683aa2129772c77c9112</p>
-      <p className="label">Balance</p>
-      <p className="description break-all">1,093,394.0232</p>
-    </div>
-    <form className="bridge-form">
-      <div className="bridge-form-controls">
-        <input type="text" className="bridge-form-input" id="amount" placeholder="0.345" />
-        <label htmlFor="amount" className="bridge-form-label">Eth</label>
-        <button type="button" className="bridge-form-button"></button>
-      </div>
-      <div className="bridge-form-footer">
-        <p>POA Network - Ethereum Network</p>
-        <a href="#">Switch</a>
-      </div>
-    </form>
-    <div className="bridge-network bridge-network_right">
-      <h1 className="bridge-network-name-container">
-        <img src={eth} width="50" height="50" />
-        <span className="bridge-network-name">
-          Ethereum network (kovan)
-        </span>
-      </h1>
-      <p className="label">Rpc url</p>
-      <p className="description">ws:localhost:8541</p>
-      <p className="label">Home address</p>
-      <p className="description break-all">0x513efa14a9f526205b8683aa2129772c77c9112</p>
-      <p className="label">Balance</p>
-      <p className="description break-all">1,093,394.0232</p>
-    </div>
-  </div>
+const Fade = ({ children, ...props }) => (
+  <CSSTransition
+    {...props}
+    timeout={1000}
+    classNames="fade"
+  >
+    {children}
+  </CSSTransition>
 );
+
+
+@inject("RootStore")
+@observer
+export class Bridge extends React.Component {
+  constructor(props) {
+    super(props);
+    this.homeStore = props.RootStore.homeStore;
+    this.foreignStore = props.RootStore.foreignStore;
+    this.web3Store = props.RootStore.web3Store;
+    this.txStore = props.RootStore.txStore;
+    this.errorsStore = props.RootStore.errorsStore;
+    this.homeCurrency = 'POA'
+    this.onSwitch = this.onSwitch.bind(this)
+    this.state = {
+      reverse: false
+    }
+    this.onTransfer = this.onTransfer.bind(this)
+  }
+
+  onTransfer(e){
+    e.preventDefault()
+    let amount = this.refs.amount.value.trim();
+    if(!amount){
+      swal("Error", "Please specify amount", "error")
+      return
+    }
+    if(this.state.reverse){
+
+    } else {
+      if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.homeNet.id.toString()){
+        swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
+        return
+      }
+      
+      if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
+        this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
+        this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance2"})
+      }
+      // this.txStore.doSend({
+      //   to: this.homeStore.HOME_BRIDGE_ADDRESS,
+      //   gasPrice:
+      //   from: 
+      //   value: 
+      // })
+      
+    }
+    
+
+  }
+
+  onSwitch(e){
+    e.preventDefault()
+    this.setState({reverse: !this.state.reverse})
+  }
+  render() {
+    let reverse, netWorkNames, currency;
+    if(this.state.reverse) {
+      reverse = 'bridge-form-button_reverse';
+      currency = this.foreignStore.symbol;
+      netWorkNames = `${this.web3Store.foreignNet.name} - ${this.web3Store.homeNet.name}`;
+    } else {
+      reverse = '';
+      currency = this.homeCurrency;
+      netWorkNames = `${this.web3Store.homeNet.name} - ${this.web3Store.foreignNet.name}`;
+    }
+    return(
+      <div className="bridge">
+        <div className="bridge-network bridge-network_left">
+          <h1 className="bridge-network-name-container">
+            <img src={poa} width="50" height="50" alt="POA"/>
+            <div className="bridge-network-name">
+              Home: {this.web3Store.homeNet.name}({this.web3Store.homeNet.id})
+            </div>
+          </h1>
+          <p className="label">WebSocket url</p>
+          <p className="description">{this.web3Store.HOME_WEB_SOCKETS_PARITY_URL}</p>
+          <p className="label">Home address</p>
+          <p className="description break-all">{this.homeStore.HOME_BRIDGE_ADDRESS}</p>
+          <p className="label">Total Contract Balance</p>
+          <p className="description break-all">{this.homeStore.balance} {this.homeCurrency}</p>
+        </div>
+        <form className="bridge-form">
+          <div className="bridge-form-controls">
+            <input ref="amount" type="text" className="bridge-form-input" id="amount" placeholder="0.345" />
+            <Fade in={this.state.reverse}>
+              <label htmlFor="amount" className="bridge-form-label">{currency}</label>
+            </Fade> 
+            <button onClick={this.onTransfer} type="button" className={`bridge-form-button ${reverse}`}></button>
+          </div>
+          <div className="bridge-form-footer">
+            <Fade in={this.state.reverse}>
+              <p>{netWorkNames}</p>
+             </Fade> 
+            <button onClick={this.onSwitch}>Switch</button>
+          </div>
+        </form>
+        <div className="bridge-network bridge-network_right">
+          <h1 className="bridge-network-name-container">
+            <img src={eth} width="50" height="50" alt="ETH" />
+            <span className="bridge-network-name">
+              Foreign: {this.web3Store.foreignNet.name}({this.web3Store.foreignNet.id})
+            </span>
+          </h1>
+          <p className="label">Websocket url</p>
+          <p className="description">{this.web3Store.FOREGIGN_WEB_SOCKETS_PARITY_URL}</p>
+          <p className="label">Foreign address</p>
+          <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
+          <p className="label">Total Supply</p>
+          <p className="description break-all">{this.foreignStore.totalSupply} {this.foreignStore.symbol}</p>
+          <p className="label">Your {this.foreignStore.symbol} Balance</p>
+          <p className="description break-all">{this.foreignStore.balance}</p>
+        </div>
+      </div>
+    );
+  }
+}

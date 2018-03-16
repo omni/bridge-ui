@@ -61,6 +61,7 @@
       &-container {
         display: flex;
         align-items: center;
+        justify-content: space-evenly;
       }
 
       img {
@@ -152,7 +153,7 @@
       background-color: #08b3f2;
 
       &_reverse {
-        transform: rotateX(180deg);
+        transform: rotateY(180deg);
       }
 
       &:hover {
@@ -171,9 +172,32 @@
         white-space: nowrap;
       }
 
-      a {
+      button {
         margin-left: 5px;
+        color: #08b3f2;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
+}
+
+.fade-enter {
+  opacity: 0.01;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+  transition: opacity 1000ms ease-in;
+}
+
+.fade-exit {
+  opacity: 0.1;
+}
+
+.fade-exit.fade-exit-active {
+  opacity: 1;
+  transition: opacity 800ms ease-in;
 }
