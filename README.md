@@ -1,8 +1,11 @@
 ![Demo](demo.gif)
 ## POA Bridge UI app
-Cross-chain bridge is capable of connecting any Ethereum-compatible networks (such as Ethereum Foundation, Ethereum Classic, Ubiq, Expanse, POA Network, Rootstock and others ) to each other.
-A bridge for cross-chain transactions is an app which runs on multiple computers with two contracts on both sides of the bridge. On the left side of the bridge (POA Network), the app listens to events from the Home Bridge contract, and on the right side of the bridge (Ethereum Foundation), it creates ERC20 tokens corresponding to these events mapped 1:1. The contract on the right side of the bridge accepts transactions signed by authorities of the POA consensus. A subset of validators on POA Network runs the bridge software. If you trust authorities of the POA Network, then you inherit this trust into the bridge, i.e. the assets are transferred in a trustless manner.
+Cross-chain bridge is capable of connecting any Ethereum-compatible networks (such as Ethereum Foundation, Ethereum Classic, Ubiq, Expanse, POA Network, Rootstock and others ) to each other.<br/>
+A bridge for cross-chain transactions is an app which runs on multiple computers with two contracts on both sides of the bridge. On the left side of the bridge (POA Network), the app listens to events from the Home Bridge contract, and on the right side of the bridge (Ethereum Foundation), it creates ERC20 tokens corresponding to these events mapped 1:1.<br/>
+The contract on the right side of the bridge accepts transactions signed by authorities of the POA consensus. A subset of validators on POA Network runs the bridge software. If you trust authorities of the POA Network, then you inherit this trust into the bridge, i.e. the assets are transferred in a trustless manner.<br/>
 [Read more](https://medium.com/poa-network/cross-chain-bridges-paving-the-way-to-internet-of-blockchains-422ac94bc2e5)
+
+
 Using current implementation of Bridges, it allows a use to tokenize his native coin of a evm network into ERC20 representation token on another evm compatible network. 
 Security considerations:
 In order to provide better decentralization of the bridges, you can increase number of required signatures and expand your list of validators. You should also increase block confirmation to have better protections from double spending attacks.
