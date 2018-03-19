@@ -1,41 +1,51 @@
 ![Demo](demo.gif)
 ## POA Bridge UI app
-Cross-chain bridge is capable of connecting any Ethereum-compatible networks (such as Ethereum Foundation, Ethereum Classic, Ubiq, Expanse, POA Network, Rootstock and others ) to each other.<br/>
-A bridge for cross-chain transactions is an app which runs on multiple computers with two contracts on both sides of the bridge. On the left side of the bridge (POA Network), the app listens to events from the Home Bridge contract, and on the right side of the bridge (Ethereum Foundation), it creates ERC20 tokens corresponding to these events mapped 1:1.<br/>
+A Cross-chain bridge provides interoperability between any Ethereum-compatible network such as Ethereum Foundation, Ethereum Classic, Ubiq, Expanse, POA Network, Rootstock, and many others.<br/>
+This Bridge-UI is an app which runs on multiple computers with two contracts on both sides of the bridge. As an example, on the left side of the bridge is POA Network. The app listens to events from the Home Bridge contract. On the right side of the bridge is Ethereum Foundation. In congruence with the communicating smart contracts and the Bridge-UI Dapp, ERC20 tokens are created corresponding to these events mapped 1:1.<br/>
 The contract on the right side of the bridge accepts transactions signed by authorities of the POA consensus. A subset of validators on POA Network runs the bridge software. If you trust authorities of the POA Network, then you inherit this trust into the bridge, i.e. the assets are transferred in a trustless manner.<br/>
 [Read more](https://medium.com/poa-network/cross-chain-bridges-paving-the-way-to-internet-of-blockchains-422ac94bc2e5)
 
 
-Using current implementation of Bridges, it allows a use to tokenize his native coin of a evm network into ERC20 representation token on another evm compatible network. 
+Using the current implementation of Bridges-UI, a user can tokenize their native coin of an EVM (Ethereum Virtual Machine) network into ERC20 representation token on another EVM compatible network. 
 Security considerations:
-In order to provide better decentralization of the bridges, you can increase number of required signatures and expand your list of validators. You should also increase block confirmation to have better protections from double spending attacks.
+In order to provide better decentralization of the bridges, a user can increase the number of required signatures and expand the number of validators. To increase security, block confirmations should be increased to protect against double spending attacks.
 POA smart contracts allows maintainers of the bridges to 
-- Upgrade smart contracts by fixing potential security vulnerabilities in smart contract with multisig contract
+- Upgrade smart contracts by fixing potential security vulnerabilities in a smart contract with multisig contract
 - Add validators
 - Remove validators
 - Set required number of signatures from validators
 - Set daily limit of deposits on Home Network(left side) for native coin deposits(POA)
 - Set daily limit of withdrawals on Foreign Network(right side) for ERC20/ERC677 token transfers(POA20)
 - Storing Home Deposits in Home Bridge contract
-- Minting on Deposits ERC20 compatible token on Foreign Network by validators
-- Burning on Withdrawals ERC20 compatible token on Foreign Network by validators
+- Minting on Deposits of ERC20 compatible token on Foreign Network by validators
+- Burning on Withdrawals of ERC20 compatible token on Foreign Network by validators
 
 Bridge UI  features:
-- show daily limits in both networks
-- display all events in both networks
-- filter events from specific block number on both sides
-- find corresponding event on different side of the network
+- Show daily limits in both networks
+- Display all events in both networks
+- Filter events from specific block number on both sides
+- Find corresponding event on different sides of the network
 - Submit a transaction from Home to Foreign network
 - Submit a transaction from Foreign to Home network
 
 ## Bridge UI
-Bridge UI allows users to explore all cross chain transactions that are happening. User can easily submit a transaction in both sides of the networks. 
+Bridge UI allows users to explore all cross chain transactions that are happening. Users can submit a transaction on both sides of the networks. 
+
 #### From Home to Foreign Network transaction:
-If a user wants to tokenize his native POA coin, she can send specify an amount and click a -> arrow button to send a transaction via Metamask within daily limits provided by the contracts. When transaction is validated, the user should expect to see Deposit event on Home Network(left side - POA network) and then after some time, validators submit signatures emitting SignedForDeposit event,to the foreign network. Once required number of signatures reached, Deposit event is emitted on Foreign network, hence ERC20 token is also minted on foreign network with the corresponding deposit to the address of recipient.
+To tokenize native POA coins a user must complete the following:
+- Specify the amount
+- Click the arrow -> send button
+- Confirm transaction via MetaMask
+
+The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should see the Deposit event on the Home Network (left side - POA Network). After some time, Validators submit signatures emitting SignedForDeposit event to the Foreign Network. Once the required number of signatures is reached, a Deposit event is emitted on the Foreign Network. Hence, an equivalent amount of ERC20 tokens are minted on the Foreign Network with the corresponding depost address. 
 
 #### From Foreign to Home Network transaction:
-If a user wants to burn his ERC20 compatible POA20 token, she can send specify an amount and click a Switch button and click on <-  arrow button to send a transaction via Metamask within daily limits provided by the contracts. When transaction is validated, a user should expect to see Withdrawal event on Foreign Network(right side - Ethereum Foundation) and then after some time, validators submit signatures emitting SignedForWithdrawal event,to the foreign network. Once required number of signatures reached, CollectedSignatures event is emitted on Foreign network, hence ERC20 token is also burnt on foreign network. It generates a signed message which validators submit on Home Network, therefore the user automatically receives his native POA coin in Home Network.
+To burn and send back to Home Network (ERC20 to POA20):
+- Specify an Amount
+- Click the switch button and click the <- arrow button to send
+- Confirm transaction on MetaMask
 
+The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should expect to see a Withdrawal Event on the Foreign Network (right-side - Ethereum Foundation). After some time, Validators submit signatures emitting SignedForWithdrawal event to the Foreign Network. Once the required number of signatures is reached, CollectedSignatures event is emitted on the Foreign Network. The ERC20 tokens are burned on the Foreign Network. This process generates a signed message which Validators submit on the Home Network. The user automatically receives their Native POA Coin.
 
 ## Dependencies
 
