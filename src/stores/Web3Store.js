@@ -1,4 +1,4 @@
-import { observable } from "mobx";
+import { action, observable } from "mobx";
 import getWeb3 from './utils/getWeb3';
 import Web3 from 'web3';
 import Web3Utils from 'web3-utils';
@@ -52,38 +52,42 @@ class Web3Store {
     this.setNetId({web3: this.foreignWeb3, isHome: false});
   }
   async setNetId({web3, isHome}){
-    let currentNet = isHome ? this.homeNet : this.foreignNet
-    currentNet.id = await web3.eth.net.getId()
-    switch (currentNet.id.toString()) {
-      case "1":
-        currentNet.name = 'Foundation'
-        break;
-      case "3":
-        currentNet.name = 'Ropsten'
-        break;
-      case "4":
-        currentNet.name = 'Rinkeby'
-        break;
-      case "42":
-        currentNet.name = 'Kovan'
-        break;
-      case "99":
-        currentNet.name = 'POA Core'
-        break;
-      case "77":
-        currentNet.name = 'POA Sokol'
-        break;
-      default:
-        currentNet.name = 'Unknown'
-        break;
+    try {
+      let currentNet = isHome ? this.homeNet : this.foreignNet
+      currentNet.id = await web3.eth.net.getId()
+      switch (currentNet.id.toString()) {
+        case "1":
+          currentNet.name = 'Foundation'
+          break;
+        case "3":
+          currentNet.name = 'Ropsten'
+          break;
+        case "4":
+          currentNet.name = 'Rinkeby'
+          break;
+        case "42":
+          currentNet.name = 'Kovan'
+          break;
+        case "99":
+          currentNet.name = 'POA Core'
+          break;
+        case "77":
+          currentNet.name = 'POA Sokol'
+          break;
+        default:
+          currentNet.name = 'Unknown'
+          break;
+      }
+    } catch(e) {
+      console.error(e)
     }
   }
-
-  async getBalances(defaultAccount){
+  @action
+  async getBalances(){
     try {
-      const homeBalance = await this.homeWeb3.eth.getBalance(defaultAccount)
+      const homeBalance = await this.homeWeb3.eth.getBalance(this.defaultAccount.address)
       this.defaultAccount.homeBalance = Web3Utils.fromWei(homeBalance)
-      const foreignBalance = await this.foreignWeb3.eth.getBalance(defaultAccount)
+      const foreignBalance = await this.foreignWeb3.eth.getBalance(this.defaultAccount.address)
       this.defaultAccount.foreignBalance = Web3Utils.fromWei(foreignBalance)
     } catch(e){
       console.error(e)

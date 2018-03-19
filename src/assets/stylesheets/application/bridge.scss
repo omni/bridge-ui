@@ -19,10 +19,6 @@
       img {
         margin-right: 10px;
       }
-
-      .description {
-        padding-right: 20px;
-      }
     }
 
     &_right {
@@ -44,8 +40,6 @@
       }
 
       .description {
-        padding-left: 20px;
-
         @media screen and (max-width: 650px) {
           padding-left: 0;
           padding-right: 20px;
@@ -170,15 +164,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-      }
-
-      button {
-        margin-left: 5px;
-        color: #08b3f2;
-        cursor: pointer;
-        &:hover {
-          text-decoration: underline;
-        }
       }
     }
   }

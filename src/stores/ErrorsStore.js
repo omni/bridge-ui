@@ -2,8 +2,6 @@ import { action, observable } from "mobx";
 
 class ErrorsStore {
   @observable errors = [];
-  constructor(rootStore) {
-  }
 
   @action 
   pushError(error){

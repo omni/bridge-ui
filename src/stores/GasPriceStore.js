@@ -1,4 +1,4 @@
-import { action, observable, computed } from "mobx";
+import { observable, computed } from "mobx";
 import Web3Utils from 'web3-utils';
 
 class GasPriceStore {

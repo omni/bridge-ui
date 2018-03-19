@@ -28,12 +28,52 @@ export class Bridge extends React.Component {
     this.web3Store = props.RootStore.web3Store;
     this.txStore = props.RootStore.txStore;
     this.errorsStore = props.RootStore.errorsStore;
+    this.gasPriceStore = props.RootStore.gasPriceStore;
     this.homeCurrency = 'POA'
     this.onSwitch = this.onSwitch.bind(this)
     this.state = {
       reverse: false
     }
     this.onTransfer = this.onTransfer.bind(this)
+  }
+
+  _sendToHome(amount){
+    if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.homeNet.id.toString()){
+      swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
+      return
+    }
+    
+    if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
+      this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
+    } else {
+      this.txStore.doSend({
+        to: this.homeStore.HOME_BRIDGE_ADDRESS,
+        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
+        from: this.web3Store.defaultAccount.address,
+        value: Web3Utils.toHex(Web3Utils.toWei(amount)),
+        data: '0x00'
+      })
+    }
+  }
+
+  _sendToForeign(amount){
+    if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.foreignNet.id.toString()){
+      swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
+      return
+    }
+    if(new BN(amount).gt(new BN(this.foreignStore.balance))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`})
+    } else {
+      this.txStore.erc677transferAndCall({
+        to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
+        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
+        from: this.web3Store.defaultAccount.address,
+        value: Web3Utils.toHex(Web3Utils.toWei(amount))
+      })
+    }
   }
 
   onTransfer(e){
@@ -44,27 +84,10 @@ export class Bridge extends React.Component {
       return
     }
     if(this.state.reverse){
-
+      this._sendToForeign(amount)
     } else {
-      if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.homeNet.id.toString()){
-        swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
-        return
-      }
-      
-      if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
-        this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
-        this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance2"})
-      }
-      // this.txStore.doSend({
-      //   to: this.homeStore.HOME_BRIDGE_ADDRESS,
-      //   gasPrice:
-      //   from: 
-      //   value: 
-      // })
-      
+      this._sendToHome(amount)
     }
-    
-
   }
 
   onSwitch(e){
@@ -95,8 +118,12 @@ export class Bridge extends React.Component {
           <p className="description">{this.web3Store.HOME_WEB_SOCKETS_PARITY_URL}</p>
           <p className="label">Home address</p>
           <p className="description break-all">{this.homeStore.HOME_BRIDGE_ADDRESS}</p>
+          <p className="label">Current Deposit limit</p>
+          <p className="description break-all">{this.homeStore.maxCurrentDeposit} {this.homeCurrency}</p>
           <p className="label">Total Contract Balance</p>
           <p className="description break-all">{this.homeStore.balance} {this.homeCurrency}</p>
+          <p className="label">Your {this.homeCurrency} Balance</p>
+          <p className="description break-all">{this.web3Store.defaultAccount.homeBalance}</p>
         </div>
         <form className="bridge-form">
           <div className="bridge-form-controls">
@@ -124,6 +151,8 @@ export class Bridge extends React.Component {
           <p className="description">{this.web3Store.FOREGIGN_WEB_SOCKETS_PARITY_URL}</p>
           <p className="label">Foreign address</p>
           <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
+          <p className="label">Current Withdraw limit</p>
+          <p className="description break-all">{this.foreignStore.maxCurrentDeposit} {this.foreignStore.symbol}</p>
           <p className="label">Total Supply</p>
           <p className="description break-all">{this.foreignStore.totalSupply} {this.foreignStore.symbol}</p>
           <p className="label">Your {this.foreignStore.symbol} Balance</p>

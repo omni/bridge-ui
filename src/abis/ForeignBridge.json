@@ -143,7 +143,7 @@
         },
         {
           "indexed": false,
-          "name": "message",
+          "name": "transactionHash",
           "type": "bytes32"
         }
       ],
@@ -160,7 +160,7 @@
         },
         {
           "indexed": false,
-          "name": "message",
+          "name": "transactionHash",
           "type": "bytes32"
         }
       ],

@@ -101,6 +101,11 @@
           "indexed": false,
           "name": "value",
           "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "name": "transactionHash",
+          "type": "bytes32"
         }
       ],
       "name": "Withdraw",

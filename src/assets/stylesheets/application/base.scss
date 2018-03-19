@@ -32,6 +32,15 @@ a {
   }
 }
 
+button {
+  margin-left: 5px;
+  color: #08b3f2;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 input,
 button {
   margin: 0;
