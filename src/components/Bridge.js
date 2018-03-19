@@ -42,7 +42,13 @@ export class Bridge extends React.Component {
       swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
       return
     }
-    
+    if(new BN(amount).gt(new BN(this.homeStore.maxCurrentDeposit))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `The amount is above current daily limit.\nThe max deposit today: ${this.homeStore.maxCurrentDeposit} ${this.homeCurrency}`})
+      return
+    }
     if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
       this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
     } else {
@@ -61,11 +67,19 @@ export class Bridge extends React.Component {
       swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
       return
     }
+    if(new BN(amount).gt(new BN(this.foreignStore.maxCurrentDeposit))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `The amount is above current daily limit.\nThe max withdrawal today: ${this.foreignStore.maxCurrentDeposit} ${this.foreignStore.symbol}`})
+      return
+    }
     if(new BN(amount).gt(new BN(this.foreignStore.balance))){
       this.errorsStore.pushError({
         label: "Error",
         type:"error",
         message: `Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`})
+      return
     } else {
       this.txStore.erc677transferAndCall({
         to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
