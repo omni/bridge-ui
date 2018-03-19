@@ -1,0 +1,45 @@
+.footer {
+  @extend %full-width;
+  position: absolute;
+  bottom: 0;
+  padding: 18px 0;
+  background-color: #6d2eae;
+
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .socials {
+    order: 2;
+
+    @media screen and (max-width: $tablet-width) {
+      order: 1;
+    }
+  }
+
+  &-logo {
+    @extend %logos;
+    order: 0;
+    left: 0;
+    width: 123px;
+  	height: 24px;
+  	background-position: 0 0;
+  }
+
+  &-rights {
+    order: 1;
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+
+    @media screen and (max-width: $tablet-width) {
+      order: 2;
+      width: 100%;
+      margin-top: 15px;
+      line-height: normal;
+    }
+  }
+}
