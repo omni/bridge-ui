@@ -47,9 +47,6 @@ export class RelayEvents extends React.Component {
           key={index}/>)
     })
     const foreign = [];
-    this.foreignStore.events.slice().forEach((e) => {
-      // console.log(e)
-    })
     this.foreignStore.events.slice().forEach(({
       event,
       transactionHash,
