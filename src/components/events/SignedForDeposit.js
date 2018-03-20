@@ -12,7 +12,7 @@ export default class SignedForDeposit extends React.Component{
     this.setState({show: !this.state.show});
   }
   render(){
-    let { blockNumber, message, signer, transactionHash, eventName, homeTxHash, filter } = this.props;
+    let { blockNumber, message, signer, transactionHash, eventName, signedTxHash, filter } = this.props;
     const color = 'purple'
     const open = filter || this.state.show ? 'events-i_open' : ''
     let style, homeTxInfo
@@ -43,9 +43,9 @@ export default class SignedForDeposit extends React.Component{
           <p className="description">
             {blockNumber}
           </p>
-          <p className="label">Home Tx Hash</p>
+          <p className="label">Signed Tx Hash</p>
           <p className="description">
-            {homeTxHash}
+            {signedTxHash}
           </p>
         </div>
     </div>

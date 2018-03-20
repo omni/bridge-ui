@@ -12,12 +12,12 @@ export default class CollectedSignatures extends React.Component{
     this.setState({show: !this.state.show});
   }
   render(){
-    const { transactionHash, authorityResponsibleForRelay, blockNumber, messageHash} = this.props;
+    const { transactionHash, authorityResponsibleForRelay, blockNumber, messageHash, signedTxHash} = this.props;
     const color = 'blue'
     const open = this.state.show ? 'events-i_open' : ''
     let style
     if(this.state.show){
-      style = {height: '16.5em'}
+      style = {height: '21.5em'}
     }
     return (
     <div className={`events-i ${open}`}>
@@ -34,6 +34,10 @@ export default class CollectedSignatures extends React.Component{
           <p className="label">Authority Responsible For Relay</p>
           <p className="description break-all">
             {authorityResponsibleForRelay}
+          </p>
+          <p className="label">Signed Tx Hash</p>
+          <p className="description break-all">
+            {signedTxHash}
           </p>
           <p className="label">Message Hash</p>
           <p className="description break-all">

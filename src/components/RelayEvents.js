@@ -35,7 +35,6 @@ export class RelayEvents extends React.Component {
   render(){
     const home = [];
     this.homeStore.events.slice().forEach(({event, transactionHash, blockNumber, returnValues}, index) => {
-      console.log(event, returnValues.transactionHash)
       home.push(
         <DepositWithdraw
           eventName={event}
@@ -48,9 +47,13 @@ export class RelayEvents extends React.Component {
           key={index}/>)
     })
     const foreign = [];
+    this.foreignStore.events.slice().forEach((e) => {
+      // console.log(e)
+    })
     this.foreignStore.events.slice().forEach(({
       event,
       transactionHash,
+      signedTxHash,
       blockNumber,
       returnValues}, index) => {
       if(event === 'Deposit' || event === 'Withdraw'){
@@ -69,12 +72,12 @@ export class RelayEvents extends React.Component {
       }
       if(event === "SignedForDeposit" || event === "SignedForWithdraw") {
         foreign.push(
-          <SignedForDeposit eventName={event} blockNumber={blockNumber} message={returnValues.message} signer={returnValues.signer} key={index} transactionHash={transactionHash} filter={this.homeStore.filter || this.foreignStore.filter} homeTxHash={returnValues.transactionHash}/>
+          <SignedForDeposit eventName={event} blockNumber={blockNumber} message={returnValues.message} signer={returnValues.signer} key={index} transactionHash={transactionHash} filter={this.homeStore.filter || this.foreignStore.filter} signedTxHash={signedTxHash || returnValues.transactionHash}/>
         )
       }
       if( event === "CollectedSignatures"){
         foreign.push(
-          <CollectedSignatures blockNumber={blockNumber} authorityResponsibleForRelay={returnValues.authorityResponsibleForRelay} messageHash={returnValues.messageHash} key={index} transactionHash={transactionHash} filter={this.homeStore.filter || this.foreignStore.filter} />
+          <CollectedSignatures blockNumber={blockNumber} authorityResponsibleForRelay={returnValues.authorityResponsibleForRelay} messageHash={returnValues.messageHash} key={index} transactionHash={transactionHash} filter={this.homeStore.filter || this.foreignStore.filter} signedTxHash={signedTxHash || returnValues.transactionHash}/>
         )
       }
     })
