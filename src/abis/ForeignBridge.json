@@ -160,7 +160,7 @@
         },
         {
           "indexed": false,
-          "name": "transactionHash",
+          "name": "messageHash",
           "type": "bytes32"
         }
       ],

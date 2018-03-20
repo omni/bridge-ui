@@ -4,6 +4,12 @@ import ERC677_ABI from '../abis/ERC677.json';
 import Web3Utils from 'web3-utils';
 import BN from 'bignumber.js'
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
+
 class ForeignStore {
   @observable state = null;
   @observable loading = true;
@@ -61,11 +67,15 @@ class ForeignStore {
 
   @action
   getEvents() {
-    this.foreignBridge.getPastEvents({fromBlock: this.filteredBlockNumber}, (e, foreignEvents) => {
+    this.foreignBridge.getPastEvents({fromBlock: this.filteredBlockNumber}, async (e, foreignEvents) => {
       console.log('foreignEvents', foreignEvents)
-      const events = []
+      let events = []
       if(foreignEvents) {
-        foreignEvents.forEach((event) => {
+        await asyncForEach(foreignEvents, async (event) => {
+          if(event.event === "SignedForWithdraw" || event.event === "CollectedSignatures") {
+            const signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
+            event.signedTxHash = signedTxHash
+          }
           events.push(event)
         })
         if(!this.filter){
@@ -80,6 +90,15 @@ class ForeignStore {
         })
       }
     })
+    
+  }
+  async getSignedTx(messageHash){
+    try {
+        const message = await this.foreignBridge.methods.message(messageHash).call()
+        return "0x" + message.substring(106, 170);
+    } catch(e){
+      console.error(e)
+    }
   }
   @action
   async getCurrentLimit(){
@@ -105,6 +124,9 @@ class ForeignStore {
   @action
   filterByTxHash(transactionHash) {
     const match = this.events.filter((event, index, obj) => {
+      if(event.signedTxHash){
+        return event.signedTxHash === transactionHash  
+      }
       return event.transactionHash === transactionHash
     })
     this.events = match
