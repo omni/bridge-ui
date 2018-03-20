@@ -157,7 +157,8 @@ all is done
   Home Bridge: 0x030caae2549fc2584879c8713d3e98d1ab615235
   POA20: 0x3ac82ca0ab3d78e131cc563c72716d11fc3795f8
 ```
-  * Copy only `Home Bridge:` line and save it somewhere else
+  * Copy only `Home Bridge:` line and save it somewhere else. You will also need block number of contract deployment, use https://sokol-explorer.poa.network to find it by contract address
+
 
 4. Setup Foreign Network node.
 I will be using Kovan for this example in the folder `kovan-node`
@@ -188,7 +189,7 @@ unlock = ["0xETH_ACCOUNT_VALIDATOR_KOVAN"] # Please provide your OWN ETH public 
 password = ["parity_password"] # specify password for the  key above
 
 ```
-* from the config above you have to create `keys` folder in: `sokol-datadir/keys/kovan` and insert your JSON keystore `0xETH_ACCOUNT_VALIDATOR_KOVAN` eth key that will be used for validation of the bridge
+* from the config above you have to create `keys` folder in: `kovan-datadir/keys/kovan` and insert your JSON keystore `0xETH_ACCOUNT_VALIDATOR_KOVAN` eth key that will be used for validation of the bridge
 * create `parity_password` file and store password for your public key in plaintext format
 * run your Foreign(Kovan) node
 ```bash
@@ -236,7 +237,7 @@ all is done
   Home Bridge: 0x6263f1fbff2dc1e8ed5e52168e9760a3613b1877
   POA20: 0x064cafec541a4faf9b7c4ffe4257d50cf0775df5
 ```
-  * Copy only `Foreign Bridge: ...` line and save it somewhere else
+  * Copy only `Foreign Bridge: ...` line and save it somewhere else. You will also need block number of contract deployment, use https://kovan.etherscan.io to find it by contract address
 
 5. Install parity-bridge binary
 
@@ -244,7 +245,7 @@ requires `rust` and `cargo`: [installation instructions.](https://www.rust-lang.
 
 requires `solc` to be in `$PATH`: [installation instructions.](https://solidity.readthedocs.io/en/develop/installing-solidity.html)
 
-assuming you've cloned the bridge (`git clone git@github.com:paritytech/parity-bridge.git`)
+assuming you've cloned the bridge (`git clone git@github.com:poanetwork/parity-bridge.git`)
 and are in the project directory (`cd parity-bridge`) run:
 
 ```
@@ -312,7 +313,6 @@ checked_withdraw_confirm = 6342830 # last checked withdraw events on Foreign net
 └── sokol-kovan-bridge
     ├── ForeignBridge_bytecode.bin
     ├── HomeBridge_bytecode.bin
-    ├── bridge-ui
     ├── config.toml
     ├── db.toml
     ├── parity-bridge
