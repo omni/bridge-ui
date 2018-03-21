@@ -136,6 +136,7 @@ module.exports = {
 };
 ```
   * Make sure your parity Home(sokol) node is fully synced by this step
+  * Get free Sokol Coins from the [sokol-faucet](https://faucet-sokol.herokuapp.com/)
   * Run the deployment script with following parameters:
 ```bash
 VALIDATORS="0xETH_ACCOUNT_VALIDATOR_SOKOL 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 HOME_LIMIT=1000000000000000000 NETWORK=home npm run deploy
@@ -196,6 +197,7 @@ password = ["parity_password"] # specify password for the  key above
 parity --config kovan.toml --nat=none --no-ui
 ```
 * Please make sure you are fully synced Foreign(kovan) network chain by this step
+* Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet)
 * Go back to your `poa-parity-bridge-contracts` folder where you previosly used for Home contracts deployment
 * open `truffle.js` file and make sure you add the following your home network config:
 ```js
