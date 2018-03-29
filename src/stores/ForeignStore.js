@@ -19,6 +19,7 @@ class ForeignStore {
   @observable balance = '';
   @observable filter = false;
   @observable maxCurrentDeposit = '';
+  @observable maxPerTx = '';
   filteredBlockNumber = 0;
   foreignBridge = {};
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
@@ -32,6 +33,7 @@ class ForeignStore {
 
   setForeign(){
     this.foreignBridge = new this.foreignWeb3.eth.Contract(FOREIGN_ABI, this.FOREIGN_BRIDGE_ADDRESS);
+    this.getMaxPerTxLimit()
     this.getEvents()
     this.getTokenInfo()
     this.getCurrentLimit()
@@ -45,9 +47,20 @@ class ForeignStore {
   }
 
   @action
+  async getMaxPerTxLimit(){
+    try {
+      const maxPerTx = await this.foreignBridge.methods.maxPerTx().call()
+      this.maxPerTx = Web3Utils.fromWei(maxPerTx);
+    } catch(e){
+      console.error(e)
+    }
+  }
+
+  @action
   async getTokenInfo(){
     try {
       const tokenAddress = await this.foreignBridge.methods.erc677token().call()
+      console.log('tokenAddress', tokenAddress)
       const tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, tokenAddress);
       const totalSupply = await tokenContract.methods.totalSupply().call()
       this.symbol = await tokenContract.methods.symbol().call()

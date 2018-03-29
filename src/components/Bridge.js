@@ -42,6 +42,13 @@ export class Bridge extends React.Component {
       swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
       return
     }
+    if(new BN(amount).gt(new BN(this.homeStore.maxPerTx))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${this.homeStore.maxPerTx} ${this.homeCurrency}`})
+      return
+    }
     if(new BN(amount).gt(new BN(this.homeStore.maxCurrentDeposit))){
       this.errorsStore.pushError({
         label: "Error",
@@ -65,6 +72,13 @@ export class Bridge extends React.Component {
   _sendToForeign(amount){
     if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
+      return
+    }
+    if(new BN(amount).gt(new BN(this.homeStore.maxPerTx))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `The amount is above maximum amount per transaction.\nThe max per transaction is: ${this.foreignStore.maxPerTx} ${this.foreignStore.symbol}`})
       return
     }
     if(new BN(amount).gt(new BN(this.foreignStore.maxCurrentDeposit))){
@@ -134,6 +148,8 @@ export class Bridge extends React.Component {
           <p className="description break-all">{this.homeStore.HOME_BRIDGE_ADDRESS}</p>
           <p className="label">Current Deposit limit</p>
           <p className="description break-all">{this.homeStore.maxCurrentDeposit} {this.homeCurrency}</p>
+          <p className="label">Maximum Amount Per Transaction limit</p>
+          <p className="description break-all">{this.homeStore.maxPerTx} {this.homeCurrency}</p>
           <p className="label">Total Contract Balance</p>
           <p className="description break-all">{this.homeStore.balance} {this.homeCurrency}</p>
           <p className="label">Your {this.homeCurrency} Balance</p>
@@ -167,6 +183,8 @@ export class Bridge extends React.Component {
           <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
           <p className="label">Current Withdraw limit</p>
           <p className="description break-all">{this.foreignStore.maxCurrentDeposit} {this.foreignStore.symbol}</p>
+          <p className="label">Maximum Amount Per Transaction limit</p>
+          <p className="description break-all">{this.foreignStore.maxPerTx} {this.foreignStore.symbol}</p>
           <p className="label">Total Supply</p>
           <p className="description break-all">{this.foreignStore.totalSupply} {this.foreignStore.symbol}</p>
           <p className="label">Your {this.foreignStore.symbol} Balance</p>

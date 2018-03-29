@@ -10,7 +10,8 @@ class HomeStore {
   @observable errors = [];
   @observable balance = "";
   @observable filter = false;
-  @observable maxCurrentDeposit = '';
+  @observable maxCurrentDeposit = "";
+  @observable maxPerTx = "";
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
@@ -24,6 +25,7 @@ class HomeStore {
 
   setHome(){
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
+    this.getMaxPerTxLimit()
     this.getEvents()
     this.getBalance()
     this.getCurrentLimit()
@@ -35,6 +37,16 @@ class HomeStore {
       this.web3Store.getBalances()
       this.getCurrentLimit()
     })
+  }
+  
+  @action
+  async getMaxPerTxLimit(){
+    try {
+      const maxPerTx = await this.homeBridge.methods.maxPerTx().call()
+      this.maxPerTx = Web3Utils.fromWei(maxPerTx);
+    } catch(e){
+      console.error(e)
+    }
   }
 
   @action
