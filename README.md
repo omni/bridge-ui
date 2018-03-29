@@ -15,7 +15,9 @@ POA smart contracts allows maintainers of the bridges to
 - Remove validators
 - Set required number of signatures from validators
 - Set daily limit of deposits on Home Network(left side) for native coin deposits(POA)
+- Set max limit per transaction for deposits on Home Network(left side) for native coin deposits(POA)
 - Set daily limit of withdrawals on Foreign Network(right side) for ERC20/ERC677 token transfers(POA20)
+- Set max limit per transaction for deposits on Foreign Network(right side) for ERC20/ERC677 token transfers(POA20)
 - Storing Home Deposits in Home Bridge contract
 - Minting on Deposits of ERC20 compatible token on Foreign Network by validators
 - Burning on Withdrawals of ERC20 compatible token on Foreign Network by validators
@@ -49,7 +51,7 @@ The amount sent must be within the daily limits provided by the contracts. When 
 
 ## Dependencies
 
-- [poa-bridge-contracts](https://github.com/poanetwork/poa-parity-bridge-contracts/tree/upgradable)
+- [poa-bridge-contracts](https://github.com/poanetwork/poa-parity-bridge-contracts/)
 - [parity node 1.9.3](https://www.parity.io/) for Home Network 
 - [parity node 1.9.3](https://www.parity.io/) for Foreign Network
 - [node.js](https://nodejs.org/en/download/)
@@ -114,7 +116,7 @@ parity --config sokol.toml --nat=none --no-ui
 ```
 
 3. Get POA Bridge contracts:
-  * `git clone -b upgradable git@github.com:poanetwork/poa-parity-bridge-contracts.git`
+  * `git clone git@github.com:poanetwork/poa-parity-bridge-contracts.git`
   * `cd poa-parity-bridge-contracts && npm install`
   * open `truffle.js` file and make sure you add the following your home network config:
 ```js
@@ -139,13 +141,14 @@ module.exports = {
   * Get free Sokol Coins from the [sokol-faucet](https://faucet-sokol.herokuapp.com/)
   * Run the deployment script with following parameters:
 ```bash
-VALIDATORS="0xETH_ACCOUNT_VALIDATOR_SOKOL 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 HOME_LIMIT=1000000000000000000 NETWORK=home npm run deploy
+VALIDATORS="0xETH_ACCOUNT_VALIDATOR_SOKOL 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 HOME_LIMIT=1000000000000000000 MAX_AMOUNT_PER_TX=100000000000000000 NETWORK=home npm run deploy
 ```
 ```ruby
 Explanation of parameters:
 VALIDATORS - list of validators who can validate bridge transactions
 REQUIRED_NUMBER_OF_VALIDATORS - how many signatures will be required in order to relay a tx
 HOME_LIMIT - daily limit in Wei (in the example above is 1 eth)
+MAX_AMOUNT_PER_TX - max amount per transaction in Wei(in the example above is 0.1 eth)
 NETWORK - reads truffle.js network
 ```
   * Wait when deployment is done
@@ -227,7 +230,7 @@ module.exports = {
 ```
   * Run the deployment script with following parameters:
 ```bash
-VALIDATORS="0xVALIDATOR_1 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 FOREIGN_LIMIT=1000000000000000000 NETWORK=foreign npm run deploy
+VALIDATORS="0xVALIDATOR_1 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 FOREIGN_LIMIT=1000000000000000000 MAX_AMOUNT_PER_TX=100000000000000000 NETWORK=foreign npm run deploy
 ```
   * Wait when deployment is done
   * when the deployment is finished you will have something like this: 
