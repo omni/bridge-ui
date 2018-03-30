@@ -38,7 +38,7 @@ To tokenize native POA coins a user must complete the following:
 - Specify the amount
 - Click the arrow -> send button
 - Confirm transaction via MetaMask
-
+- The address that you use to send from, the same address will be used to receive the token on a Foreign chain
 The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should see the Deposit event on the Home Network (left side - POA Network). After some time, Validators submit signatures emitting SignedForDeposit event to the Foreign Network. Once the required number of signatures is reached, a Deposit event is emitted on the Foreign Network. Hence, an equivalent amount of ERC20 tokens are minted on the Foreign Network with the corresponding depost address. 
 
 #### From Foreign to Home Network transaction:
@@ -46,8 +46,24 @@ To burn and send back to Home Network (ERC20 to POA20):
 - Specify an Amount
 - Click the switch button and click the <- arrow button to send
 - Confirm transaction on MetaMask
+- The address that you use to send from, the same address will be used to receive the coin on a Home chain
 
 The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should expect to see a Withdrawal Event on the Foreign Network (right-side - Ethereum Foundation). After some time, Validators submit signatures emitting SignedForWithdrawal event to the Foreign Network. Once the required number of signatures is reached, CollectedSignatures event is emitted on the Foreign Network. The ERC20 tokens are burned on the Foreign Network. This process generates a signed message which Validators submit on the Home Network. The user automatically receives their Native POA Coin.
+
+# Responsibilities and roles of the bridge:
+- Administrator Role(representation of a multisig contract):
+  - add/remove validators
+  - set daily limits on both bridges
+  - set maximum per transaction limit on both bridges
+  - upgrade contracts in case of vulnerability
+  - set minimum required signatures from validators in order to relay a user's transaction
+- Validator Role :
+  - provide 100% uptime to relay transactions
+  - listen for Deposit events on Home bridge to mint erc20 token on Foreign bridge
+  - listen for Withdraw events on Foreign bridge to unlock funds on Home Bridge
+- User role:
+  - sends POA coins to Home bridge in order to receive ERC20 token on Foreign Bridge using the same address to send/receive
+  - sends ERC20 POA20 token on Foreign Bridge in order to receive POA coins on Home Bridge using the same address to send/receive
 
 ## Dependencies
 
@@ -116,7 +132,7 @@ parity --config sokol.toml --nat=none --no-ui
 ```
 
 3. Get POA Bridge contracts:
-  * `git clone git@github.com:poanetwork/poa-parity-bridge-contracts.git`
+  * `git clone https://github.com/poanetwork/poa-parity-bridge-contracts.git`
   * `cd poa-parity-bridge-contracts && npm install`
   * open `truffle.js` file and make sure you add the following your home network config:
 ```js
@@ -141,7 +157,7 @@ module.exports = {
   * Get free Sokol Coins from the [sokol-faucet](https://faucet-sokol.herokuapp.com/)
   * Run the deployment script with following parameters:
 ```bash
-VALIDATORS="0xETH_ACCOUNT_VALIDATOR_SOKOL 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 HOME_LIMIT=1000000000000000000 MAX_AMOUNT_PER_TX=100000000000000000 NETWORK=home npm run deploy
+VALIDATORS="0xETH_ACCOUNT_VALIDATOR_SOKOL 0xVALIDATOR_2" REQUIRED_NUMBER_OF_VALIDATORS=1 HOME_LIMIT=1000000000000000000 MAX_AMOUNT_PER_TX=100000000000000000 PROXY_OWNER="YOUR_UNLOCKED_PARITY_ACCOUNT" NETWORK=home npm run deploy
 ```
 ```ruby
 Explanation of parameters:
@@ -149,6 +165,7 @@ VALIDATORS - list of validators who can validate bridge transactions
 REQUIRED_NUMBER_OF_VALIDATORS - how many signatures will be required in order to relay a tx
 HOME_LIMIT - daily limit in Wei (in the example above is 1 eth)
 MAX_AMOUNT_PER_TX - max amount per transaction in Wei(in the example above is 0.1 eth)
+PROXY_OWNER - an account which should be unlocked and which will hold the `Administrator` role
 NETWORK - reads truffle.js network
 ```
   * Wait when deployment is done
@@ -250,7 +267,7 @@ requires `rust` and `cargo`: [installation instructions.](https://www.rust-lang.
 
 requires `solc` to be in `$PATH`: [installation instructions.](https://solidity.readthedocs.io/en/develop/installing-solidity.html)
 
-assuming you've cloned the bridge (`git clone git@github.com:poanetwork/parity-bridge.git`)
+assuming you've cloned the bridge (`git clone https://github.com/poanetwork/parity-bridge.git`)
 and are in the project directory (`cd parity-bridge`) run:
 
 ```
@@ -359,7 +376,7 @@ INFO:bridge::bridge::withdraw_confirm: waiting for new withdraws that should get
 
 ## Installation of the UI app
 
-1. `git clone git@github.com:poanetwork/bridge-ui.git`
+1. `git clone https://github.com/poanetwork/bridge-ui.git`
 2. `cd bridge-ui`
 3. `npm install`
 4. Please create .env file [.env.example](.env.example)
