@@ -93,6 +93,7 @@ Folder structure:
 ```
 1. Install parity (Current setup was tested against parity 1.9.3)
 2. Setup Home Network node. In this example, we will use `sokol-node` folder
+
 Example: POA-Sokol:
   * Download Sokol spec.json file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/spec.json)
   * Download Sokol bootnodes.txt file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/bootnodes.txt)
@@ -124,9 +125,12 @@ unlock = ["0xETH_ACCOUNT_VALIDATOR_SOKOL"] # Please provide your OWN ETH public 
 password = ["parity_password"] # specify password for the  key above
 
 ```
-  * from the config above you have to create `keys` folder in: `sokol-datadir/keys/Sokol` and insert your JSON keystore `0xETH_ACCOUNT_VALIDATOR_SOKOL` eth key
-  * create `parity_password` file and store password for your public key in plaintext format
-  * run your Home(sokol) node
+For the `0xETH_ACCOUNT_VALIDATOR_SOKOL` ETH public key provided in the config above:
+* create `parity_password` file and store password in plaintext format
+* Create the folders `sokol-datadir/keys/Sokol` and insert your JSON keystore there
+
+
+Run your Home(sokol) node
 ```bash
 parity --config sokol.toml --nat=none --no-ui
 ```
@@ -134,7 +138,7 @@ parity --config sokol.toml --nat=none --no-ui
 3. Get POA Bridge contracts:
   * `git clone https://github.com/poanetwork/poa-parity-bridge-contracts.git`
   * `cd poa-parity-bridge-contracts && npm install`
-  * open `truffle.js` file and make sure you add the following your home network config:
+  * open `truffle.js` file and make sure you add your home network config:
 ```js
 module.exports = {
   networks: {
@@ -210,16 +214,18 @@ unlock = ["0xETH_ACCOUNT_VALIDATOR_KOVAN"] # Please provide your OWN ETH public 
 password = ["parity_password"] # specify password for the  key above
 
 ```
-* from the config above you have to create `keys` folder in: `kovan-datadir/keys/kovan` and insert your JSON keystore `0xETH_ACCOUNT_VALIDATOR_KOVAN` eth key that will be used for validation of the bridge
-* create `parity_password` file and store password for your public key in plaintext format
-* run your Foreign(Kovan) node
+For the `0xETH_ACCOUNT_VALIDATOR_KOVAN` ETH public key provided in the config above:
+* create `parity_password` file and store password in plaintext format
+* Create the folders `kovan-datadir/keys/kovan` and insert your JSON keystore there
+
+Run your Foreign(Kovan) node
 ```bash
 parity --config kovan.toml --nat=none --no-ui
 ```
 * Please make sure you are fully synced Foreign(kovan) network chain by this step
 * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet)
 * Go back to your `poa-parity-bridge-contracts` folder where you previosly used for Home contracts deployment
-* open `truffle.js` file and make sure you add the following your home network config:
+* open `truffle.js` file and make sure you add your foreign network config:
 ```js
 module.exports = {
   networks: {
@@ -263,12 +269,13 @@ all is done
 
 5. Install parity-bridge binary
 
-requires `rust` and `cargo`: [installation instructions.](https://www.rust-lang.org/en-US/install.html)
+* Install `rust` and `cargo`: [installation instructions.](https://www.rust-lang.org/en-US/install.html)
 
-requires `solc` to be in `$PATH`: [installation instructions.](https://solidity.readthedocs.io/en/develop/installing-solidity.html)
+* Install `solc` and add it to `$PATH`: [installation instructions.](https://solidity.readthedocs.io/en/develop/installing-solidity.html)
 
-assuming you've cloned the bridge (`git clone https://github.com/poanetwork/parity-bridge.git`)
-and are in the project directory (`cd parity-bridge`) run:
+* `git clone https://github.com/poanetwork/parity-bridge.git`
+* `cd parity-bridge`
+* Run:
 
 ```
 cargo build -p bridge-cli --release
