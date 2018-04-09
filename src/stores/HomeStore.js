@@ -12,6 +12,7 @@ class HomeStore {
   @observable filter = false;
   @observable maxCurrentDeposit = "";
   @observable maxPerTx = "";
+  @observable latestBlockNumber = 0;
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
@@ -23,21 +24,30 @@ class HomeStore {
     this.setHome()
   }
 
-  setHome(){
+  async setHome(){
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
+    await this.getBlockNumber()
     this.getMinPerTxLimit()
     this.getMaxPerTxLimit()
     this.getEvents()
     this.getBalance()
     this.getCurrentLimit()
-    this.homeBridge.events.allEvents({
-      fromBlock: 0
-    }).on('data', (e) => {
+    setInterval(() => {
       this.getEvents()
       this.getBalance()
       this.web3Store.getBalances()
       this.getCurrentLimit()
-    })
+      this.getBlockNumber()
+    }, 5000)
+  }
+
+  @action
+  async getBlockNumber() {
+    try {
+      this.latestBlockNumber = await this.homeWeb3.eth.getBlockNumber()
+    } catch(e){
+      console.error(e)
+    }
   }
   
   @action
@@ -72,7 +82,8 @@ class HomeStore {
 
   @action
   getEvents() {
-    this.homeBridge.getPastEvents({fromBlock: this.filteredBlockNumber}, (e, homeEvents) => {
+    const blockNumber = this.filteredBlockNumber || this.latestBlockNumber - 50
+    this.homeBridge.getPastEvents({fromBlock: blockNumber}, (e, homeEvents) => {
       console.log('homeEvents', homeEvents)
       const events = []
       if(homeEvents){

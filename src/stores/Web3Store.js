@@ -19,8 +19,8 @@ class Web3Store {
   @observable foreignNet = {id: '', name: ''};
   @observable metamaskNet = {id: '', name: ''};
 
-  HOME_WEB_SOCKETS_PARITY_URL = process.env.REACT_APP_HOME_WEB_SOCKETS_PARITY_URL;
-  FOREGIGN_WEB_SOCKETS_PARITY_URL = process.env.REACT_APP_FOREGIGN_WEB_SOCKETS_PARITY_URL;
+  HOME_HTTP_PARITY_URL = process.env.REACT_APP_HOME_HTTP_PARITY_URL;
+  FOREIGN_HTTP_PARITY_URL = process.env.REACT_APP_FOREIGN_HTTP_PARITY_URL;
 
   constructor(rootStore) {
     this.errorsStore = rootStore.errorsStore;
@@ -41,13 +41,13 @@ class Web3Store {
   }
 
   setWeb3Home() {
-    const homeWeb3Provider = new Web3.providers.WebsocketProvider(this.HOME_WEB_SOCKETS_PARITY_URL);
+    const homeWeb3Provider = new Web3.providers.HttpProvider(this.HOME_HTTP_PARITY_URL);
     this.homeWeb3 = new Web3(homeWeb3Provider);
     this.setNetId({web3: this.homeWeb3, isHome: true});
   }
 
   setWeb3Foreign() {
-    const foreignWeb3Provider = new Web3.providers.WebsocketProvider(this.FOREGIGN_WEB_SOCKETS_PARITY_URL);
+    const foreignWeb3Provider = new Web3.providers.HttpProvider(this.FOREIGN_HTTP_PARITY_URL);
     this.foreignWeb3 = new Web3(foreignWeb3Provider);
     this.setNetId({web3: this.foreignWeb3, isHome: false});
   }

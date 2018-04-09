@@ -21,6 +21,7 @@ class ForeignStore {
   @observable maxCurrentDeposit = '';
   @observable maxPerTx = '';
   @observable minPerTx = '';
+  @observable latestBlockNumber = 0;
   filteredBlockNumber = 0;
   foreignBridge = {};
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
@@ -32,20 +33,29 @@ class ForeignStore {
     this.setForeign()
   }
 
-  setForeign(){
+  async setForeign(){
     this.foreignBridge = new this.foreignWeb3.eth.Contract(FOREIGN_ABI, this.FOREIGN_BRIDGE_ADDRESS);
+    await this.getBlockNumber()
     this.getMinPerTxLimit()
     this.getMaxPerTxLimit()
     this.getEvents()
     this.getTokenInfo()
     this.getCurrentLimit()
-    this.foreignBridge.events.allEvents({
-      fromBlock: 0
-    }).on('data', (e) => {
+    setInterval(() => {
+      this.getBlockNumber()
       this.getEvents()
       this.getTokenInfo()
       this.getCurrentLimit()
-    })
+    }, 5000)
+  }
+
+  @action
+  async getBlockNumber() {
+    try {
+      this.latestBlockNumber = await this.foreignWeb3.eth.getBlockNumber()
+    } catch(e){
+      console.error(e)
+    }
   }
 
   @action
@@ -92,7 +102,8 @@ class ForeignStore {
 
   @action
   getEvents() {
-    this.foreignBridge.getPastEvents({fromBlock: this.filteredBlockNumber}, async (e, foreignEvents) => {
+    const blockNumber = this.filteredBlockNumber || this.latestBlockNumber - 50
+    this.foreignBridge.getPastEvents({fromBlock: blockNumber}, async (e, foreignEvents) => {
       console.log('foreignEvents', foreignEvents)
       let events = []
       if(foreignEvents) {
