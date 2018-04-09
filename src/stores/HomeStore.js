@@ -25,6 +25,7 @@ class HomeStore {
 
   setHome(){
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
+    this.getMinPerTxLimit()
     this.getMaxPerTxLimit()
     this.getEvents()
     this.getBalance()
@@ -44,6 +45,16 @@ class HomeStore {
     try {
       const maxPerTx = await this.homeBridge.methods.maxPerTx().call()
       this.maxPerTx = Web3Utils.fromWei(maxPerTx);
+    } catch(e){
+      console.error(e)
+    }
+  }
+
+  @action
+  async getMinPerTxLimit(){
+    try {
+      const minPerTx = await this.homeBridge.methods.minPerTx().call()
+      this.minPerTx = Web3Utils.fromWei(minPerTx);
     } catch(e){
       console.error(e)
     }

@@ -150,6 +150,8 @@ export class Bridge extends React.Component {
           <p className="description break-all">{this.homeStore.maxCurrentDeposit} {this.homeCurrency}</p>
           <p className="label">Maximum Amount Per Transaction limit</p>
           <p className="description break-all">{this.homeStore.maxPerTx} {this.homeCurrency}</p>
+          <p className="label">Minimum Amount Per Transaction</p>
+          <p className="description break-all">{this.homeStore.minPerTx} {this.homeCurrency}</p>
           <p className="label">Total Contract Balance</p>
           <p className="description break-all">{this.homeStore.balance} {this.homeCurrency}</p>
           <p className="label">Your {this.homeCurrency} Balance</p>
@@ -185,6 +187,8 @@ export class Bridge extends React.Component {
           <p className="description break-all">{this.foreignStore.maxCurrentDeposit} {this.foreignStore.symbol}</p>
           <p className="label">Maximum Amount Per Transaction limit</p>
           <p className="description break-all">{this.foreignStore.maxPerTx} {this.foreignStore.symbol}</p>
+          <p className="label">Minimum Amount Per Transaction</p>
+          <p className="description break-all">{this.foreignStore.minPerTx} {this.foreignStore.symbol}</p>
           <p className="label">Total Supply</p>
           <p className="description break-all">{this.foreignStore.totalSupply} {this.foreignStore.symbol}</p>
           <p className="label">Your {this.foreignStore.symbol} Balance</p>
