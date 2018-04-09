@@ -124,6 +124,7 @@ export class Bridge extends React.Component {
   }
   render() {
     let reverse, netWorkNames, currency;
+    let foreignURL = new URL(this.web3Store.FOREIGN_HTTP_PARITY_URL) 
     if(this.state.reverse) {
       reverse = 'bridge-form-button_reverse';
       currency = this.foreignStore.symbol;
@@ -142,8 +143,8 @@ export class Bridge extends React.Component {
               Home: {this.web3Store.homeNet.name}({this.web3Store.homeNet.id})
             </div>
           </h1>
-          <p className="label">WebSocket url</p>
-          <p className="description">{this.web3Store.HOME_WEB_SOCKETS_PARITY_URL}</p>
+          <p className="label">RPC url</p>
+          <p className="description">{this.web3Store.HOME_HTTP_PARITY_URL}</p>
           <p className="label">Home address</p>
           <p className="description break-all">{this.homeStore.HOME_BRIDGE_ADDRESS}</p>
           <p className="label">Current Deposit limit</p>
@@ -179,8 +180,8 @@ export class Bridge extends React.Component {
               Foreign: {this.web3Store.foreignNet.name}({this.web3Store.foreignNet.id})
             </span>
           </h1>
-          <p className="label">Websocket url</p>
-          <p className="description">{this.web3Store.FOREGIGN_WEB_SOCKETS_PARITY_URL}</p>
+          <p className="label">RPC url</p>
+          <p className="description">{foreignURL.protocol}//{foreignURL.hostname}</p>
           <p className="label">Foreign address</p>
           <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
           <p className="label">Current Withdraw limit</p>
