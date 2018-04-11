@@ -193,8 +193,8 @@ Example: POA-Sokol:
     Exit from `nano` by Ctrl-O and Ctrl-X  
   * Create the folders `sokol-datadir/keys/Sokol` and insert your JSON keystore there   
     `mkdir -p sokol-datadir/keys/Sokol`  
-  * Move your JSON Keystore file that you generated from MyEtherWallet
-    `mv UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6 sokol-datadir/keys/Sokol`    
+  * Move your JSON Keystore file that you generated from MyEtherWallet  
+    `mv UTC--YOUR_FILE_FOR_HOME_VALIDATOR_ACCOUNT_THAT_YOU_GENERATED_FROM_MEW sokol-datadir/keys/Sokol`   
   * Fund this address from Sokol Faucet if you haven't done so: https://faucet-sokol.herokuapp.com/  
   * Create sokol.toml file replace below `0xETH_ACCOUNT_VALIDATOR_SOKOL` which should match `HOME_VALIDATORS`
   (same address that is in your JSON Keystore file)    
@@ -215,7 +215,7 @@ hosts = ["all"]
 port = 8545 # port needed for truffle.js config 
 apis = ["web3", "eth", "net", "parity", "rpc", "secretstore", "traces"]
 [account]
-unlock = ["0xETH_ACCOUNT_VALIDATOR_SOKOL"] # Please provide your OWN ETH public Key here
+unlock = ["0xETH_ACCOUNT_VALIDATOR_SOKOL"] # Please provide your HOME_VALIDATOR account here
 password = ["parity_password"] # specify password for the  key above
 
 ```
@@ -228,15 +228,22 @@ Open separate terminal window and go to your `sokol-kovan-bridge` folder
 `cd ..`  
 
 ## 4. Setup Foreign Network node.
-
-* Get JSON Keystore file that you used for `FOREIGN_VALIDATORS` variable above
-Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`
-  * Fund this address if you haven't done so from Kovan Faucet: https://gitter.im/kovan-testnet/faucet
-  * Create `config.toml` file replace below `0xETH_ACCOUNT_VALIDATOR_KOVAN` which should match `FOREIGN_VALIDATORS`
+  * Create folder `kovan-node`  
+  `mkdir kovan-node`  
+  * Get JSON Keystore file that you used for `FOREIGN_VALIDATORS` variable above  
+Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`  
+  * Fund this address if you haven't done so from Kovan Faucet:  https://gitter.im/kovan-testnet/faucet  
+  For the `0xETH_ACCOUNT_VALIDATOR_KOVAN` ETH public key provided in the config above:  
+  * create `parity_password` file and store password in plaintext format  
+    `nano parity_password`  
+    `Password123`  
+    Exit from `nano` by Ctrl-O and Ctrl-X  
+  * Create the folders `kovan-datadir/keys/kovan` and insert your JSON keystore there  
+  `mkdir -p kovan-datadir/keys/kovan`  
+  `mv UTC--YOUR_FILE_FOR_FOREIGN_VALIDATOR_ACCOUNT_THAT_YOU_GENERATED_FROM_MEW kovan-datadir/keys/kovan`  
+  * Create `config.toml` file and replace below `0xETH_ACCOUNT_VALIDATOR_KOVAN` which should match `FOREIGN_VALIDATORS`  
 `touch config.toml`
 
-I will be using Kovan for this example in the folder `kovan-node`
-  * prepare config.toml
 ```bash
 # Kovan
 [parity]
@@ -253,18 +260,10 @@ port = 8591 # port needed for truffle.js config. Please make sure it's different
 apis = ["web3", "eth", "net", "parity", "rpc", "secretstore", "traces"]
 
 [account]
-unlock = ["0xETH_ACCOUNT_VALIDATOR_KOVAN"] # Please provide your OWN ETH public Key here for Validator
+unlock = ["0xETH_ACCOUNT_VALIDATOR_KOVAN"] # Please provide your FOREIGN_VALIDATOR ETH public address that you generated in MyEtherWallet
 password = ["parity_password"] # specify password for the  key above
 
 ```
-For the `0xETH_ACCOUNT_VALIDATOR_KOVAN` ETH public key provided in the config above:
-* create `parity_password` file and store password in plaintext format
-`nano parity_password`
-`Password123`
-Exit from `nano` by Ctrl-O and Ctrl-X
-* Create the folders `kovan-datadir/keys/kovan` and insert your JSON keystore there
-`mkdir -p kovan-datadir/keys/kovan`
-`mv UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6 kovan-datadir/keys/kovan`
 
 Run your Foreign(Kovan) node
 ```bash
