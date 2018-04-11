@@ -156,6 +156,8 @@ As a result you should have the following output:
 [ Foreign ] POA20:  0xAb121C134aD7e128BE06fEaf40b494F9865F794b
 Contracts Deployment have been saved to `bridgeDeploymentResults.json`
 ```
+DESTROY `.env` file  
+`rm -rf .env`  
 The deployment information is also located in `bridgeDeploymentResults.json`  
 When you are done, go back to `sokol-kovan-bridge` folder   
 `cd ../../`
@@ -214,6 +216,8 @@ interface = "all"
 hosts = ["all"]
 port = 8545 # port needed for truffle.js config 
 apis = ["web3", "eth", "net", "parity", "rpc", "secretstore", "traces"]
+[websockets]
+disable = true
 [account]
 unlock = ["0xETH_ACCOUNT_VALIDATOR_SOKOL"] # Please provide your HOME_VALIDATOR account here
 password = ["parity_password"] # specify password for the  key above
@@ -229,7 +233,7 @@ Open separate terminal window and go to your `sokol-kovan-bridge` folder
 
 ## 4. Setup Foreign Network node.
   * Create folder `kovan-node`  
-  `mkdir kovan-node`  
+  `mkdir kovan-node && cd kovan-node`  
   * Get JSON Keystore file that you used for `FOREIGN_VALIDATORS` variable above  
 Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`  
   * Fund this address if you haven't done so from Kovan Faucet:  https://gitter.im/kovan-testnet/faucet  
@@ -258,7 +262,8 @@ interface = "all"
 hosts = ["all"]
 port = 8591 # port needed for truffle.js config. Please make sure it's different from sokol.toml
 apis = ["web3", "eth", "net", "parity", "rpc", "secretstore", "traces"]
-
+[websockets]
+disable = true
 [account]
 unlock = ["0xETH_ACCOUNT_VALIDATOR_KOVAN"] # Please provide your FOREIGN_VALIDATOR ETH public address that you generated in MyEtherWallet
 password = ["parity_password"] # specify password for the  key above
