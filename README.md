@@ -186,11 +186,19 @@ Example: POA-Sokol:
 `curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/spec.json`  
   * Download Sokol bootnodes.txt file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/bootnodes.txt)  
 `curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/bootnodes.txt`  
-  * Get JSON Keystore file that you used for `HOME_VALIDATORS` variable above  
-Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`  
-  * Fund this address from Sokol Faucet: https://faucet-sokol.herokuapp.com/  
-  * Create sokol.toml file replace below `0xETH_ACCOUNT_VALIDATOR_SOKOL` which should match `HOME_VALIDATORS`  
-`touch sokol.toml`
+  * For the `0xETH_ACCOUNT_VALIDATOR_SOKOL` ETH public key provided in the config below:  
+    * create `parity_password` file and store password in plaintext format  
+    `nano parity_password`  
+    `Password123`  
+    Exit from `nano` by Ctrl-O and Ctrl-X  
+  * Create the folders `sokol-datadir/keys/Sokol` and insert your JSON keystore there   
+    `mkdir -p sokol-datadir/keys/Sokol`  
+  * Move your JSON Keystore file that you generated from MyEtherWallet
+    `mv UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6 sokol-datadir/keys/Sokol`    
+  * Fund this address from Sokol Faucet if you haven't done so: https://faucet-sokol.herokuapp.com/  
+  * Create sokol.toml file replace below `0xETH_ACCOUNT_VALIDATOR_SOKOL` which should match `HOME_VALIDATORS`
+  (same address that is in your JSON Keystore file)    
+`touch sokol.toml`  
 ```bash
 # Sokol
 [parity]
@@ -211,22 +219,13 @@ unlock = ["0xETH_ACCOUNT_VALIDATOR_SOKOL"] # Please provide your OWN ETH public 
 password = ["parity_password"] # specify password for the  key above
 
 ```
-For the `0xETH_ACCOUNT_VALIDATOR_SOKOL` ETH public key provided in the config above:
-* create `parity_password` file and store password in plaintext format
-`nano parity_password`
-`Password123`
-Exit from `nano` by Ctrl-O and Ctrl-X
-* Create the folders `sokol-datadir/keys/Sokol` and insert your JSON keystore there
-`mkdir -p sokol-datadir/keys/Sokol`
-`mv UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6 sokol-datadir/keys/Sokol`
 
-
-Run your Home(sokol) node
+Run your Home(sokol) node  
 ```bash
-parity --config sokol.toml --nat=none --no-ui
+parity --config sokol.toml --nat=none --no-ui  
 ```
-Open separate terminal window and go to your `sokol-kovan-bridge` folder
-`cd ..`
+Open separate terminal window and go to your `sokol-kovan-bridge` folder  
+`cd ..`  
 
 ## 4. Setup Foreign Network node.
 
