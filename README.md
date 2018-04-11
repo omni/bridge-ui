@@ -301,8 +301,14 @@ cat ../sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentRes
 ```bash
 cat ../sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq '.foreignBridge.bytecode' -r > ForeignBridge_bytecode.bin
 ```
-9. Create `config.toml` file
-`touch config.toml`
+9. Create `config.toml` file  
+`nano config.toml`  
+Replace
+`0xETH_ACCOUNT_VALIDATOR_SOKOL` to your `HOME_VALIDATORS` address   
+`0xETH_ACCOUNT_VALIDATOR_KOVAN` to your `FOREIGN_VALIDATORS` address  
+`ipc` should be full path to your kovan/sokol jsonrpc.ipc file
+Example: MacOSX: `/Users/USERNAME/....`  
+
 ```yaml
 estimated_gas_cost_of_withdraw = 0
 [home]
@@ -339,16 +345,21 @@ deposit_relay = { gas = 3000000 }
 withdraw_relay = { gas = 3000000 }
 withdraw_confirm = { gas = 3000000 }
 ```
-10. Create db.toml file
+10. Create db.toml file  
+`nano db.toml`  
+Insert addresses from  
+`cat poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq 'del(.[].bytecode)'`  
 ```yaml
-home_contract_address = "0xE460DD303Abf282Bde9f7c9cB608D1E1a7c02E0a" #YOUR HOME CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#3 
-foreign_contract_address = "0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA" #YOUR FOREIGN CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#4
+home_contract_address = "0xE46...E0a" #YOUR HOME CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#3 
+foreign_contract_address = "0x90...3eA" #YOUR FOREIGN CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#4
 home_deploy = 1400663 # block number at which the contract was created for home contract you can find in `bridgeDeploymentResults.json`
 foreign_deploy = 6342830 # block number at which the contract was created for foreign contract you can find in `bridgeDeploymentResults.json`
 checked_deposit_relay = 1400663 # last checked deposits events on Home network
 checked_withdraw_relay = 6342830 # last checked withdraw events on Foreign network
 checked_withdraw_confirm = 6342830 # last checked withdraw events on Foreign network
 ```
+Exit `nano` by Ctrl-O and Ctrl-X  
+
 11. At this step your folder structure should look like this
 ```bash
 .
@@ -398,10 +409,13 @@ Open separate terminal window and go to your `sokol-kovan-bridge` folder
 
 ## Installation of the UI app
 
-1. `git clone https://github.com/poanetwork/bridge-ui.git`
-2. `cd bridge-ui`
-3. `npm install`
-4. Please create .env file [.env.example](.env.example)
+1. `git clone https://github.com/poanetwork/bridge-ui.git`  
+2. `cd bridge-ui`  
+3. `npm install`  
+4. Please create .env file [.env.example](.env.example)  
+`cp .env.example .env`  
+5. Insert addresses from  
+`cat ../poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq 'del(.[].bytecode)'`  
 ```bash
 REACT_APP_HOME_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
 REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
