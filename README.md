@@ -178,18 +178,18 @@ Folder structure:
     └── poa-parity-bridge-contracts
 ```
 1. Install parity (Current setup was tested against parity 1.9.5) https://www.parity.io/
-2. Setup Home Network node. In this example, we will use `sokol-node` folder
-`mkdir sokol-node && cd sokol-node`
+2. Setup Home Network node. In this example, we will use `sokol-node` folder  
+`mkdir sokol-node && cd sokol-node`  
 
 Example: POA-Sokol:
-  * Download Sokol spec.json file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/spec.json)
-`curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/spec.json`
-  * Download Sokol bootnodes.txt file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/bootnodes.txt)
-`curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/bootnodes.txt`
-  * Get JSON Keystore file that you used for `HOME_VALIDATORS` variable above
-Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`
-  * Fund this address from Sokol Faucet: https://faucet-sokol.herokuapp.com/
-  * Create sokol.toml file replace below `0xETH_ACCOUNT_VALIDATOR_SOKOL` which should match `HOME_VALIDATORS`
+  * Download Sokol spec.json file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/spec.json)  
+`curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/spec.json`  
+  * Download Sokol bootnodes.txt file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/bootnodes.txt)  
+`curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/bootnodes.txt`  
+  * Get JSON Keystore file that you used for `HOME_VALIDATORS` variable above  
+Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`  
+  * Fund this address from Sokol Faucet: https://faucet-sokol.herokuapp.com/  
+  * Create sokol.toml file replace below `0xETH_ACCOUNT_VALIDATOR_SOKOL` which should match `HOME_VALIDATORS`  
 `touch sokol.toml`
 ```bash
 # Sokol
