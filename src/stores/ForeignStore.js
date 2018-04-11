@@ -22,6 +22,7 @@ class ForeignStore {
   @observable maxPerTx = '';
   @observable minPerTx = '';
   @observable latestBlockNumber = 0;
+  @observable tokenAddress = '';
   filteredBlockNumber = 0;
   foreignBridge = {};
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
@@ -30,6 +31,7 @@ class ForeignStore {
     this.web3Store = rootStore.web3Store;
     this.foreignWeb3 = rootStore.web3Store.foreignWeb3
     this.errorsStore = rootStore.errorsStore
+    this.homeStore = rootStore.homeStore;
     this.setForeign()
   }
 
@@ -46,7 +48,7 @@ class ForeignStore {
       this.getEvents()
       this.getTokenInfo()
       this.getCurrentLimit()
-    }, 5000)
+    }, 15000)
   }
 
   @action
@@ -82,7 +84,7 @@ class ForeignStore {
   async getTokenInfo(){
     try {
       const tokenAddress = await this.foreignBridge.methods.erc677token().call()
-      console.log('tokenAddress', tokenAddress)
+      this.tokenAddress = tokenAddress;
       const tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, tokenAddress);
       const totalSupply = await tokenContract.methods.totalSupply().call()
       this.symbol = await tokenContract.methods.symbol().call()
@@ -101,32 +103,31 @@ class ForeignStore {
   }
 
   @action
-  getEvents() {
-    const blockNumber = this.filteredBlockNumber || this.latestBlockNumber - 50
-    this.foreignBridge.getPastEvents({fromBlock: blockNumber}, async (e, foreignEvents) => {
-      console.log('foreignEvents', foreignEvents)
+  async getEvents(fromBlock, toBlock) {
+    try {
+      fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
+      toBlock =  toBlock || this.filteredBlockNumber || "latest"
+      let foreignEvents = await this.foreignBridge.getPastEvents({fromBlock, toBlock});
       let events = []
-      if(foreignEvents) {
-        await asyncForEach(foreignEvents, async (event) => {
-          if(event.event === "SignedForWithdraw" || event.event === "CollectedSignatures") {
-            const signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
-            event.signedTxHash = signedTxHash
-          }
-          events.push(event)
-        })
-        if(!this.filter){
-          this.events = events;
+      await asyncForEach(foreignEvents, (async (event, index) => {
+        if(event.event === "SignedForWithdraw" || event.event === "CollectedSignatures") {
+          const signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
+          event.signedTxHash = signedTxHash
         }
-      } else {
-        this.errorsStore.pushError({
-          label: "Error",
-          message: `Cannot establish connection to Foreign Network.\n
-                  Please make sure you have set it up in env variables`,
-          type: "error"
-        })
+        events.push(event)
+      }))
+      if(!this.filter){
+        this.events = events;
       }
-    })
-    
+      return events
+    } catch(e) {
+      this.errorsStore.pushError({
+        label: "Error",
+        message: `Cannot establish connection to Home Network.\n
+                 Please make sure you have set it up in env variables`,
+        type: "error"
+      })
+    }
   }
   async getSignedTx(messageHash){
     try {
@@ -150,35 +151,38 @@ class ForeignStore {
   }
 
   @action
-  filterByTxHashInReturnValues(transactionHash) {
-    const match = this.events.filter((event, index, obj) => {
+  async filterByTxHashInReturnValues(transactionHash) {
+    const events = await this.getEvents(1,"latest");
+    const match = events.filter((event, index, obj) => {
       return event.returnValues.transactionHash === transactionHash
     })
     this.events = match
   }
 
   @action
-  filterByTxHash(transactionHash) {
-    const match = this.events.filter((event, index, obj) => {
+  async filterByTxHash(transactionHash) {
+    this.homeStore.filterByTxHashInReturnValues(transactionHash)
+    const events = await this.getEvents(1,"latest");
+    const match = events.filter((event, index, obj) => {
       if(event.signedTxHash){
         return event.signedTxHash === transactionHash  
       }
       return event.transactionHash === transactionHash
     })
+    console.log('events', match, transactionHash)
     this.events = match
   }
 
   @action
-  setBlockFilter(blockNumber){
+  async setBlockFilter(blockNumber){
     this.filteredBlockNumber = blockNumber
-    this.getEvents()
+    await this.getEvents()
   }
 
   
   @action
   toggleFilter(){
     this.filter = !this.filter
-    this.getEvents()
   }
 }
 

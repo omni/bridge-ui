@@ -8,7 +8,6 @@ export default class Event extends React.Component{
   constructor(props) {
     super(props)
     this.onReveal  = this.onReveal.bind(this)
-    this.onFindRelayedEvents = this.onFindRelayedEvents.bind(this)
     this.state = {
       show: props.filter
     }
@@ -16,44 +15,18 @@ export default class Event extends React.Component{
   onReveal(e) {
     this.setState({show: !this.state.show});
   }
-  onFindRelayedEvents(e){
-    e.preventDefault()
-    if(!this.props.filter){
-      if(this.props.eventName === 'Deposit'){
-        if(this.props.homeTxHash){
-          this.props.RootStore.foreignStore.filterByTxHashInReturnValues(this.props.homeTxHash)
-          this.props.RootStore.homeStore.filterByTxHash(this.props.homeTxHash)
-        } else {
-          this.props.RootStore.foreignStore.filterByTxHashInReturnValues(this.props.transactionHash)
-          this.props.RootStore.homeStore.filterByTxHash(this.props.transactionHash)
-        }
-      }
-
-      if(this.props.eventName === 'Withdraw'){
-        if(this.props.homeTxHash){
-          this.props.RootStore.foreignStore.filterByTxHash(this.props.homeTxHash)
-          this.props.RootStore.homeStore.filterByTxHashInReturnValues(this.props.homeTxHash)
-        } else {
-          this.props.RootStore.foreignStore.filterByTxHash(this.props.transactionHash)
-          this.props.RootStore.homeStore.filterByTxHashInReturnValues(this.props.transactionHash)
-        }
-      }
-    }
-    
-    this.props.RootStore.homeStore.toggleFilter()
-    this.props.RootStore.foreignStore.toggleFilter()
-  }
   render(){
-    let {eventName, transactionHash, recipient, value, blockNumber, homeTxHash, currency, filter} = this.props;
+    let {home, eventName, transactionHash, recipient, value, blockNumber, homeTxHash, currency, filter} = this.props;
     value = Web3Utils.fromWei(value)
     const color = eventName === 'Deposit' ? 'green' : 'red'
-    const open = filter || this.state.show ? 'events-i_open' : ''
+    const open = this.state.show ? 'events-i_open' : ''
     const filterTxt = filter ? 'Reset filter' : 'Find Relayed Events'
-    let homeTxInfo, style;
+    const labelOtherTxHash = home ? "Home" : "Foreign"
+    let homeTxInfo, style, filterComponent;
     if(homeTxHash && this.state.show){
       homeTxInfo = (
         <div>
-          <p className="label">Home Tx Hash</p>
+          <p className="label">{labelOtherTxHash} Tx Hash</p>
           <p className="description">
             {homeTxHash}
           </p>
@@ -61,13 +34,11 @@ export default class Event extends React.Component{
       )
       style = {height: '19.5em'}
     }
-    const filterBtn = eventName === 'Deposit' ? <button onClick={this.onFindRelayedEvents}>{filterTxt}</button> : null
     return (
     <div name="myScrollToElement" className={`events-i ${open}`}>
       <div className="events-i-header">
         <div className="events-i-header-title">
           <p className={`label ${color}`}>{eventName}</p>
-          <button onClick={this.onFindRelayedEvents}>{filterTxt}</button>
         </div>
         <p className="description break-all">
           tx: {transactionHash}

@@ -5,7 +5,7 @@ export default class CollectedSignatures extends React.Component{
     super(props)
     this.onClick  = this.onClick.bind(this)
     this.state = {
-      show: false
+      show: props.filter
     }
   }
   onClick(e) {

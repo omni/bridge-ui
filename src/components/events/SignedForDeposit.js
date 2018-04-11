@@ -5,7 +5,7 @@ export default class SignedForDeposit extends React.Component{
     super(props)
     this.onClick  = this.onClick.bind(this)
     this.state = {
-      show: false
+      show: props.filter
     }
   }
   onClick(e) {
@@ -14,10 +14,10 @@ export default class SignedForDeposit extends React.Component{
   render(){
     let { blockNumber, message, signer, transactionHash, eventName, signedTxHash, filter } = this.props;
     const color = 'purple'
-    const open = filter || this.state.show ? 'events-i_open' : ''
+    const open = this.state.show ? 'events-i_open' : ''
     let style, homeTxInfo
     if(this.state.show){
-      style = {height: '18.5em'}
+      style = {height: '21.5em'}
     }
     return (
     <div className={`events-i ${open}`}>

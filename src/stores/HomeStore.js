@@ -3,6 +3,12 @@ import HOME_ABI from '../abis/HomeBridge.json';
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js';
 
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
+
 class HomeStore {
   @observable state = null;
   @observable loading = true;
@@ -21,6 +27,7 @@ class HomeStore {
     this.homeWeb3 = rootStore.web3Store.homeWeb3
     this.web3Store = rootStore.web3Store
     this.errorsStore = rootStore.errorsStore
+    this.rootStore = rootStore
     this.setHome()
   }
 
@@ -81,41 +88,49 @@ class HomeStore {
   }
 
   @action
-  getEvents() {
-    const blockNumber = this.filteredBlockNumber || this.latestBlockNumber - 50
-    this.homeBridge.getPastEvents({fromBlock: blockNumber}, (e, homeEvents) => {
-      console.log('homeEvents', homeEvents)
-      const events = []
-      if(homeEvents){
-        homeEvents.forEach((event) => {
-          if(event.event === "Deposit" || event.event === "Withdraw"){
-            events.push(event)
-          }
-        })
-        if(!this.filter){
-          this.events = events;
+  async getEvents(fromBlock, toBlock) {
+    try {
+      fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
+      toBlock =  toBlock || this.filteredBlockNumber || "latest"
+      let homeEvents = await this.homeBridge.getPastEvents({fromBlock, toBlock});
+      homeEvents = homeEvents.filter((event, index) => {
+        if(event.event === "Deposit" || event.event === "Withdraw"){
+          return event;
         }
-      } else {
-        this.errorsStore.pushError({
-            label: "Error",
-            message: `Cannot establish connection to Home Network.\n
-                     Please make sure you have set it up in env variables`,
-            type: "error"
-          })
+      })
+      if(!this.filter){
+        this.events = homeEvents;
       }
-    })
+      return homeEvents
+    } catch(e) {
+      this.errorsStore.pushError({
+        label: "Error",
+        message: `Cannot establish connection to Home Network.\n
+                 Please make sure you have set it up in env variables`,
+        type: "error"
+      })
+    }
   }
   @action
-  filterByTxHashInReturnValues(transactionHash) {
-    const match = this.events.filter((event, index, obj) => {
+  async filterByTxHashInReturnValues(transactionHash) {
+    console.log('filter home', transactionHash)
+    const events = await this.getEvents(1,"latest");
+    const match = events.filter((event, index, obj) => {
       return event.returnValues.transactionHash === transactionHash
     })
     this.events = match
   }
   @action
-  filterByTxHash(transactionHash) {
-    const match = this.events.filter((event, index, obj) => {
-      return event.transactionHash === transactionHash
+  async filterByTxHash(transactionHash) {
+    const events = await this.getEvents(1,"latest");
+    let match = [];
+    await asyncForEach(events, async (event, index, obj) => {
+      if(event.transactionHash === transactionHash){
+        if(event.event === 'Withdraw'){
+          await this.rootStore.foreignStore.filterByTxHash(event.returnValues.transactionHash)
+        }
+        match.push(event)
+      }
     })
     this.events = match
   }
@@ -123,13 +138,12 @@ class HomeStore {
   @action
   toggleFilter(){
     this.filter = !this.filter
-    this.getEvents()
   }
   
   @action
-  setBlockFilter(blockNumber){
+  async setBlockFilter(blockNumber){
     this.filteredBlockNumber = blockNumber
-    this.getEvents()
+    await this.getEvents()
   }
 
   @action

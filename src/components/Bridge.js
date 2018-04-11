@@ -42,6 +42,13 @@ export class Bridge extends React.Component {
       swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
       return
     }
+    if(new BN(amount).lt(new BN(this.homeStore.minPerTx))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${this.homeStore.minPerTx} ${this.homeCurrency}`})
+      return
+    }
     if(new BN(amount).gt(new BN(this.homeStore.maxPerTx))){
       this.errorsStore.pushError({
         label: "Error",
@@ -74,7 +81,14 @@ export class Bridge extends React.Component {
       swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
       return
     }
-    if(new BN(amount).gt(new BN(this.homeStore.maxPerTx))){
+    if(new BN(amount).lt(new BN(this.foreignStore.minPerTx))){
+      this.errorsStore.pushError({
+        label: "Error",
+        type:"error",
+        message: `The amount is less than minimum amount per transaction.\nThe min per transaction is: ${this.foreignStore.minPerTx} ${this.foreignStore.symbol}`})
+      return
+    }
+    if(new BN(amount).gt(new BN(this.foreignStore.maxPerTx))){
       this.errorsStore.pushError({
         label: "Error",
         type:"error",
@@ -128,11 +142,11 @@ export class Bridge extends React.Component {
     if(this.state.reverse) {
       reverse = 'bridge-form-button_reverse';
       currency = this.foreignStore.symbol;
-      netWorkNames = `${this.web3Store.foreignNet.name} - ${this.web3Store.homeNet.name}`;
+      netWorkNames = `${this.web3Store.homeNet.name} ${String.fromCharCode(8592)} ${this.web3Store.foreignNet.name}`;
     } else {
       reverse = '';
       currency = this.homeCurrency;
-      netWorkNames = `${this.web3Store.homeNet.name} - ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `${this.web3Store.homeNet.name} ${String.fromCharCode(8594)} ${this.web3Store.foreignNet.name}`;
     }
     return(
       <div className="bridge">
@@ -184,6 +198,8 @@ export class Bridge extends React.Component {
           <p className="description">{foreignURL.protocol}//{foreignURL.hostname}</p>
           <p className="label">Foreign address</p>
           <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
+          <p className="label">Token address</p>
+          <p className="description break-all">{this.foreignStore.tokenAddress}</p>
           <p className="label">Current Withdraw limit</p>
           <p className="description break-all">{this.foreignStore.maxCurrentDeposit} {this.foreignStore.symbol}</p>
           <p className="label">Maximum Amount Per Transaction limit</p>
