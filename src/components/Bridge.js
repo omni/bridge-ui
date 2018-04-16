@@ -37,7 +37,7 @@ export class Bridge extends React.Component {
     this.onTransfer = this.onTransfer.bind(this)
   }
 
-  _sendToHome(amount){
+  async _sendToHome(amount){
     if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.homeNet.id.toString()){
       swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
       return
@@ -66,17 +66,21 @@ export class Bridge extends React.Component {
     if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
       this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
     } else {
-      this.txStore.doSend({
-        to: this.homeStore.HOME_BRIDGE_ADDRESS,
-        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
-        from: this.web3Store.defaultAccount.address,
-        value: Web3Utils.toHex(Web3Utils.toWei(amount)),
-        data: '0x00'
-      })
+      try {
+        return this.txStore.doSend({
+          to: this.homeStore.HOME_BRIDGE_ADDRESS,
+          gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
+          from: this.web3Store.defaultAccount.address,
+          value: Web3Utils.toHex(Web3Utils.toWei(amount)),
+          data: '0x00'
+        })
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 
-  _sendToForeign(amount){
+  async _sendToForeign(amount){
     if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
       return
@@ -109,27 +113,35 @@ export class Bridge extends React.Component {
         message: `Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`})
       return
     } else {
-      this.txStore.erc677transferAndCall({
-        to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
-        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
-        from: this.web3Store.defaultAccount.address,
-        value: Web3Utils.toHex(Web3Utils.toWei(amount))
-      })
+      try {
+        return await this.txStore.erc677transferAndCall({
+          to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
+          gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
+          from: this.web3Store.defaultAccount.address,
+          value: Web3Utils.toHex(Web3Utils.toWei(amount))
+        })
+      } catch(e) {
+        console.error(e)
+      }
     }
   }
 
-  onTransfer(e){
+  async onTransfer(e){
     e.preventDefault()
+    this.errorsStore.setLoading(true)
     let amount = this.refs.amount.value.trim();
     if(!amount){
       swal("Error", "Please specify amount", "error")
       return
     }
     if(this.state.reverse){
-      this._sendToForeign(amount)
+      await this._sendToForeign(amount)
+      this.errorsStore.setLoading(false)
     } else {
-      this._sendToHome(amount)
+      await this._sendToHome(amount)
+      this.errorsStore.setLoading(false)
     }
+    
   }
 
   onSwitch(e){

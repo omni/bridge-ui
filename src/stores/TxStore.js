@@ -16,7 +16,7 @@ class TxStore {
   @action
   async doSend({to, gasPrice, from, value, data}){
     const index = this.txs.length;
-    this.web3Store.getWeb3Promise.then(async ()=> {
+    return this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
         this.errorsStore.pushError({label: "Error", message: "Please unlock metamask", type: "error"})
         return
@@ -29,7 +29,7 @@ class TxStore {
           value,
           data
         })
-        this.web3Store.injectedWeb3.eth.sendTransaction({
+        return this.web3Store.injectedWeb3.eth.sendTransaction({
           to,
           gasPrice,
           gas: Web3Utils.toHex(gas.toString()),
@@ -45,7 +45,6 @@ class TxStore {
           console.error(e)
           this.errorsStore.pushError({label: "Error", message: e.message, type: "error"});
         })
-        return
       } catch(e) {
         console.error(e.message)
         this.errorsStore.pushError({label: "Error", message: e.message, type: "error"});
@@ -60,13 +59,12 @@ class TxStore {
       const tokenAddress = await foreignBridge.methods.erc677token().call()
       const tokenContract = new this.web3Store.foreignWeb3.eth.Contract(ERC677_ABI, tokenAddress);
 
-      this.web3Store.getWeb3Promise.then(async () => {
+      return this.web3Store.getWeb3Promise.then(async () => {
         if(this.web3Store.defaultAccount.address){
           const data = await tokenContract.methods.transferAndCall(
             to, value, '0x00'
           ).encodeABI()
-          this.doSend({to: tokenAddress, from, value: '0x00', gasPrice, data})
-          return
+          return this.doSend({to: tokenAddress, from, value: '0x00', gasPrice, data})
         } else {
           this.errorsStore.pushError({label: 'Error', message: 'Please unlock metamask', type:'error'});    
         }
