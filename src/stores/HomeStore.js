@@ -93,11 +93,7 @@ class HomeStore {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
       let homeEvents = await this.homeBridge.getPastEvents({fromBlock, toBlock});
-      homeEvents = homeEvents.filter((event, index) => {
-        if(event.event === "Deposit" || event.event === "Withdraw"){
-          return event;
-        }
-      })
+      homeEvents = homeEvents.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
       if(!this.filter){
         this.events = homeEvents;
       }

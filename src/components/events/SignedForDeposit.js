@@ -12,10 +12,10 @@ export default class SignedForDeposit extends React.Component{
     this.setState({show: !this.state.show});
   }
   render(){
-    let { blockNumber, message, signer, transactionHash, eventName, signedTxHash, filter } = this.props;
+    let { blockNumber, message, signer, transactionHash, eventName, signedTxHash } = this.props;
     const color = 'purple'
     const open = this.state.show ? 'events-i_open' : ''
-    let style, homeTxInfo
+    let style
     if(this.state.show){
       style = {height: '21.5em'}
     }
@@ -28,7 +28,7 @@ export default class SignedForDeposit extends React.Component{
         <p className="description break-all">
           tx: {transactionHash}
         </p>
-      <div onClick={this.onClick} className="events-i-switcher"></div>
+      <div onClick={this.onClick} className="events-i-switcher" />
       </div>
         <div className="events-i-body" style={style}>
           <p className="label">Message</p>
