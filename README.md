@@ -129,23 +129,26 @@ GAS_PRICE=1
 ```
 
 #### Explanation of parameters:
-`HOME_RPC_URL` - Public RPC Node URL for Home Network  
-`HOME_PROXY_OWNER` - Address of Administrator role on Home network  
-`HOME_PROXY_OWNER_PRIVATE_KEY` - Private key of HOME_PROXY_OWNER  
-`HOME_REQUIRED_NUMBER_OF_VALIDATORS` - Minimum Number of validators in order to Withdraw Funds on POA network Sokol  
-`HOME_VALIDATORS` - array of validators on Home network. Space separated.  
-`HOME_DAILY_LIMIT` - Daily Limit in Wei. Example above is `1 eth`  
-`HOME_MAX_AMOUNT_PER_TX` - Max limit per 1 tx in Wei. Example above is `0.1 eth`  
-`HOME_MIN_AMOUNT_PER_TX` - Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
-`FOREIGN_RPC_URL` - Public RPC Node URL for Foreign Network  
-`FOREIGN_PROXY_OWNER` - Address of Administrator role on Foreign network  
-`FOREIGN_PROXY_OWNER_PRIVATE_KEY` - Private key of FOREIGN_PROXY_OWNER  
-`FOREIGN_REQUIRED_NUMBER_OF_VALIDATORS` - Minimum Number of validators in order to mint ERC20 token on Foreign network  
-`FOREIGN_VALIDATORS` - array of validators on Home network. Space separated.  
-`FOREIGN_DAILY_LIMIT` - Daily Limit in Wei. Example above is `1 eth`  
-`FOREIGN_MAX_AMOUNT_PER_TX` - Max limit per 1 tx in Wei. Example above is `0.1 eth`  
-`FOREIGN_MIN_AMOUNT_PER_TX` - Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
-`GAS_PRICE` -  Gas Price to use for every tx on both networks in gwei  
+
+Name | Description
+--------- | -------
+HOME_RPC_URL | Public RPC Node URL for Home Network  
+HOME_PROXY_OWNER | Address of Administrator role on Home network  
+HOME_PROXY_OWNER_PRIVATE_KEY | Private key of HOME_PROXY_OWNER  
+HOME_REQUIRED_NUMBER_OF_VALIDATORS | Minimum Number of validators in order to Withdraw Funds on POA network Sokol  
+HOME_VALIDATORS | array of validators on Home network. Space separated.  
+HOME_DAILY_LIMIT | Daily Limit in Wei. Example above is `1 eth`  
+HOME_MAX_AMOUNT_PER_TX | Max limit per 1 tx in Wei. Example above is `0.1 eth`  
+HOME_MIN_AMOUNT_PER_TX | Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
+FOREIGN_RPC_URL | Public RPC Node URL for Foreign Network  
+FOREIGN_PROXY_OWNER | Address of Administrator role on Foreign network  
+FOREIGN_PROXY_OWNER_PRIVATE_KEY | Private key of FOREIGN_PROXY_OWNER  
+FOREIGN_REQUIRED_NUMBER_OF_VALIDATORS | Minimum Number of validators in order to mint ERC20 token on Foreign network  
+FOREIGN_VALIDATORS | array of validators on Home network. Space separated.  
+FOREIGN_DAILY_LIMIT | Daily Limit in Wei. Example above is `1 eth`  
+FOREIGN_MAX_AMOUNT_PER_TX | Max limit per 1 tx in Wei. Example above is `0.1 eth`  
+FOREIGN_MIN_AMOUNT_PER_TX | Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
+GAS_PRICE |  Gas Price to use for every tx on both networks in gwei  
 
 3. run `node deploy.js`  
 
@@ -422,13 +425,15 @@ REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
 REACT_APP_FOREIGN_HTTP_PARITY_URL=https://kovan.infura.io/mew
 REACT_APP_HOME_HTTP_PARITY_URL=https://sokol.poa.network
 ```
-Explanation: 
-```js
-REACT_APP_HOME_BRIDGE_ADDRESS - address that you have deployed at step#3. Should alose be recorded at `sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json`
-REACT_APP_FOREIGN_BRIDGE_ADDRESS - address that you have deployed at step#3.
-REACT_APP_FOREIGN_HTTP_PARITY_URL - http public rpc node for Foreign Network
-REACT_APP_HOME_HTTP_PARITY_URL - http public rpc node for Foreign Network
-```
+Explanation:
+
+Name | Description
+--------- | -------
+REACT_APP_HOME_BRIDGE_ADDRESS | address that you have deployed at step#3. Should also be recorded at `sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json`
+REACT_APP_FOREIGN_BRIDGE_ADDRESS | address that you have deployed at step#3.
+REACT_APP_FOREIGN_HTTP_PARITY_URL | http public rpc node for Foreign Network
+REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
+
 5. Run `npm run start`
 6. Make sure you have https://metamask.io installed
 7. Specify amount and click on Arrow button to make a cross chain transaction from Sokol to Kovan
