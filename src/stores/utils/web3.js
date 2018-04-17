@@ -1,52 +1,26 @@
-let getWeb3 = () => {
+import Web3 from 'web3'
+import Web3Utils from 'web3-utils'
+
+const getWeb3 = () => {
   return new Promise(function (resolve, reject) {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener('load', function () {
-      var results
-      var web3 = window.web3
+      let web3 = window.web3
 
       // Checking if Web3 has been injected by the browser (Mist/MetaMask)
       if (typeof web3 !== 'undefined') {
         // Use Mist/MetaMask's provider.
         web3 = new window.Web3(web3.currentProvider)
         web3.version.getNetwork((err, netId) => {
-          let netIdName;
-          switch (netId) {
-            case "1":
-              netIdName = 'Foundation'
-              console.log('This is Foundation', netId)
-              break;
-            case "3":
-              netIdName = 'Ropsten'
-              console.log('This is Ropsten', netId)
-              break;
-            case "4":
-              netIdName = 'Rinkeby'
-              console.log('This is Rinkeby', netId)
-              break;
-            case "42":
-              netIdName = 'Kovan'
-              console.log('This is Kovan', netId)
-              break;
-            case "99":
-              netIdName = 'POA Core'
-              console.log('This is Core', netId)
-              break;
-            case "77":
-              netIdName = 'POA Sokol'
-              console.log('This is Sokol', netId)
-              break;
-            default:
-              netIdName = 'Unknown'
-              console.log('This is an unknown network.', netId)
-          }
+          const netIdName = getNetworkName(netId)
+          console.log(`This is ${netIdName} network.`, netId)
           document.title = `${netIdName} - Bridge UI dApp`
-          var defaultAccount = web3.eth.defaultAccount || null;
+          const defaultAccount = web3.eth.defaultAccount || null;
           if(defaultAccount === null){
             reject({message: 'Please unlock your metamask and refresh the page'})
           }
-          results = {
-            web3Instance: web3,
+          const results = {
+            web3Instance: new Web3(web3.currentProvider),
             netIdName,
             netId,
             injectedWeb3: true,
@@ -68,3 +42,33 @@ let getWeb3 = () => {
 }
 
 export default getWeb3
+
+const networks = {
+  1: 'Foundation',
+  3: 'Ropsten',
+  4: 'Rinkeby',
+  42: 'Kovan',
+  77: 'POA Sokol',
+  99: 'POA Core'
+}
+
+export const getNetworkName = (id) => networks[id] || 'Unknown'
+
+export const getBalance = async (web3, address) => {
+  const balance = await web3.eth.getBalance(address)
+  return Web3Utils.fromWei(balance)
+}
+
+export const getWeb3Instance = (provider) => {
+  const web3Provider = new Web3.providers.HttpProvider(provider);
+  return new Web3(web3Provider);
+}
+
+export const getNetwork = async (web3) => {
+  const id = await web3.eth.net.getId()
+  const name = getNetworkName(id)
+  return {
+    id,
+    name
+  }
+}
