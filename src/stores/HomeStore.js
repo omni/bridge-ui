@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
 import HOME_ABI from '../abis/HomeBridge.json';
-import Web3Utils from 'web3-utils'
-import BN from 'bignumber.js';
+import { getBlockNumber, getBalance } from './utils/web3'
+import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -51,7 +51,7 @@ class HomeStore {
   @action
   async getBlockNumber() {
     try {
-      this.latestBlockNumber = await this.homeWeb3.eth.getBlockNumber()
+      this.latestBlockNumber = await getBlockNumber(this.homeWeb3)
     } catch(e){
       console.error(e)
     }
@@ -60,8 +60,7 @@ class HomeStore {
   @action
   async getMaxPerTxLimit(){
     try {
-      const maxPerTx = await this.homeBridge.methods.maxPerTx().call()
-      this.maxPerTx = Web3Utils.fromWei(maxPerTx);
+      this.maxPerTx = await getMaxPerTxLimit(this.homeBridge)
     } catch(e){
       console.error(e)
     }
@@ -70,21 +69,20 @@ class HomeStore {
   @action
   async getMinPerTxLimit(){
     try {
-      const minPerTx = await this.homeBridge.methods.minPerTx().call()
-      this.minPerTx = Web3Utils.fromWei(minPerTx);
+      this.minPerTx = await getMinPerTxLimit(this.homeBridge)
     } catch(e){
       console.error(e)
     }
   }
 
   @action
-  getBalance() {
-    this.homeWeb3.eth.getBalance(this.HOME_BRIDGE_ADDRESS).then((balance) => {
-      this.balance = Web3Utils.fromWei(balance)
-    }).catch((e) => {
+  async getBalance() {
+    try {
+      this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
+    } catch(e) {
       console.error(e)
       this.errors.push(e)
-    })
+    }
   }
 
   @action
@@ -92,12 +90,8 @@ class HomeStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
-      let homeEvents = await this.homeBridge.getPastEvents({fromBlock, toBlock});
-      homeEvents = homeEvents.filter((event, index) => {
-        if(event.event === "Deposit" || event.event === "Withdraw"){
-          return event;
-        }
-      })
+      let homeEvents = await getPastEvents(this.homeBridge, fromBlock, toBlock)
+      homeEvents = homeEvents.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
       if(!this.filter){
         this.events = homeEvents;
       }
@@ -115,16 +109,13 @@ class HomeStore {
   async filterByTxHashInReturnValues(transactionHash) {
     console.log('filter home', transactionHash)
     const events = await this.getEvents(1,"latest");
-    const match = events.filter((event, index, obj) => {
-      return event.returnValues.transactionHash === transactionHash
-    })
-    this.events = match
+    this.events = events.filter((event) => event.returnValues.transactionHash === transactionHash)
   }
   @action
   async filterByTxHash(transactionHash) {
     const events = await this.getEvents(1,"latest");
-    let match = [];
-    await asyncForEach(events, async (event, index, obj) => {
+    const match = [];
+    await asyncForEach(events, async (event) => {
       if(event.transactionHash === transactionHash){
         if(event.event === 'Withdraw'){
           await this.rootStore.foreignStore.filterByTxHash(event.returnValues.transactionHash)
@@ -149,11 +140,7 @@ class HomeStore {
   @action
   async getCurrentLimit(){
     try {
-      const currentDay = await this.homeBridge.methods.getCurrentDay().call()
-      const homeDailyLimit = await this.homeBridge.methods.homeDailyLimit().call()
-      const totalSpentPerDay = await this.homeBridge.methods.totalSpentPerDay(currentDay).call()
-      const maxCurrentDeposit = new BN(homeDailyLimit).minus(new BN(totalSpentPerDay)).toString(10)
-      this.maxCurrentDeposit = Web3Utils.fromWei(maxCurrentDeposit);
+      this.maxCurrentDeposit = await getCurrentLimit(this.homeBridge, true)
     } catch(e){
       console.error(e)
     }

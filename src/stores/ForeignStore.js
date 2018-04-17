@@ -1,8 +1,18 @@
 import { action, observable } from 'mobx';
 import FOREIGN_ABI from '../abis/ForeignBridge.json';
 import ERC677_ABI from '../abis/ERC677.json';
-import Web3Utils from 'web3-utils';
-import BN from 'bignumber.js'
+import { getBlockNumber } from './utils/web3'
+import {
+  getMaxPerTxLimit,
+  getMinPerTxLimit,
+  getCurrentLimit,
+  getPastEvents,
+  getTotalSupply,
+  getBalanceOf,
+  getErc677TokenAddress,
+  getSymbol,
+  getMessage
+} from './utils/contract'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -25,6 +35,7 @@ class ForeignStore {
   @observable tokenAddress = '';
   filteredBlockNumber = 0;
   foreignBridge = {};
+  tokenContract = {}
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
 
   constructor (rootStore) {
@@ -38,15 +49,16 @@ class ForeignStore {
   async setForeign(){
     this.foreignBridge = new this.foreignWeb3.eth.Contract(FOREIGN_ABI, this.FOREIGN_BRIDGE_ADDRESS);
     await this.getBlockNumber()
+    await this.getTokenInfo()
     this.getMinPerTxLimit()
     this.getMaxPerTxLimit()
     this.getEvents()
-    this.getTokenInfo()
+    this.getTokenBalance()
     this.getCurrentLimit()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
-      this.getTokenInfo()
+      this.getTokenBalance()
       this.getCurrentLimit()
     }, 15000)
   }
@@ -54,7 +66,7 @@ class ForeignStore {
   @action
   async getBlockNumber() {
     try {
-      this.latestBlockNumber = await this.foreignWeb3.eth.getBlockNumber()
+      this.latestBlockNumber = await getBlockNumber(this.foreignWeb3)
     } catch(e){
       console.error(e)
     }
@@ -63,8 +75,7 @@ class ForeignStore {
   @action
   async getMaxPerTxLimit(){
     try {
-      const maxPerTx = await this.foreignBridge.methods.maxPerTx().call()
-      this.maxPerTx = Web3Utils.fromWei(maxPerTx);
+      this.maxPerTx = await getMaxPerTxLimit(this.foreignBridge)
     } catch(e){
       console.error(e)
     }
@@ -73,8 +84,7 @@ class ForeignStore {
   @action
   async getMinPerTxLimit(){
     try {
-      const minPerTx = await this.foreignBridge.methods.minPerTx().call()
-      this.minPerTx = Web3Utils.fromWei(minPerTx);
+      this.minPerTx = await getMinPerTxLimit(this.foreignBridge)
     } catch(e){
       console.error(e)
     }
@@ -83,16 +93,21 @@ class ForeignStore {
   @action
   async getTokenInfo(){
     try {
-      const tokenAddress = await this.foreignBridge.methods.erc677token().call()
-      this.tokenAddress = tokenAddress;
-      const tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, tokenAddress);
-      const totalSupply = await tokenContract.methods.totalSupply().call()
-      this.symbol = await tokenContract.methods.symbol().call()
-      this.totalSupply = Web3Utils.fromWei(totalSupply)
+      this.tokenAddress = await getErc677TokenAddress(this.foreignBridge)
+      this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
+      this.symbol = await getSymbol(this.tokenContract)
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
+  @action
+  async getTokenBalance(){
+    try {
+      this.totalSupply = await getTotalSupply(this.tokenContract)
       this.web3Store.getWeb3Promise.then(async () => {
         if(this.web3Store.defaultAccount.address && this.web3Store.metamaskNet.name === this.web3Store.foreignNet.name){
-          const balance = await tokenContract.methods.balanceOf(this.web3Store.defaultAccount.address).call()
-          this.balance = Web3Utils.fromWei(balance)
+          this.balance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
         } else {
           this.balance = `Please point metamask to ${this.web3Store.foreignNet.name}\n`
         }
@@ -107,12 +122,11 @@ class ForeignStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
-      let foreignEvents = await this.foreignBridge.getPastEvents({fromBlock, toBlock});
+      let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock)
       let events = []
-      await asyncForEach(foreignEvents, (async (event, index) => {
+      await asyncForEach(foreignEvents, (async (event) => {
         if(event.event === "SignedForWithdraw" || event.event === "CollectedSignatures") {
-          const signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
-          event.signedTxHash = signedTxHash
+          event.signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
         }
         events.push(event)
       }))
@@ -131,7 +145,7 @@ class ForeignStore {
   }
   async getSignedTx(messageHash){
     try {
-        const message = await this.foreignBridge.methods.message(messageHash).call()
+        const message = await getMessage(this.foreignBridge, messageHash)
         return "0x" + message.substring(106, 170);
     } catch(e){
       console.error(e)
@@ -140,11 +154,7 @@ class ForeignStore {
   @action
   async getCurrentLimit(){
     try {
-      const currentDay = await this.foreignBridge.methods.getCurrentDay().call()
-      const foreignDailyLimit = await this.foreignBridge.methods.foreignDailyLimit().call()
-      const totalSpentPerDay = await this.foreignBridge.methods.totalSpentPerDay(currentDay).call()
-      const maxCurrentDeposit = new BN(foreignDailyLimit).minus(new BN(totalSpentPerDay)).toString(10)
-      this.maxCurrentDeposit = Web3Utils.fromWei(maxCurrentDeposit);
+      this.maxCurrentDeposit = await getCurrentLimit(this.foreignBridge, false)
     } catch(e){
       console.error(e)
     }
@@ -153,17 +163,14 @@ class ForeignStore {
   @action
   async filterByTxHashInReturnValues(transactionHash) {
     const events = await this.getEvents(1,"latest");
-    const match = events.filter((event, index, obj) => {
-      return event.returnValues.transactionHash === transactionHash
-    })
-    this.events = match
+    this.events = events.filter((event) => event.returnValues.transactionHash === transactionHash)
   }
 
   @action
   async filterByTxHash(transactionHash) {
     this.homeStore.filterByTxHashInReturnValues(transactionHash)
     const events = await this.getEvents(1,"latest");
-    const match = events.filter((event, index, obj) => {
+    const match = events.filter((event) => {
       if(event.signedTxHash){
         return event.signedTxHash === transactionHash  
       }

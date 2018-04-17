@@ -72,3 +72,5 @@ export const getNetwork = async (web3) => {
     name
   }
 }
+
+export const getBlockNumber = (web3) => web3.eth.getBlockNumber()
