@@ -161,7 +161,7 @@ export class Bridge extends React.Component {
     } else {
       reverse = '';
       currency = this.homeCurrency;
-      netWorkNames = `from ${this.web3Store.homeNet.name} ${String.fromCharCode(8594)} to ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `from ${this.web3Store.foreignNet.name} ${String.fromCharCode(8594)} to ${this.web3Store.homeNet.name}`;
     }
     return(
       <div className="bridge">
