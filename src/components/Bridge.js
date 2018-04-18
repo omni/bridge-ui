@@ -30,11 +30,18 @@ export class Bridge extends React.Component {
     this.errorsStore = props.RootStore.errorsStore;
     this.gasPriceStore = props.RootStore.gasPriceStore;
     this.homeCurrency = 'POA'
-    this.onSwitch = this.onSwitch.bind(this)
     this.state = {
       reverse: false
     }
     this.onTransfer = this.onTransfer.bind(this)
+  }
+  componentDidMount(){
+    this.web3Store.getWeb3Promise.then(() => {
+      const reverse = this.web3Store.metamaskNet.id.toString() === this.web3Store.foreignNet.id.toString() ? true : false;
+      this.setState({
+        reverse
+      })
+    })
   }
 
   async _sendToHome(amount){
@@ -144,21 +151,17 @@ export class Bridge extends React.Component {
     
   }
 
-  onSwitch(e){
-    e.preventDefault()
-    this.setState({reverse: !this.state.reverse})
-  }
   render() {
     let reverse, netWorkNames, currency;
     let foreignURL = new URL(this.web3Store.FOREIGN_HTTP_PARITY_URL) 
     if(this.state.reverse) {
       reverse = 'bridge-form-button_reverse';
       currency = this.foreignStore.symbol;
-      netWorkNames = `${this.web3Store.homeNet.name} ${String.fromCharCode(8592)} ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `from ${this.web3Store.homeNet.name} ${String.fromCharCode(8592)} to ${this.web3Store.foreignNet.name}`;
     } else {
       reverse = '';
       currency = this.homeCurrency;
-      netWorkNames = `${this.web3Store.homeNet.name} ${String.fromCharCode(8594)} ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `from ${this.web3Store.homeNet.name} ${String.fromCharCode(8594)} to ${this.web3Store.foreignNet.name}`;
     }
     return(
       <div className="bridge">
@@ -196,7 +199,6 @@ export class Bridge extends React.Component {
             <Fade in={this.state.reverse}>
               <p>{netWorkNames}</p>
              </Fade> 
-            <button onClick={this.onSwitch}>Switch</button>
           </div>
         </form>
         <div className="bridge-network bridge-network_right">
