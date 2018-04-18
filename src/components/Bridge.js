@@ -157,11 +157,11 @@ export class Bridge extends React.Component {
     if(this.state.reverse) {
       reverse = 'bridge-form-button_reverse';
       currency = this.foreignStore.symbol;
-      netWorkNames = `from ${this.web3Store.homeNet.name} ${String.fromCharCode(8592)} to ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `from ${this.web3Store.foreignNet.name} ${String.fromCharCode(8592)} to ${this.web3Store.homeNet.name}`;
     } else {
       reverse = '';
       currency = this.homeCurrency;
-      netWorkNames = `from ${this.web3Store.foreignNet.name} ${String.fromCharCode(8594)} to ${this.web3Store.homeNet.name}`;
+      netWorkNames = `from ${this.web3Store.homeNet.name} ${String.fromCharCode(8594)} to ${this.web3Store.foreignNet.name}`;
     }
     return(
       <div className="bridge">
