@@ -74,3 +74,8 @@ export const getNetwork = async (web3) => {
 }
 
 export const getBlockNumber = (web3) => web3.eth.getBlockNumber()
+
+export const estimateGas = async (web3, to, gasPrice, from, value, data) =>{
+  const gas = await web3.eth.estimateGas({to, gasPrice, from, value, data})
+  return Web3Utils.toHex(gas.toString())
+}
