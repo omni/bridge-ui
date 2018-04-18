@@ -27,7 +27,7 @@ export class Bridge extends React.Component {
     this.foreignStore = props.RootStore.foreignStore;
     this.web3Store = props.RootStore.web3Store;
     this.txStore = props.RootStore.txStore;
-    this.errorsStore = props.RootStore.errorsStore;
+    this.alertStore = props.RootStore.alertStore;
     this.homeCurrency = 'POA'
     this.onSwitch = this.onSwitch.bind(this)
     this.state = {
@@ -42,28 +42,19 @@ export class Bridge extends React.Component {
       return
     }
     if(new BN(amount).lt(new BN(this.homeStore.minPerTx))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${this.homeStore.minPerTx} ${this.homeCurrency}`})
+      this.alertStore.pushError(`The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${this.homeStore.minPerTx} ${this.homeCurrency}`)
       return
     }
     if(new BN(amount).gt(new BN(this.homeStore.maxPerTx))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${this.homeStore.maxPerTx} ${this.homeCurrency}`})
+      this.alertStore.pushError(`The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${this.homeStore.maxPerTx} ${this.homeCurrency}`)
       return
     }
     if(new BN(amount).gt(new BN(this.homeStore.maxCurrentDeposit))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `The amount is above current daily limit.\nThe max deposit today: ${this.homeStore.maxCurrentDeposit} ${this.homeCurrency}`})
+      this.alertStore.pushError(`The amount is above current daily limit.\nThe max deposit today: ${this.homeStore.maxCurrentDeposit} ${this.homeCurrency}`)
       return
     }
     if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
-      this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
+      this.alertStore.pushError("Insufficient balance")
     } else {
       this.txStore.doSend({
         to: this.homeStore.HOME_BRIDGE_ADDRESS,
@@ -80,31 +71,19 @@ export class Bridge extends React.Component {
       return
     }
     if(new BN(amount).lt(new BN(this.foreignStore.minPerTx))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `The amount is less than minimum amount per transaction.\nThe min per transaction is: ${this.foreignStore.minPerTx} ${this.foreignStore.symbol}`})
+      this.alertStore.pushError(`The amount is less than minimum amount per transaction.\nThe min per transaction is: ${this.foreignStore.minPerTx} ${this.foreignStore.symbol}`)
       return
     }
     if(new BN(amount).gt(new BN(this.foreignStore.maxPerTx))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `The amount is above maximum amount per transaction.\nThe max per transaction is: ${this.foreignStore.maxPerTx} ${this.foreignStore.symbol}`})
+      this.alertStore.pushError(`The amount is above maximum amount per transaction.\nThe max per transaction is: ${this.foreignStore.maxPerTx} ${this.foreignStore.symbol}`)
       return
     }
     if(new BN(amount).gt(new BN(this.foreignStore.maxCurrentDeposit))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `The amount is above current daily limit.\nThe max withdrawal today: ${this.foreignStore.maxCurrentDeposit} ${this.foreignStore.symbol}`})
+      this.alertStore.pushError(`The amount is above current daily limit.\nThe max withdrawal today: ${this.foreignStore.maxCurrentDeposit} ${this.foreignStore.symbol}`)
       return
     }
     if(new BN(amount).gt(new BN(this.foreignStore.balance))){
-      this.errorsStore.pushError({
-        label: "Error",
-        type:"error",
-        message: `Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`})
+      this.alertStore.pushError(`Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`)
       return
     } else {
       this.txStore.erc677transferAndCall({

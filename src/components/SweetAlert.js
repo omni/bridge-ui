@@ -7,18 +7,25 @@ import { inject, observer } from "mobx-react";
 export class SweetAlert extends React.Component {
   constructor(props){
     super(props)
-    this.errorsStore = props.RootStore.errorsStore;
+    this.alertStore = props.RootStore.alertStore;
   }
   componentWillReact(){
-    if(this.errorsStore.errors.length > 0){
-      const error = this.errorsStore.errors.slice()[0]
-      swal(error.label, error.message, error.type).then(() => {
-        this.errorsStore.remove(error)
+    if(this.alertStore.alerts.length > 0){
+      const alert = this.alertStore.alerts.slice()[0]
+      swal(alert.label, alert.message, alert.type).then(() => {
+        this.alertStore.remove(alert)
       })
     }
   }
+  logErrors() {
+    const errors = this.alertStore.alerts.filter(alert => alert.type === 'error')
+    if (errors.length) {
+      console.log('Found errors:', errors.length)
+    }
+  }
+
   render(){
-    console.log('Found errors:', this.errorsStore.errors.length)
+    this.logErrors()
     return (
       <div style={{display: 'none'}}></div>
     )

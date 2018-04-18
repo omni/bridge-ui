@@ -26,7 +26,7 @@ class HomeStore {
   constructor (rootStore) {
     this.homeWeb3 = rootStore.web3Store.homeWeb3
     this.web3Store = rootStore.web3Store
-    this.errorsStore = rootStore.errorsStore
+    this.alertStore = rootStore.alertStore
     this.rootStore = rootStore
     this.setHome()
   }
@@ -97,12 +97,8 @@ class HomeStore {
       }
       return homeEvents
     } catch(e) {
-      this.errorsStore.pushError({
-        label: "Error",
-        message: `Cannot establish connection to Home Network.\n
-                 Please make sure you have set it up in env variables`,
-        type: "error"
-      })
+      this.alertStore.pushError(`Cannot establish connection to Home Network.\n
+                 Please make sure you have set it up in env variables`)
     }
   }
   @action

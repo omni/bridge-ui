@@ -41,7 +41,7 @@ class ForeignStore {
   constructor (rootStore) {
     this.web3Store = rootStore.web3Store;
     this.foreignWeb3 = rootStore.web3Store.foreignWeb3
-    this.errorsStore = rootStore.errorsStore
+    this.alertStore = rootStore.alertStore
     this.homeStore = rootStore.homeStore;
     this.setForeign()
   }
@@ -135,12 +135,8 @@ class ForeignStore {
       }
       return events
     } catch(e) {
-      this.errorsStore.pushError({
-        label: "Error",
-        message: `Cannot establish connection to Home Network.\n
-                 Please make sure you have set it up in env variables`,
-        type: "error"
-      })
+      this.alertStore.pushError(`Cannot establish connection to Home Network.\n
+                 Please make sure you have set it up in env variables`)
     }
   }
   async getSignedTx(messageHash){

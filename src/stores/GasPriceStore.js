@@ -7,7 +7,7 @@ class GasPriceStore {
   gasPricePromise = null;
   constructor(rootStore) {
     this.getGasPrices()
-    this.errorsStore = rootStore.errorsStore;
+    this.alertStore = rootStore.alertStore;
   }
 
   async getGasPrices(){
@@ -15,8 +15,7 @@ class GasPriceStore {
       console.log(data)
       this.gasPrices = data;
     }).catch((e) => {
-      console.error(e)
-      this.errorsStore.pushError(e)
+      this.alertStore.pushError(e)
     })
   }
 

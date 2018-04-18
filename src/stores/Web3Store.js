@@ -21,7 +21,7 @@ class Web3Store {
   FOREIGN_HTTP_PARITY_URL = process.env.REACT_APP_FOREIGN_HTTP_PARITY_URL;
 
   constructor(rootStore) {
-    this.errorsStore = rootStore.errorsStore;
+    this.alertStore = rootStore.alertStore;
 
     this.getWeb3Promise = getWeb3().then((web3Config) => {
       const {web3Instance, defaultAccount, netIdName, netId} = web3Config;
@@ -54,8 +54,7 @@ class Web3Store {
       this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
       this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
     } catch(e){
-      console.error(e)
-      this.errorsStore.pushError(e)
+      this.alertStore.pushError(e)
     }
   }
 

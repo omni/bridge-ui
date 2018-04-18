@@ -7,7 +7,7 @@ class TxStore {
   constructor(rootStore) {
     this.web3Store = rootStore.web3Store
     this.gasPriceStore = rootStore.gasPriceStore
-    this.errorsStore = rootStore.errorsStore
+    this.alertStore = rootStore.alertStore
     this.foreignStore = rootStore.foreignStore
   }
 
@@ -16,7 +16,7 @@ class TxStore {
     const index = this.txs.length;
     this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
-        this.errorsStore.pushError({label: "Error", message: "Please unlock metamask", type: "error"})
+        this.alertStore.pushError("Please unlock metamask")
         return
       }
       try {
@@ -36,11 +36,11 @@ class TxStore {
           this.getTxReceipt(hash)
         }).on('error', (e) => {
           console.error(e)
-          this.errorsStore.pushError({label: "Error", message: e.message, type: "error"});
+          this.alertStore.pushError(e.message);
         })
       } catch(e) {
         console.error(e.message)
-        this.errorsStore.pushError({label: "Error", message: e.message, type: "error"});
+        this.alertStore.pushError(e.message);
       }
     })
   }
@@ -55,12 +55,11 @@ class TxStore {
           ).encodeABI()
           this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x00', data})
         } else {
-          this.errorsStore.pushError({label: 'Error', message: 'Please unlock metamask', type:'error'});    
+          this.alertStore.pushError('Please unlock metamask');
         }
       })
     } catch(e) {
-      console.error(e)
-      this.errorsStore.pushError(e);
+      this.alertStore.pushError(e);
     }
 
   }
@@ -87,15 +86,12 @@ class TxStore {
         if(res.status === '0x1'){
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
-          this.errorsStore.pushError({
-            label: "Success",
-            message: `${hash} Mined successfully on ${this.web3Store.metamaskNet.name} at block number ${res.blockNumber}`,
-            type: "success"})
+          this.alertStore.pushSuccess(`${hash} Mined successfully on ${this.web3Store.metamaskNet.name} at block number ${res.blockNumber}`)
         } else {
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `error`
           this.txs[index].name = `Mined but with errors. Perhaps out of gas`
-          this.errorsStore.pushError({label: "Error", message: `${hash} Mined but with errors. Perhaps out of gas`, type: "error"})
+          this.alertStore.pushError(`${hash} Mined but with errors. Perhaps out of gas`)
         }
       } else {
         this.getTxStatus(hash)
