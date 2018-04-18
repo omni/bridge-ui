@@ -35,11 +35,9 @@ class TxStore {
           this.txs[index] = {status: 'pending', name: `Sending ${to} ${value}`, hash}
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          console.error(e)
           this.alertStore.pushError(e.message);
         })
       } catch(e) {
-        console.error(e.message)
         this.alertStore.pushError(e.message);
       }
     })

@@ -102,18 +102,22 @@ export class Bridge extends React.Component {
 
   async onTransfer(e){
     e.preventDefault()
-    this.errorsStore.setLoading(true)
+    this.alertStore.setLoading(true)
     let amount = this.refs.amount.value.trim();
     if(!amount){
       swal("Error", "Please specify amount", "error")
       return
     }
-    if(this.state.reverse){
-      await this._sendToForeign(amount)
-      this.errorsStore.setLoading(false)
-    } else {
-      await this._sendToHome(amount)
-      this.errorsStore.setLoading(false)
+    try {
+      if(this.state.reverse){
+        await this._sendToForeign(amount)
+        this.alertStore.setLoading(false)
+      } else {
+        await this._sendToHome(amount)
+        this.alertStore.setLoading(false)
+      }
+    } catch(e) {
+      this.alertStore.setLoading(false)
     }
   }
 
