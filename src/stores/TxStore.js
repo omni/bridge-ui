@@ -12,7 +12,7 @@ class TxStore {
   }
 
   @action
-  async doSend({to, gasPrice, from, value, data}){
+  async doSend({to, from, value, data}){
     const index = this.txs.length;
     this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
@@ -20,6 +20,7 @@ class TxStore {
         return
       }
       try {
+        const gasPrice = this.gasPriceStore.standardInHex
         const gas = await estimateGas(this.web3Store.injectedWeb3, to, gasPrice, from, value, data)
         this.web3Store.injectedWeb3.eth.sendTransaction({
           to,
@@ -45,14 +46,14 @@ class TxStore {
   }
 
   @action
-  async erc677transferAndCall({to, gasPrice, from, value}){
+  async erc677transferAndCall({to, from, value}){
     try {
       this.web3Store.getWeb3Promise.then(async () => {
         if(this.web3Store.defaultAccount.address){
           const data = await this.foreignStore.tokenContract.methods.transferAndCall(
             to, value, '0x00'
           ).encodeABI()
-          this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x00', gasPrice, data})
+          this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x00', data})
         } else {
           this.errorsStore.pushError({label: 'Error', message: 'Please unlock metamask', type:'error'});    
         }

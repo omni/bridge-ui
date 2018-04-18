@@ -28,7 +28,6 @@ export class Bridge extends React.Component {
     this.web3Store = props.RootStore.web3Store;
     this.txStore = props.RootStore.txStore;
     this.errorsStore = props.RootStore.errorsStore;
-    this.gasPriceStore = props.RootStore.gasPriceStore;
     this.homeCurrency = 'POA'
     this.onSwitch = this.onSwitch.bind(this)
     this.state = {
@@ -68,7 +67,6 @@ export class Bridge extends React.Component {
     } else {
       this.txStore.doSend({
         to: this.homeStore.HOME_BRIDGE_ADDRESS,
-        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
         from: this.web3Store.defaultAccount.address,
         value: Web3Utils.toHex(Web3Utils.toWei(amount)),
         data: '0x00'
@@ -111,7 +109,6 @@ export class Bridge extends React.Component {
     } else {
       this.txStore.erc677transferAndCall({
         to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
-        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
         from: this.web3Store.defaultAccount.address,
         value: Web3Utils.toHex(Web3Utils.toWei(amount))
       })
