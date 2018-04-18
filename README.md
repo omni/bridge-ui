@@ -97,7 +97,7 @@ For `HOME_VALIDATORS` and `FOREIGN_VALIDATORS` I'm also going to use the same ad
 Example: `0x7A6a585dB8cDFa88B9e8403c054ec2e912E9D32E`  
 Feel free to use diffrent on both chain, for simplicity of this tutorial, I'm going to reuse them on both chains.
 
-  * `HOME_PROXY_OWNER` and  `FOREIGN_PROXY_OWNER`: Generate New Ethereum Keystore File JSON and its password https://www.myetherwallet.com/#generate-wallet
+  * `HOME_PROXY_OWNER` and  `FOREIGN_PROXY_OWNER`: Generate New Ethereum Private Key https://www.myetherwallet.com/#generate-wallet
   * `HOME_VALIDATORS` and `FOREIGN_VALIDATORS`: Generate New Ethereum Keystore File JSON and its password https://www.myetherwallet.com/#generate-wallet
   * Fund Home accounts using Sokol Faucet URL:
   https://faucet-sokol.herokuapp.com/ 
