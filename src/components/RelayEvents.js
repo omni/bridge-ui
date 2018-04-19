@@ -135,6 +135,7 @@ export class RelayEvents extends React.Component {
         if(event === "CollectedSignatures") {
           return (
             <CollectedSignatures
+              eventName={event}
               blockNumber={blockNumber}
               authorityResponsibleForRelay={returnValues.authorityResponsibleForRelay}
               messageHash={returnValues.messageHash}

@@ -1,10 +1,8 @@
 import React from 'react';
 import Web3Utils from 'web3-utils'
-import { inject, observer } from "mobx-react";
+import { EventHeader } from './EventHeader'
 
-@inject("RootStore")
-@observer
-export default class Event extends React.Component{
+export default class DepositWithdraw extends React.Component{
   constructor(props) {
     super(props)
     this.onReveal  = this.onReveal.bind(this)
@@ -12,17 +10,16 @@ export default class Event extends React.Component{
       show: props.filter
     }
   }
-  onReveal(e) {
+  onReveal() {
     this.setState({show: !this.state.show});
   }
   render(){
-    let {home, eventName, transactionHash, recipient, value, blockNumber, homeTxHash, currency, filter} = this.props;
-    value = Web3Utils.fromWei(value)
+    const {home, eventName, transactionHash, recipient, value, blockNumber, homeTxHash, currency} = this.props;
+    const formattedValue = Web3Utils.fromWei(value)
     const color = eventName === 'Deposit' ? 'green' : 'red'
     const open = this.state.show ? 'events-i_open' : ''
-    const filterTxt = filter ? 'Reset filter' : 'Find Relayed Events'
     const labelOtherTxHash = home ? "Home" : "Foreign"
-    let homeTxInfo, style, filterComponent;
+    let homeTxInfo, style
     if(homeTxHash && this.state.show){
       homeTxInfo = (
         <div>
@@ -36,30 +33,27 @@ export default class Event extends React.Component{
     }
     return (
     <div name="myScrollToElement" className={`events-i ${open}`}>
-      <div className="events-i-header">
-        <div className="events-i-header-title">
-          <p className={`label ${color}`}>{eventName}</p>
-        </div>
+      <EventHeader
+        color={color}
+        eventName={eventName}
+        transactionHash={transactionHash}
+        handleClick={this.onReveal}
+      />
+      <div className="events-i-body" style={style}>
+        <p className="label">Recepient</p>
         <p className="description break-all">
-          tx: {transactionHash}
+          {recipient}
         </p>
-      <div onClick={this.onReveal} className="events-i-switcher"></div>
+        <p className="label">Recepient value</p>
+        <p className="description break-all">
+          {formattedValue} {currency}
+        </p>
+        <p className="label">Block number</p>
+        <p className="description">
+          {blockNumber}
+        </p>
+        {homeTxInfo}
       </div>
-        <div className="events-i-body" style={style}>
-          <p className="label">Recepient</p>
-          <p className="description break-all">
-            {recipient}
-          </p>
-          <p className="label">Recepient value</p>
-          <p className="description break-all">
-            {value} {currency}
-          </p>
-          <p className="label">Block number</p>
-          <p className="description">
-            {blockNumber}
-          </p>
-          {homeTxInfo}
-        </div>
     </div>
     )}
   }
