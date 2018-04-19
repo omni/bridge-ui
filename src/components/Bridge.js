@@ -30,14 +30,21 @@ export class Bridge extends React.Component {
     this.errorsStore = props.RootStore.errorsStore;
     this.gasPriceStore = props.RootStore.gasPriceStore;
     this.homeCurrency = 'POA'
-    this.onSwitch = this.onSwitch.bind(this)
     this.state = {
       reverse: false
     }
     this.onTransfer = this.onTransfer.bind(this)
   }
+  componentDidMount(){
+    this.web3Store.getWeb3Promise.then(() => {
+      const reverse = this.web3Store.metamaskNet.id.toString() === this.web3Store.foreignNet.id.toString() ? true : false;
+      this.setState({
+        reverse
+      })
+    })
+  }
 
-  _sendToHome(amount){
+  async _sendToHome(amount){
     if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.homeNet.id.toString()){
       swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
       return
@@ -66,17 +73,21 @@ export class Bridge extends React.Component {
     if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
       this.errorsStore.pushError({label: "Error", type:"error", message: "Insufficient balance"})
     } else {
-      this.txStore.doSend({
-        to: this.homeStore.HOME_BRIDGE_ADDRESS,
-        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
-        from: this.web3Store.defaultAccount.address,
-        value: Web3Utils.toHex(Web3Utils.toWei(amount)),
-        data: '0x00'
-      })
+      try {
+        return this.txStore.doSend({
+          to: this.homeStore.HOME_BRIDGE_ADDRESS,
+          gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
+          from: this.web3Store.defaultAccount.address,
+          value: Web3Utils.toHex(Web3Utils.toWei(amount)),
+          data: '0x00'
+        })
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 
-  _sendToForeign(amount){
+  async _sendToForeign(amount){
     if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
       return
@@ -109,33 +120,37 @@ export class Bridge extends React.Component {
         message: `Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`})
       return
     } else {
-      this.txStore.erc677transferAndCall({
-        to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
-        gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
-        from: this.web3Store.defaultAccount.address,
-        value: Web3Utils.toHex(Web3Utils.toWei(amount))
-      })
+      try {
+        return await this.txStore.erc677transferAndCall({
+          to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
+          gasPrice: Web3Utils.toHex(Web3Utils.toWei(this.gasPriceStore.gasPrices.standard.toString(), 'gwei')),
+          from: this.web3Store.defaultAccount.address,
+          value: Web3Utils.toHex(Web3Utils.toWei(amount))
+        })
+      } catch(e) {
+        console.error(e)
+      }
     }
   }
 
-  onTransfer(e){
+  async onTransfer(e){
     e.preventDefault()
+    this.errorsStore.setLoading(true)
     let amount = this.refs.amount.value.trim();
     if(!amount){
       swal("Error", "Please specify amount", "error")
       return
     }
     if(this.state.reverse){
-      this._sendToForeign(amount)
+      await this._sendToForeign(amount)
+      this.errorsStore.setLoading(false)
     } else {
-      this._sendToHome(amount)
+      await this._sendToHome(amount)
+      this.errorsStore.setLoading(false)
     }
+    
   }
 
-  onSwitch(e){
-    e.preventDefault()
-    this.setState({reverse: !this.state.reverse})
-  }
   render() {
     let reverse, netWorkNames, currency;
     const foreignURL = new URL(this.web3Store.FOREIGN_HTTP_PARITY_URL)
@@ -143,11 +158,11 @@ export class Bridge extends React.Component {
     if(this.state.reverse) {
       reverse = 'bridge-form-button_reverse';
       currency = this.foreignStore.symbol;
-      netWorkNames = `${this.web3Store.homeNet.name} ${String.fromCharCode(8592)} ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `from ${this.web3Store.foreignNet.name} to ${this.web3Store.homeNet.name}`;
     } else {
       reverse = '';
       currency = this.homeCurrency;
-      netWorkNames = `${this.web3Store.homeNet.name} ${String.fromCharCode(8594)} ${this.web3Store.foreignNet.name}`;
+      netWorkNames = `from ${this.web3Store.homeNet.name} to ${this.web3Store.foreignNet.name}`;
     }
     return(
       <div className="bridge">
@@ -185,7 +200,6 @@ export class Bridge extends React.Component {
             <Fade in={this.state.reverse}>
               <p>{netWorkNames}</p>
              </Fade> 
-            <button onClick={this.onSwitch}>Switch</button>
           </div>
         </form>
         <div className="bridge-network bridge-network_right">

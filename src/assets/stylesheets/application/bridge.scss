@@ -156,6 +156,7 @@
     }
 
     &-footer {
+      justify-content: center;
       @extend %flex-between;
       padding: 4px 8px;
       border-top: 1px solid #d0c1e0;
