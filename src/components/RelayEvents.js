@@ -3,6 +3,7 @@ import { inject, observer } from "mobx-react";
 import DepositWithdraw from './events/DepositWithdraw';
 import SignedForDeposit from './events/SignedForDeposit';
 import CollectedSignatures from './events/CollectedSignatures';
+import { EventList } from './index'
 
 
 const WAIT_INTERVAL = 700;
@@ -17,64 +18,62 @@ export class RelayEvents extends React.Component {
     this.foreignStore = this.props.RootStore.foreignStore;
     this.alertStore = this.props.RootStore.alertStore;
     this.web3Store = this.props.RootStore.web3Store;
-    this.handleChangeHome = this.handleChangeHome.bind(this)
-    this.handleChangeForeign = this.handleChangeForeign.bind(this)
-    this.handleKeyDownHome = this.handleKeyDownHome.bind(this)
-    this.handleKeyDownForeign = this.handleKeyDownForeign.bind(this)
     this.timer = null;
   }
 
-  async onHomeBlockFilter(value){
-    this.alertStore.setLoading(true)
+  onHomeBlockFilter = async (value) => {
+    const { alertStore, homeStore, foreignStore } = this.props.RootStore
+    alertStore.setLoading(true)
     if(value.substr(0,2) === "0x"){
-      this.homeStore.toggleFilter()
-      this.foreignStore.toggleFilter()
-      await this.homeStore.filterByTxHash(value)
+      homeStore.toggleFilter()
+      foreignStore.toggleFilter()
+      await homeStore.filterByTxHash(value)
     } else {
       if(Number(value) > 0){
-        await this.homeStore.setBlockFilter(value)
+        await homeStore.setBlockFilter(value)
       } else {
-        this.foreignStore.setBlockFilter(0)
-        this.homeStore.setBlockFilter(0)
-        this.homeStore.toggleFilter()
-        this.foreignStore.toggleFilter()
+        foreignStore.setBlockFilter(0)
+        homeStore.setBlockFilter(0)
+        homeStore.toggleFilter()
+        foreignStore.toggleFilter()
       }
     }
-    this.alertStore.setLoading(false)
+    alertStore.setLoading(false)
   }
 
- async onForeignBlockFilter(value){
-    this.alertStore.setLoading(true)
+  onForeignBlockFilter = async (value) => {
+    const { alertStore, homeStore, foreignStore } = this.props.RootStore
+    alertStore.setLoading(true)
     if(value.substr(0,2) === "0x"){
-      this.homeStore.toggleFilter()
-      this.foreignStore.toggleFilter()
-      await this.foreignStore.filterByTxHash(value)
+      homeStore.toggleFilter()
+      foreignStore.toggleFilter()
+      await foreignStore.filterByTxHash(value)
     } else {
       if(Number(value) > 0){
-        await this.foreignStore.setBlockFilter(value)
+        await foreignStore.setBlockFilter(value)
       } else {
-        this.foreignStore.setBlockFilter(0)
-        this.homeStore.setBlockFilter(0)
-        this.homeStore.toggleFilter()
-        this.foreignStore.toggleFilter()
+        foreignStore.setBlockFilter(0)
+        homeStore.setBlockFilter(0)
+        homeStore.toggleFilter()
+        foreignStore.toggleFilter()
       }
     }
-    this.alertStore.setLoading(false)
+    alertStore.setLoading(false)
   }
 
-  async handleChangeHome(e) {
+  handleChangeHome = async (e) => {
     const value = e.target.value;
     window.clearTimeout(this.timer);
     this.timer = setTimeout(() => {this.onHomeBlockFilter(value)}, WAIT_INTERVAL);
   }
 
-  async handleChangeForeign(e) {
+  handleChangeForeign = async (e) => {
     const value = e.target.value;
     window.clearTimeout(this.timer);
     this.timer = setTimeout(() => {this.onForeignBlockFilter(value)}, WAIT_INTERVAL);
   }
 
-  handleKeyDownHome(e) {
+  handleKeyDownHome = (e) => {
     const value = e.target.value;
     window.clearTimeout(this.timer);
     if (e.keyCode === ENTER_KEY && value) {
@@ -82,7 +81,7 @@ export class RelayEvents extends React.Component {
     }
   }
 
-  handleKeyDownForeign(e) {
+  handleKeyDownForeign = (e) => {
     const value = e.target.value;
     window.clearTimeout(this.timer);
     if (e.keyCode === ENTER_KEY && value) {
@@ -90,66 +89,90 @@ export class RelayEvents extends React.Component {
     }
   }
 
+  getHomeEvents = (homeStore, foreignStore) => {
+    return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}, index) =>
+      <DepositWithdraw
+        home={true}
+        eventName={event}
+        transactionHash={transactionHash}
+        blockNumber={blockNumber}
+        recipient={returnValues.recipient}
+        value={returnValues.value}
+        homeTxHash={returnValues.transactionHash}
+        filter={homeStore.filter || foreignStore.filter}
+        key={index} />)
+  }
+
+  getForeignEvents = (foreignStore, homeStore) => {
+    return foreignStore.events.slice()
+      .map(({ event, transactionHash, signedTxHash, blockNumber, returnValues}, index) => {
+        if(event === 'Deposit' || event === 'Withdraw') {
+          return (
+            <DepositWithdraw
+              eventName={event}
+              transactionHash={transactionHash}
+              blockNumber={blockNumber}
+              recipient={returnValues.recipient}
+              value={returnValues.value}
+              homeTxHash={returnValues.transactionHash}
+              filter={homeStore.filter || foreignStore.filter}
+              currency={event === 'Deposit' ? 'POA': foreignStore.symbol}
+              key={index}/>)
+        }
+        if(event === "SignedForDeposit" || event === "SignedForWithdraw") {
+          return (
+            <SignedForDeposit
+              eventName={event}
+              blockNumber={blockNumber}
+              message={returnValues.messageHash}
+              signer={returnValues.signer}
+              key={index}
+              transactionHash={transactionHash}
+              filter={homeStore.filter || foreignStore.filter}
+              signedTxHash={signedTxHash || returnValues.transactionHash}/>
+          )
+        }
+        if(event === "CollectedSignatures") {
+          return (
+            <CollectedSignatures
+              blockNumber={blockNumber}
+              authorityResponsibleForRelay={returnValues.authorityResponsibleForRelay}
+              messageHash={returnValues.messageHash}
+              key={index}
+              transactionHash={transactionHash}
+              filter={homeStore.filter || foreignStore.filter}
+              signedTxHash={signedTxHash || returnValues.transactionHash}/>
+          )
+        }
+      })
+  }
+
   render(){
-    const home = [];
-    this.homeStore.events.slice().forEach(({event, transactionHash, blockNumber, returnValues}, index) => {
-      home.push(
-        <DepositWithdraw
-          home={true}
-          eventName={event}
-          transactionHash={transactionHash}
-          blockNumber={blockNumber}
-          recipient={returnValues.recipient}
-          value={returnValues.value}
-          homeTxHash={returnValues.transactionHash}
-          filter={this.homeStore.filter || this.foreignStore.filter}
-          key={index}/>)
-    })
-    const foreign = [];
-    this.foreignStore.events.slice().forEach(({
-      event,
-      transactionHash,
-      signedTxHash,
-      blockNumber,
-      returnValues}, index) => {
-      if(event === 'Deposit' || event === 'Withdraw'){
-        const currency = event === 'Deposit' ? 'POA': this.foreignStore.symbol
-        foreign.push(
-          <DepositWithdraw
-            eventName={event}
-            transactionHash={transactionHash}
-            blockNumber={blockNumber}
-            recipient={returnValues.recipient}
-            value={returnValues.value}
-            homeTxHash={returnValues.transactionHash}
-            filter={this.homeStore.filter || this.foreignStore.filter}
-            currency={currency}
-            key={index}/>)
-      }
-      if(event === "SignedForDeposit" || event === "SignedForWithdraw") {
-        foreign.push(
-          <SignedForDeposit eventName={event} blockNumber={blockNumber} message={returnValues.messageHash} signer={returnValues.signer} key={index} transactionHash={transactionHash} filter={this.homeStore.filter || this.foreignStore.filter} signedTxHash={signedTxHash || returnValues.transactionHash}/>
-        )
-      }
-      if( event === "CollectedSignatures"){
-        foreign.push(
-          <CollectedSignatures blockNumber={blockNumber} authorityResponsibleForRelay={returnValues.authorityResponsibleForRelay} messageHash={returnValues.messageHash} key={index} transactionHash={transactionHash} filter={this.homeStore.filter || this.foreignStore.filter} signedTxHash={signedTxHash || returnValues.transactionHash}/>
-        )
-      }
-    })
+    const { homeStore, foreignStore, web3Store } = this.props.RootStore
+
+    const home = this.getHomeEvents(homeStore, foreignStore)
+    const foreign = this.getForeignEvents(foreignStore, homeStore)
+
+    const homeDescription = `Home: ${web3Store.homeNet.name}(${web3Store.homeNet.id})`
+    const foreignDescription = `Foreign: ${web3Store.foreignNet.name}(${web3Store.foreignNet.id})`
+
     return(
       <div className="events-container">
         <h1 className="events-title">Events</h1>
         <div className="events">
           <div className="events-side events-side_left">
-            <h1 className="events-title events-title_mobile">Home: {this.web3Store.homeNet.name}({this.web3Store.homeNet.id})</h1>
-            <input type="text" onChange={this.handleChangeHome} onKeyDown={this.handleKeyDownHome} className="events-side-input" placeholder="Tx Hash or Block Number..." />
-            {home}
+            <EventList
+              events={home}
+              description={homeDescription}
+              handleChange={this.handleChangeHome}
+              handleKeyDown={this.handleKeyDownHome} />
           </div>
           <div className="events-side events-side_right">
-            <h1 className="events-title events-title_mobile">Foreign: {this.web3Store.foreignNet.name}({this.web3Store.foreignNet.id})</h1>
-            <input type="text" onChange={this.onForeignBlockFilter} onKeyDown={this.handleKeyDownForeign} className="events-side-input" placeholder="Tx Hash or Block Number ..." />
-            {foreign}
+            <EventList
+              events={foreign}
+              description={foreignDescription}
+              handleChange={this.handleChangeForeign}
+              handleKeyDown={this.handleKeyDownForeign} />
           </div>
         </div>
       </div>

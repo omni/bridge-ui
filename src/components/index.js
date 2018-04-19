@@ -7,3 +7,4 @@ export { Loading } from './Loading';
 export { Fade } from './Fade'
 export { BridgeForm } from './BridgeForm'
 export { BridgeNetwork } from './BridgeNetwork'
+export { EventList } from './EventList'
