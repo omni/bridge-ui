@@ -1,7 +1,7 @@
 import React from 'react'
 import { Fade } from './index'
 
-export const BridgeForm = ({ reverse, currency, homeNetName, foreignNetName, onSwitch, onTransfer, onInputChange}) => (
+export const BridgeForm = ({ reverse, currency, from, to, onTransfer, onInputChange}) => (
   <form className="bridge-form">
     <div className="bridge-form-controls">
       <input onChange={onInputChange} name='amount' type="text" className="bridge-form-input" id="amount" placeholder="0.345" />
@@ -12,9 +12,8 @@ export const BridgeForm = ({ reverse, currency, homeNetName, foreignNetName, onS
     </div>
     <div className="bridge-form-footer">
       <Fade in={reverse}>
-        <p>{homeNetName} {reverse ? String.fromCharCode(8592) : String.fromCharCode(8594)} {foreignNetName}</p>
+        <p>from {from} to {to}</p>
       </Fade>
-      <button onClick={onSwitch}>Switch</button>
     </div>
   </form>
 )

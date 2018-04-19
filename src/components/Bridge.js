@@ -133,6 +133,8 @@ export class Bridge extends React.Component {
     const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
+    const from = reverse ? web3Store.foreignNet.name : web3Store.homeNet.name
+    const to = reverse ? web3Store.homeNet.name : web3Store.foreignNet.name
     return(
       <div className="bridge">
         <BridgeNetwork
@@ -149,9 +151,8 @@ export class Bridge extends React.Component {
         <BridgeForm
           reverse={reverse}
           currency={formCurrency}
-          homeNetName={web3Store.homeNet.name}
-          foreignNetName={web3Store.foreignNet.name}
-          onSwitch={this.onSwitch}
+          from={from}
+          to={to}
           onTransfer={this.onTransfer}
           onInputChange={this.handleInputChange('amount')} />
         <BridgeNetwork
