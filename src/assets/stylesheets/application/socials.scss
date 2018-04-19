@@ -1,6 +1,12 @@
 .socials {
   font-size: 0;
 
+  &-item {
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
+  }
+
   &-i {
     transition: 0.3s background-color;
     position: relative;

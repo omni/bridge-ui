@@ -153,7 +153,8 @@ export class Bridge extends React.Component {
 
   render() {
     let reverse, netWorkNames, currency;
-    let foreignURL = new URL(this.web3Store.FOREIGN_HTTP_PARITY_URL) 
+    const foreignURL = new URL(this.web3Store.FOREIGN_HTTP_PARITY_URL)
+    const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
     if(this.state.reverse) {
       reverse = 'bridge-form-button_reverse';
       currency = this.foreignStore.symbol;
@@ -193,7 +194,7 @@ export class Bridge extends React.Component {
             <Fade in={this.state.reverse}>
               <label htmlFor="amount" className="bridge-form-label">{currency}</label>
             </Fade> 
-            <button onClick={this.onTransfer} type="button" className={`bridge-form-button ${reverse}`}></button>
+            <button onClick={this.onTransfer} type="button" className={`bridge-form-button ${reverse}`} />
           </div>
           <div className="bridge-form-footer">
             <Fade in={this.state.reverse}>
@@ -209,7 +210,7 @@ export class Bridge extends React.Component {
             </span>
           </h1>
           <p className="label">RPC url</p>
-          <p className="description">{foreignURL.protocol}//{foreignURL.hostname}</p>
+          <p className="description">{foreignDisplayUrl}</p>
           <p className="label">Foreign address</p>
           <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
           <p className="label">Token address</p>
