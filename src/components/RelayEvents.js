@@ -14,10 +14,6 @@ const ENTER_KEY = 13;
 export class RelayEvents extends React.Component {
   constructor(props){
     super(props)
-    this.homeStore = this.props.RootStore.homeStore;
-    this.foreignStore = this.props.RootStore.foreignStore;
-    this.alertStore = this.props.RootStore.alertStore;
-    this.web3Store = this.props.RootStore.web3Store;
     this.timer = null;
   }
 
