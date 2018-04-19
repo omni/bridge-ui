@@ -22,6 +22,15 @@ export class Bridge extends React.Component {
       [name]: event.target.value
     })
   }
+  componentDidMount(){
+    const { web3Store } = this.props.RootStore
+    web3Store.getWeb3Promise.then(() => {
+      const reverse = web3Store.metamaskNet.id.toString() === web3Store.foreignNet.id.toString()
+      this.setState({
+        reverse
+      })
+    })
+  }
 
   async _sendToHome(amount){
     const { web3Store, homeStore, alertStore, txStore } = this.props.RootStore
@@ -116,11 +125,6 @@ export class Bridge extends React.Component {
     } catch(e) {
       alertStore.setLoading(false)
     }
-  }
-
-  onSwitch = (e) => {
-    e.preventDefault()
-    this.setState({reverse: !this.state.reverse})
   }
 
   render() {
