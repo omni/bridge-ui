@@ -1,7 +1,5 @@
 import { action, observable } from "mobx";
-import getWeb3 from './utils/getWeb3';
-import Web3 from 'web3';
-import Web3Utils from 'web3-utils';
+import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 
 class Web3Store {
   @observable injectedWeb3 = {};
@@ -23,15 +21,15 @@ class Web3Store {
   FOREIGN_HTTP_PARITY_URL = process.env.REACT_APP_FOREIGN_HTTP_PARITY_URL;
 
   constructor(rootStore) {
-    this.errorsStore = rootStore.errorsStore;
+    this.alertStore = rootStore.alertStore;
 
-    this.getWeb3Promise = getWeb3().then(async (web3Config) => {
+    this.getWeb3Promise = getWeb3().then((web3Config) => {
       const {web3Instance, defaultAccount, netIdName, netId} = web3Config;
       this.metamaskNet = {id: netId, name: netIdName};
       this.defaultAccount.address = defaultAccount;
-      this.injectedWeb3 = new Web3(web3Instance.currentProvider); 
+      this.injectedWeb3 = web3Instance;
       this.loading = false;
-      this.getBalances(defaultAccount);
+      this.getBalances();
     }).catch((e) => {
       console.error(e,'web3 not loaded')
       this.errors.push(e.message)
@@ -40,58 +38,23 @@ class Web3Store {
     this.setWeb3Foreign();
   }
 
-  setWeb3Home() {
-    const homeWeb3Provider = new Web3.providers.HttpProvider(this.HOME_HTTP_PARITY_URL);
-    this.homeWeb3 = new Web3(homeWeb3Provider);
-    this.setNetId({web3: this.homeWeb3, isHome: true});
+  async setWeb3Home() {
+    this.homeWeb3 = getWeb3Instance(this.HOME_HTTP_PARITY_URL)
+    this.homeNet = await getNetwork(this.homeWeb3)
   }
 
-  setWeb3Foreign() {
-    const foreignWeb3Provider = new Web3.providers.HttpProvider(this.FOREIGN_HTTP_PARITY_URL);
-    this.foreignWeb3 = new Web3(foreignWeb3Provider);
-    this.setNetId({web3: this.foreignWeb3, isHome: false});
+  async setWeb3Foreign() {
+    this.foreignWeb3 = getWeb3Instance(this.FOREIGN_HTTP_PARITY_URL)
+    this.foreignNet = await getNetwork(this.foreignWeb3)
   }
-  async setNetId({web3, isHome}){
-    try {
-      let currentNet = isHome ? this.homeNet : this.foreignNet
-      currentNet.id = await web3.eth.net.getId()
-      switch (currentNet.id.toString()) {
-        case "1":
-          currentNet.name = 'Foundation'
-          break;
-        case "3":
-          currentNet.name = 'Ropsten'
-          break;
-        case "4":
-          currentNet.name = 'Rinkeby'
-          break;
-        case "42":
-          currentNet.name = 'Kovan'
-          break;
-        case "99":
-          currentNet.name = 'POA Core'
-          break;
-        case "77":
-          currentNet.name = 'POA Sokol'
-          break;
-        default:
-          currentNet.name = 'Unknown'
-          break;
-      }
-    } catch(e) {
-      console.error(e)
-    }
-  }
+
   @action
   async getBalances(){
     try {
-      const homeBalance = await this.homeWeb3.eth.getBalance(this.defaultAccount.address)
-      this.defaultAccount.homeBalance = Web3Utils.fromWei(homeBalance)
-      const foreignBalance = await this.foreignWeb3.eth.getBalance(this.defaultAccount.address)
-      this.defaultAccount.foreignBalance = Web3Utils.fromWei(foreignBalance)
+      this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
+      this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
     } catch(e){
-      console.error(e)
-      this.errorsStore.pushError(e)
+      this.alertStore.pushError(e)
     }
   }
 

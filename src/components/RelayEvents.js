@@ -15,7 +15,7 @@ export class RelayEvents extends React.Component {
     super(props)
     this.homeStore = this.props.RootStore.homeStore;
     this.foreignStore = this.props.RootStore.foreignStore;
-    this.errorsStore = this.props.RootStore.errorsStore;
+    this.alertStore = this.props.RootStore.alertStore;
     this.web3Store = this.props.RootStore.web3Store;
     this.handleChangeHome = this.handleChangeHome.bind(this)
     this.handleChangeForeign = this.handleChangeForeign.bind(this)
@@ -25,7 +25,7 @@ export class RelayEvents extends React.Component {
   }
 
   async onHomeBlockFilter(value){
-    this.errorsStore.setLoading(true)
+    this.alertStore.setLoading(true)
     if(value.substr(0,2) === "0x"){
       this.homeStore.toggleFilter()
       this.foreignStore.toggleFilter()
@@ -40,11 +40,11 @@ export class RelayEvents extends React.Component {
         this.foreignStore.toggleFilter()
       }
     }
-    this.errorsStore.setLoading(false)
+    this.alertStore.setLoading(false)
   }
 
  async onForeignBlockFilter(value){
-    this.errorsStore.setLoading(true)
+    this.alertStore.setLoading(true)
     if(value.substr(0,2) === "0x"){
       this.homeStore.toggleFilter()
       this.foreignStore.toggleFilter()
@@ -59,7 +59,7 @@ export class RelayEvents extends React.Component {
         this.foreignStore.toggleFilter()
       }
     }
-    this.errorsStore.setLoading(false)
+    this.alertStore.setLoading(false)
   }
 
   async handleChangeHome(e) {

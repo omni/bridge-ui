@@ -1,7 +1,5 @@
 import { action, observable } from "mobx";
-import Web3Utils from 'web3-utils'
-import FOREIGN_ABI from '../abis/ForeignBridge.json'
-import ERC677_ABI from '../abis/ERC677.json'
+import { estimateGas } from './utils/web3'
 
 class TxStore {
   @observable txs = []
@@ -9,30 +7,25 @@ class TxStore {
   constructor(rootStore) {
     this.web3Store = rootStore.web3Store
     this.gasPriceStore = rootStore.gasPriceStore
-    this.errorsStore = rootStore.errorsStore
+    this.alertStore = rootStore.alertStore
     this.foreignStore = rootStore.foreignStore
   }
 
   @action
-  async doSend({to, gasPrice, from, value, data}){
+  async doSend({to, from, value, data}){
     const index = this.txs.length;
     return this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
-        this.errorsStore.pushError({label: "Error", message: "Please unlock metamask", type: "error"})
+        this.alertStore.pushError("Please unlock metamask")
         return
       }
       try {
-        const gas = await this.web3Store.injectedWeb3.eth.estimateGas({
-          to,
-          gasPrice,
-          from,
-          value,
-          data
-        })
+        const gasPrice = this.gasPriceStore.standardInHex
+        const gas = await estimateGas(this.web3Store.injectedWeb3, to, gasPrice, from, value, data)
         return this.web3Store.injectedWeb3.eth.sendTransaction({
           to,
           gasPrice,
-          gas: Web3Utils.toHex(gas.toString()),
+          gas,
           from,
           value,
           data
@@ -42,36 +35,29 @@ class TxStore {
           this.txs[index] = {status: 'pending', name: `Sending ${to} ${value}`, hash}
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          console.error(e)
-          this.errorsStore.pushError({label: "Error", message: e.message, type: "error"});
+          this.alertStore.pushError(e.message);
         })
       } catch(e) {
-        console.error(e.message)
-        this.errorsStore.pushError({label: "Error", message: e.message, type: "error"});
+        this.alertStore.pushError(e.message);
       }
     })
   }
 
   @action
-  async erc677transferAndCall({to, gasPrice, from, value}){
+  async erc677transferAndCall({to, from, value}){
     try {
-      const foreignBridge = new this.web3Store.foreignWeb3.eth.Contract(FOREIGN_ABI, this.foreignStore.FOREIGN_BRIDGE_ADDRESS);
-      const tokenAddress = await foreignBridge.methods.erc677token().call()
-      const tokenContract = new this.web3Store.foreignWeb3.eth.Contract(ERC677_ABI, tokenAddress);
-
       return this.web3Store.getWeb3Promise.then(async () => {
         if(this.web3Store.defaultAccount.address){
-          const data = await tokenContract.methods.transferAndCall(
+          const data = await this.foreignStore.tokenContract.methods.transferAndCall(
             to, value, '0x00'
           ).encodeABI()
-          return this.doSend({to: tokenAddress, from, value: '0x00', gasPrice, data})
+          return this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x00', data})
         } else {
-          this.errorsStore.pushError({label: 'Error', message: 'Please unlock metamask', type:'error'});    
+          this.alertStore.pushError('Please unlock metamask');
         }
       })
     } catch(e) {
-      console.error(e)
-      this.errorsStore.pushError(e);
+      this.alertStore.pushError(e);
     }
 
   }
@@ -98,15 +84,12 @@ class TxStore {
         if(res.status === '0x1'){
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
-          this.errorsStore.pushError({
-            label: "Success",
-            message: `${hash} Mined successfully on ${this.web3Store.metamaskNet.name} at block number ${res.blockNumber}`,
-            type: "success"})
+          this.alertStore.pushSuccess(`${hash} Mined successfully on ${this.web3Store.metamaskNet.name} at block number ${res.blockNumber}`)
         } else {
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `error`
           this.txs[index].name = `Mined but with errors. Perhaps out of gas`
-          this.errorsStore.pushError({label: "Error", message: `${hash} Mined but with errors. Perhaps out of gas`, type: "error"})
+          this.alertStore.pushError(`${hash} Mined but with errors. Perhaps out of gas`)
         }
       } else {
         this.getTxStatus(hash)

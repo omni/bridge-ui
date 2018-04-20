@@ -1,23 +1,21 @@
 import { observable, computed } from "mobx";
 import Web3Utils from 'web3-utils';
+import { getGasPrices } from './utils/web3'
 
 class GasPriceStore {
   @observable gasPrices = {};
   gasPricePromise = null;
   constructor(rootStore) {
     this.getGasPrices()
-    this.errorsStore = rootStore.errorsStore;
+    this.alertStore = rootStore.alertStore;
   }
 
   async getGasPrices(){
-    this.gasPricePromise = fetch('https://gasprice.poa.network/').then((response) => {
-      return response.json()
-    }).then((data) => {
+    this.gasPricePromise = getGasPrices().then((data) => {
       console.log(data)
       this.gasPrices = data;
     }).catch((e) => {
-      console.error(e)
-      this.errorsStore.pushError(e)
+      this.alertStore.pushError(e)
     })
   }
 
@@ -25,7 +23,6 @@ class GasPriceStore {
     const toWei = Web3Utils.toWei(this.gasPrices.standard.toString(), 'gwei')
     return Web3Utils.toHex(toWei)
   }
-
 }
 
 export default GasPriceStore;
