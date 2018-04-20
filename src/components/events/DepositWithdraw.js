@@ -16,13 +16,12 @@ export default class Event extends React.Component{
     this.setState({show: !this.state.show});
   }
   render(){
-    let {home, eventName, transactionHash, recipient, value, blockNumber, homeTxHash, currency, filter} = this.props;
+    let {home, eventName, transactionHash, recipient, value, blockNumber, homeTxHash, currency} = this.props;
     value = Web3Utils.fromWei(value)
     const color = eventName === 'Deposit' ? 'green' : 'red'
     const open = this.state.show ? 'events-i_open' : ''
-    const filterTxt = filter ? 'Reset filter' : 'Find Relayed Events'
     const labelOtherTxHash = home ? "Home" : "Foreign"
-    let homeTxInfo, style, filterComponent;
+    let homeTxInfo, style
     if(homeTxHash && this.state.show){
       homeTxInfo = (
         <div>
@@ -43,7 +42,7 @@ export default class Event extends React.Component{
         <p className="description break-all">
           tx: {transactionHash}
         </p>
-      <div onClick={this.onReveal} className="events-i-switcher"></div>
+      <div onClick={this.onReveal} className="events-i-switcher" />
       </div>
         <div className="events-i-body" style={style}>
           <p className="label">Recepient</p>

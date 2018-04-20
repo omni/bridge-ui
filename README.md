@@ -103,6 +103,8 @@ Feel free to use diffrent on both chain, for simplicity of this tutorial, I'm go
   https://faucet-sokol.herokuapp.com/ 
   * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) to Foreign Accounts. Get 5 Keth to 1 acc, and transfer from it to all others.
   * `git clone https://github.com/poanetwork/poa-parity-bridge-contracts.git`
+  * Make sure that you have a fresh installation of Node.js (version > 8)
+   If not, you can update your main installation or use https://github.com/creationix/nvm 
   * `cd poa-parity-bridge-contracts && npm install`
   * `./node_modules/.bin/truffle compile`
   * `cd ./deploy && npm install`
@@ -172,14 +174,6 @@ Folder structure:
 ```bash
 .
 └── sokol-kovan-bridge
-    ├── ForeignBridge_bytecode.bin
-    ├── HomeBridge_bytecode.bin
-    ├── bridge-ui
-    ├── config.toml
-    ├── db.toml
-    ├── parity-bridge
-    ├── kovan-node
-    ├── sokol-node
     └── poa-parity-bridge-contracts
 ```
 1. Install parity (Current setup was tested against parity 1.9.5) https://www.parity.io/
@@ -436,4 +430,5 @@ REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
 
 5. Run `npm run start`
 6. Make sure you have https://metamask.io installed
-7. Specify amount and click on Arrow button to make a cross chain transaction from Sokol to Kovan
+7. Switch to account with POA tokens in your metamask or fund an account using https://faucet-sokol.herokuapp.com/
+8. Specify amount and click on Arrow button to make a cross chain transaction from Sokol to Kovan
