@@ -339,9 +339,9 @@ required_signatures = 1
 [transactions]
 home_deploy = { gas = 3000000, gas_price = 1000000000 }
 foreign_deploy = { gas = 3000000, gas_price = 1000000000 }
-deposit_relay = { gas = 300000, gas_price = 1000000000 }
-withdraw_confirm = { gas = 300000, gas_price = 1000000000 }
-withdraw_relay = { gas = 300000, gas_price = 1000000000 }
+deposit_relay = { gas = 3000000, gas_price = 1000000000 }
+withdraw_relay = { gas = 3000000, gas_price = 1000000000 }
+withdraw_confirm = { gas = 3000000, gas_price = 1000000000 }
 ```
 11. Create db.toml file  
 `nano db.toml`  
