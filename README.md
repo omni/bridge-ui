@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/patitonar/bridge-ui.svg?branch=master)](https://travis-ci.org/patitonar/bridge-ui)
 [![Coverage Status](https://coveralls.io/repos/github/patitonar/bridge-ui/badge.svg?branch=master)](https://coveralls.io/github/patitonar/bridge-ui?branch=master)
+[![dependencies Status](https://david-dm.org/poanetwork/bridge-ui/status.svg)](https://david-dm.org/poanetwork/bridge-ui)
+
 ![Demo](demo.gif)
 ### Deployed URL
 
