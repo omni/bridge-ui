@@ -9,6 +9,7 @@ class TxStore {
     this.gasPriceStore = rootStore.gasPriceStore
     this.alertStore = rootStore.alertStore
     this.foreignStore = rootStore.foreignStore
+    this.homeStore = rootStore.homeStore
   }
 
   @action
@@ -85,6 +86,12 @@ class TxStore {
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
           this.alertStore.pushSuccess(`${hash} Mined successfully on ${this.web3Store.metamaskNet.name} at block number ${res.blockNumber}`)
+
+          if(this.web3Store.metamaskNet.name === this.web3Store.homeNet.name) {
+            this.foreignStore.addWaitingForConfirmation(hash)
+          } else {
+            this.homeStore.addWaitingForConfirmation(hash)
+          }
         } else {
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `error`
