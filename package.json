@@ -5,6 +5,7 @@
   "homepage": "https://poanetwork.github.io/bridge-ui",
   "dependencies": {
     "bignumber.js": "^6.0.0",
+    "coveralls": "^3.0.0",
     "gh-pages": "^1.1.0",
     "mobx": "^4.0.2",
     "mobx-react": "^5.0.0",
@@ -27,6 +28,8 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
+    "coverage": "react-app-rewired test --env=jsdom --coverage",
+    "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-app-rewired eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build -o origin"

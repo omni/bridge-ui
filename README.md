@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/patitonar/bridge-ui.svg?branch=master)](https://travis-ci.org/patitonar/bridge-ui)
+[![Coverage Status](https://coveralls.io/repos/github/patitonar/bridge-ui/badge.svg?branch=master)](https://coveralls.io/github/patitonar/bridge-ui?branch=master)
 ![Demo](demo.gif)
 ### Deployed URL
 
@@ -432,3 +434,13 @@ REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
 6. Make sure you have https://metamask.io installed
 7. Switch to account with POA tokens in your metamask or fund an account using https://faucet-sokol.herokuapp.com/
 8. Specify amount and click on Arrow button to make a cross chain transaction from Sokol to Kovan
+
+## Tests
+
+To run tests
+
+`npm run test`
+
+To run tests with coverage
+
+`npm run coverage`
