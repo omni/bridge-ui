@@ -1,4 +1,5 @@
 import React from 'react';
+import { EventHeader } from './EventHeader'
 
 export default class CollectedSignatures extends React.Component{
   constructor(props) {
@@ -8,11 +9,11 @@ export default class CollectedSignatures extends React.Component{
       show: props.filter
     }
   }
-  onClick(e) {
+  onClick() {
     this.setState({show: !this.state.show});
   }
   render(){
-    const { transactionHash, authorityResponsibleForRelay, blockNumber, messageHash, signedTxHash} = this.props;
+    const { eventName, transactionHash, authorityResponsibleForRelay, blockNumber, messageHash, signedTxHash} = this.props;
     const color = 'blue'
     const open = this.state.show ? 'events-i_open' : ''
     let style
@@ -21,33 +22,30 @@ export default class CollectedSignatures extends React.Component{
     }
     return (
     <div className={`events-i ${open}`}>
-      <div className="events-i-header">
-        <div className="events-i-header-title">
-          <p className={`label ${color}`}>CollectedSignatures</p>
-        </div>
+      <EventHeader
+        color={color}
+        eventName={eventName}
+        transactionHash={transactionHash}
+        handleClick={this.onClick}
+      />
+      <div className="events-i-body" style={style}>
+        <p className="label">Authority Responsible For Relay</p>
         <p className="description break-all">
-          tx: {transactionHash}
+          {authorityResponsibleForRelay}
         </p>
-      <div onClick={this.onClick} className="events-i-switcher"></div>
+        <p className="label">Signed Tx Hash</p>
+        <p className="description break-all">
+          {signedTxHash}
+        </p>
+        <p className="label">Message Hash</p>
+        <p className="description break-all">
+          {messageHash}
+        </p>
+        <p className="label">Block number</p>
+        <p className="description">
+          {blockNumber}
+        </p>
       </div>
-        <div className="events-i-body" style={style}>
-          <p className="label">Authority Responsible For Relay</p>
-          <p className="description break-all">
-            {authorityResponsibleForRelay}
-          </p>
-          <p className="label">Signed Tx Hash</p>
-          <p className="description break-all">
-            {signedTxHash}
-          </p>
-          <p className="label">Message Hash</p>
-          <p className="description break-all">
-            {messageHash}
-          </p>
-          <p className="label">Block number</p>
-          <p className="description">
-            {blockNumber}
-          </p>
-        </div>
     </div>
     )}
   }

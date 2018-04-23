@@ -1,4 +1,5 @@
 import React from 'react';
+import { EventHeader } from './EventHeader'
 
 export default class SignedForDeposit extends React.Component{
   constructor(props) {
@@ -8,7 +9,7 @@ export default class SignedForDeposit extends React.Component{
       show: props.filter
     }
   }
-  onClick(e) {
+  onClick() {
     this.setState({show: !this.state.show});
   }
   render(){
@@ -21,33 +22,30 @@ export default class SignedForDeposit extends React.Component{
     }
     return (
     <div className={`events-i ${open}`}>
-      <div className="events-i-header">
-        <div className="events-i-header-title">
-          <p className={`label ${color}`}>{eventName}</p>
-        </div>
+      <EventHeader
+        color={color}
+        eventName={eventName}
+        transactionHash={transactionHash}
+        handleClick={this.onClick}
+      />
+      <div className="events-i-body" style={style}>
+        <p className="label">Message</p>
         <p className="description break-all">
-          tx: {transactionHash}
+          {message}
         </p>
-      <div onClick={this.onClick} className="events-i-switcher" />
+        <p className="label">Signer</p>
+        <p className="description break-all">
+          {signer}
+        </p>
+        <p className="label">Block number</p>
+        <p className="description">
+          {blockNumber}
+        </p>
+        <p className="label">Signed Tx Hash</p>
+        <p className="description">
+          {signedTxHash}
+        </p>
       </div>
-        <div className="events-i-body" style={style}>
-          <p className="label">Message</p>
-          <p className="description break-all">
-            {message}
-          </p>
-          <p className="label">Signer</p>
-          <p className="description break-all">
-            {signer}
-          </p>
-          <p className="label">Block number</p>
-          <p className="description">
-            {blockNumber}
-          </p>
-          <p className="label">Signed Tx Hash</p>
-          <p className="description">
-            {signedTxHash}
-          </p>
-        </div>
     </div>
     )}
   }
