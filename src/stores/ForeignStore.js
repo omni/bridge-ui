@@ -43,6 +43,7 @@ class ForeignStore {
     this.foreignWeb3 = rootStore.web3Store.foreignWeb3
     this.alertStore = rootStore.alertStore
     this.homeStore = rootStore.homeStore;
+    this.waitingForConfirmation = new Set()
     this.setForeign()
   }
 
@@ -133,6 +134,15 @@ class ForeignStore {
       if(!this.filter){
         this.events = events;
       }
+
+      if(this.waitingForConfirmation.size) {
+        const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
+        confirmationEvents.forEach(event => {
+          this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} for Tx ${event.returnValues.transactionHash}`)
+          this.waitingForConfirmation.delete(event.returnValues.transactionHash)
+        })
+      }
+
       return events
     } catch(e) {
       this.alertStore.pushError(`Cannot establish connection to Home Network.\n
@@ -186,6 +196,10 @@ class ForeignStore {
   @action
   toggleFilter(){
     this.filter = !this.filter
+  }
+
+  addWaitingForConfirmation(hash) {
+    this.waitingForConfirmation.add(hash)
   }
 }
 

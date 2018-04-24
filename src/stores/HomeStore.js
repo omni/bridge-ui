@@ -28,6 +28,7 @@ class HomeStore {
     this.web3Store = rootStore.web3Store
     this.alertStore = rootStore.alertStore
     this.rootStore = rootStore
+    this.waitingForConfirmation = new Set()
     this.setHome()
   }
 
@@ -95,6 +96,15 @@ class HomeStore {
       if(!this.filter){
         this.events = homeEvents;
       }
+
+      if(this.waitingForConfirmation.size) {
+        const confirmationEvents = homeEvents.filter((event) => event.event === "Withdraw" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
+        confirmationEvents.forEach(event => {
+          this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.homeNet.name} for Tx ${event.returnValues.transactionHash}`)
+          this.waitingForConfirmation.delete(event.returnValues.transactionHash)
+        })
+      }
+
       return homeEvents
     } catch(e) {
       this.alertStore.pushError(`Cannot establish connection to Home Network.\n
@@ -140,6 +150,10 @@ class HomeStore {
     } catch(e){
       console.error(e)
     }
+  }
+
+  addWaitingForConfirmation(hash) {
+    this.waitingForConfirmation.add(hash)
   }
 }
 
