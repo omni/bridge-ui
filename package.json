@@ -1,6 +1,6 @@
 {
-  "name": "bridge",
-  "version": "0.1.0",
+  "name": "poabridgeui",
+  "version": "0.2.0",
   "private": true,
   "homepage": "https://poanetwork.github.io/",
   "dependencies": {
