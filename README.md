@@ -294,15 +294,15 @@ cargo build -p bridge-cli --release
 6. Install [jq](https://stedolan.github.io/jq/)
 7. Go back to directory up.
 `cd ..`
-8. Create `HomeBridge_bytecode.bin` with the following command:
+8. Create an empty file `HomeBridge_bytecode.bin`. Even the contract is deployed separetely, the bridge is still looking for the file holding contract bytecode.
 ```bash
-cat ../sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq '.homeBridge.bytecode' -r > HomeBridge_bytecode.bin
+touch HomeBridge_bytecode.bin
 ```
-8. Create `ForeignBridge_bytecode.bin` with the following command:
+9. Create an empty file `ForeignBridge_bytecode.bin`:
 ```bash
-cat ../sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq '.foreignBridge.bytecode' -r > ForeignBridge_bytecode.bin
+touch ForeignBridge_bytecode.bin
 ```
-9. Create `config.toml` file  
+10. Create `config.toml` file  
 `nano config.toml`  
 Replace
 `0xETH_ACCOUNT_VALIDATOR_SOKOL` to your `HOME_VALIDATORS` address   
@@ -334,19 +334,18 @@ bin = "ForeignBridge_bytecode.bin"
 
 [authorities]
 accounts = [
-  "0xETH_ACCOUNT_VALIDATOR_SOKOL",
   "0xETH_ACCOUNT_VALIDATOR_KOVAN"
 ]
 required_signatures = 1
 
 [transactions]
-home_deploy = { gas = 3000000 }
-foreign_deploy = { gas = 3000000 }
-deposit_relay = { gas = 3000000 }
-withdraw_relay = { gas = 3000000 }
-withdraw_confirm = { gas = 3000000 }
+home_deploy = { gas = 3000000, gas_price = 1000000000 }
+foreign_deploy = { gas = 3000000, gas_price = 1000000000 }
+deposit_relay = { gas = 3000000, gas_price = 1000000000 }
+withdraw_relay = { gas = 3000000, gas_price = 1000000000 }
+withdraw_confirm = { gas = 3000000, gas_price = 1000000000 }
 ```
-10. Create db.toml file  
+11. Create db.toml file  
 `nano db.toml`  
 Insert addresses from  
 `cat poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq 'del(.[].bytecode)'`  
@@ -361,7 +360,7 @@ checked_withdraw_confirm = 6342830 # last checked withdraw events on Foreign net
 ```
 Exit `nano` by Ctrl-O and Ctrl-X  
 
-11. At this step your folder structure should look like this
+12. At this step your folder structure should look like this
 ```bash
 .
 └── sokol-kovan-bridge
@@ -374,7 +373,7 @@ Exit `nano` by Ctrl-O and Ctrl-X
     ├── sokol-node
     └── poa-parity-bridge-contracts
 ```
-12. Run the bridge app:
+13. Run the bridge app:
 ```
 env RUST_LOG=info ./parity-bridge/target/release/bridge --config config.toml --database db.toml
 ```
@@ -406,7 +405,7 @@ INFO:bridge::bridge::withdraw_confirm: waiting for new withdraws that should get
 ```
 Open separate terminal window and go to your `sokol-kovan-bridge` folder
 
-13. Install UI app
+14. Install UI app
 
 ## Installation of the UI app
 
