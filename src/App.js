@@ -1,6 +1,6 @@
 import React from 'react';
 import { Header, Bridge, RelayEvents, Footer, SweetAlert, Loading } from './components';
-import { Route } from 'react-router'
+import { Route } from 'react-router-dom'
 import './assets/stylesheets/application.css';
 export const App = () => {
   return (
