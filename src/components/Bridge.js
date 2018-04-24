@@ -1,42 +1,31 @@
 import React from 'react';
 import { inject, observer } from "mobx-react";
-import poa from '../assets/images/poa@2x.png';
-import eth from '../assets/images/eth@2x.png';
-import { CSSTransition } from 'react-transition-group'
 import Web3Utils from 'web3-utils'
 import swal from 'sweetalert'
 import BN from 'bignumber.js'
+import { BridgeForm } from './index'
+import { BridgeNetwork } from './index'
 
-const Fade = ({ children, ...props }) => (
-  <CSSTransition
-    {...props}
-    timeout={1000}
-    classNames="fade"
-  >
-    {children}
-  </CSSTransition>
-);
 
 
 @inject("RootStore")
 @observer
 export class Bridge extends React.Component {
-  constructor(props) {
-    super(props);
-    this.homeStore = props.RootStore.homeStore;
-    this.foreignStore = props.RootStore.foreignStore;
-    this.web3Store = props.RootStore.web3Store;
-    this.txStore = props.RootStore.txStore;
-    this.alertStore = props.RootStore.alertStore;
-    this.homeCurrency = 'POA'
-    this.state = {
-      reverse: false
-    }
-    this.onTransfer = this.onTransfer.bind(this)
+  state = {
+    reverse: false,
+    homeCurrency: 'POA',
+    amount:''
+  }
+
+  handleInputChange = name => event => {
+    this.setState({
+      [name]: event.target.value
+    })
   }
   componentDidMount(){
-    this.web3Store.getWeb3Promise.then(() => {
-      const reverse = this.web3Store.metamaskNet.id.toString() === this.web3Store.foreignNet.id.toString() ? true : false;
+    const { web3Store } = this.props.RootStore
+    web3Store.getWeb3Promise.then(() => {
+      const reverse = web3Store.metamaskNet.id.toString() === web3Store.foreignNet.id.toString()
       this.setState({
         reverse
       })
@@ -44,29 +33,32 @@ export class Bridge extends React.Component {
   }
 
   async _sendToHome(amount){
-    if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.homeNet.id.toString()){
-      swal("Error", `Please switch metamask network to ${this.web3Store.homeNet.name}`, "error")
+    const { web3Store, homeStore, alertStore, txStore } = this.props.RootStore
+    const { homeCurrency } = this.state
+    const { isLessThan, isGreaterThan } = this
+    if(web3Store.metamaskNet.id.toString() !== web3Store.homeNet.id.toString()){
+      swal("Error", `Please switch metamask network to ${web3Store.homeNet.name}`, "error")
       return
     }
-    if(new BN(amount).lt(new BN(this.homeStore.minPerTx))){
-      this.alertStore.pushError(`The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${this.homeStore.minPerTx} ${this.homeCurrency}`)
+    if(isLessThan(amount, homeStore.minPerTx)){
+      alertStore.pushError(`The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${homeStore.minPerTx} ${homeCurrency}`)
       return
     }
-    if(new BN(amount).gt(new BN(this.homeStore.maxPerTx))){
-      this.alertStore.pushError(`The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${this.homeStore.maxPerTx} ${this.homeCurrency}`)
+    if(isGreaterThan(amount, homeStore.maxPerTx)){
+      alertStore.pushError(`The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${homeStore.maxPerTx} ${homeCurrency}`)
       return
     }
-    if(new BN(amount).gt(new BN(this.homeStore.maxCurrentDeposit))){
-      this.alertStore.pushError(`The amount is above current daily limit.\nThe max deposit today: ${this.homeStore.maxCurrentDeposit} ${this.homeCurrency}`)
+    if(isGreaterThan(amount, homeStore.maxCurrentDeposit)){
+      alertStore.pushError(`The amount is above current daily limit.\nThe max deposit today: ${homeStore.maxCurrentDeposit} ${homeCurrency}`)
       return
     }
-    if(new BN(amount).gt(new BN(this.web3Store.defaultAccount.homeBalance))){
-      this.alertStore.pushError("Insufficient balance")
+    if(isGreaterThan(amount, web3Store.defaultAccount.homeBalance)){
+      alertStore.pushError("Insufficient balance")
     } else {
       try {
-        return this.txStore.doSend({
-        to: this.homeStore.HOME_BRIDGE_ADDRESS,
-        from: this.web3Store.defaultAccount.address,
+        return txStore.doSend({
+        to: homeStore.HOME_BRIDGE_ADDRESS,
+        from: web3Store.defaultAccount.address,
         value: Web3Utils.toHex(Web3Utils.toWei(amount)),
         data: '0x00'
       })} catch (e) {
@@ -76,30 +68,31 @@ export class Bridge extends React.Component {
   }
 
   async _sendToForeign(amount){
-    if(this.web3Store.metamaskNet.id.toString() !== this.web3Store.foreignNet.id.toString()){
-      swal("Error", `Please switch metamask network to ${this.web3Store.foreignNet.name}`, "error")
+    const { web3Store, foreignStore, alertStore, txStore } = this.props.RootStore
+    const { isLessThan, isGreaterThan } = this
+    if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
+      swal("Error", `Please switch metamask network to ${web3Store.foreignNet.name}`, "error")
       return
     }
-    if(new BN(amount).lt(new BN(this.foreignStore.minPerTx))){
-      this.alertStore.pushError(`The amount is less than minimum amount per transaction.\nThe min per transaction is: ${this.foreignStore.minPerTx} ${this.foreignStore.symbol}`)
+    if(isLessThan(amount, foreignStore.minPerTx)){
+      alertStore.pushError(`The amount is less than minimum amount per transaction.\nThe min per transaction is: ${foreignStore.minPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(new BN(amount).gt(new BN(this.foreignStore.maxPerTx))){
-      this.alertStore.pushError(`The amount is above maximum amount per transaction.\nThe max per transaction is: ${this.foreignStore.maxPerTx} ${this.foreignStore.symbol}`)
+    if(isGreaterThan(amount, foreignStore.maxPerTx)){
+      alertStore.pushError(`The amount is above maximum amount per transaction.\nThe max per transaction is: ${foreignStore.maxPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(new BN(amount).gt(new BN(this.foreignStore.maxCurrentDeposit))){
-      this.alertStore.pushError(`The amount is above current daily limit.\nThe max withdrawal today: ${this.foreignStore.maxCurrentDeposit} ${this.foreignStore.symbol}`)
+    if(isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
+      alertStore.pushError(`The amount is above current daily limit.\nThe max withdrawal today: ${foreignStore.maxCurrentDeposit} ${foreignStore.symbol}`)
       return
     }
-    if(new BN(amount).gt(new BN(this.foreignStore.balance))){
-      this.alertStore.pushError(`Insufficient token balance. Your balance is ${this.foreignStore.balance} ${this.foreignStore.symbol}`)
-      return
+    if(isGreaterThan(amount, foreignStore.balance)){
+      alertStore.pushError(`Insufficient token balance. Your balance is ${foreignStore.balance} ${foreignStore.symbol}`)
     } else {
       try {
-        return await this.txStore.erc677transferAndCall({
-        to: this.foreignStore.FOREIGN_BRIDGE_ADDRESS,
-        from: this.web3Store.defaultAccount.address,
+        return await txStore.erc677transferAndCall({
+        to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
+        from: web3Store.defaultAccount.address,
         value: Web3Utils.toHex(Web3Utils.toWei(amount))
       })} catch(e) {
         console.error(e)
@@ -107,103 +100,74 @@ export class Bridge extends React.Component {
     }
   }
 
-  async onTransfer(e){
+  isLessThan = (amount, base) => new BN(amount).lt(new BN(base))
+
+  isGreaterThan = (amount, base) => new BN(amount).gt(new BN(base))
+
+  onTransfer = async (e) => {
+    const { alertStore } = this.props.RootStore
+    const { reverse } = this.state
     e.preventDefault()
-    this.alertStore.setLoading(true)
-    let amount = this.refs.amount.value.trim();
+    alertStore.setLoading(true)
+    const amount = this.state.amount.trim();
     if(!amount){
       swal("Error", "Please specify amount", "error")
       return
     }
     try {
-      if(this.state.reverse){
+      if(reverse){
         await this._sendToForeign(amount)
-        this.alertStore.setLoading(false)
+        alertStore.setLoading(false)
       } else {
         await this._sendToHome(amount)
-        this.alertStore.setLoading(false)
+        alertStore.setLoading(false)
       }
     } catch(e) {
-      this.alertStore.setLoading(false)
+      alertStore.setLoading(false)
     }
   }
 
   render() {
-    let reverse, netWorkNames, currency;
-    const foreignURL = new URL(this.web3Store.FOREIGN_HTTP_PARITY_URL)
+    const { web3Store, homeStore, foreignStore } = this.props.RootStore
+    const { reverse, homeCurrency } = this.state
+    const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
-    if(this.state.reverse) {
-      reverse = 'bridge-form-button_reverse';
-      currency = this.foreignStore.symbol;
-      netWorkNames = `from ${this.web3Store.foreignNet.name} to ${this.web3Store.homeNet.name}`;
-    } else {
-      reverse = '';
-      currency = this.homeCurrency;
-      netWorkNames = `from ${this.web3Store.homeNet.name} to ${this.web3Store.foreignNet.name}`;
-    }
+    const formCurrency = reverse ? foreignStore.symbol : homeCurrency
+    const from = reverse ? web3Store.foreignNet.name : web3Store.homeNet.name
+    const to = reverse ? web3Store.homeNet.name : web3Store.foreignNet.name
     return(
       <div className="bridge">
-        <div className="bridge-network bridge-network_left">
-          <h1 className="bridge-network-name-container">
-            <img src={poa} width="50" height="50" alt="POA"/>
-            <div className="bridge-network-name">
-              Home: {this.web3Store.homeNet.name}({this.web3Store.homeNet.id})
-            </div>
-          </h1>
-          <p className="label">RPC url</p>
-          <p className="description">{this.web3Store.HOME_HTTP_PARITY_URL}</p>
-          <p className="label">Home address</p>
-          <p className="description break-all">{this.homeStore.HOME_BRIDGE_ADDRESS}</p>
-          <p className="label">Current Deposit limit</p>
-          <p className="description break-all">{this.homeStore.maxCurrentDeposit} {this.homeCurrency}</p>
-          <p className="label">Maximum Amount Per Transaction limit</p>
-          <p className="description break-all">{this.homeStore.maxPerTx} {this.homeCurrency}</p>
-          <p className="label">Minimum Amount Per Transaction</p>
-          <p className="description break-all">{this.homeStore.minPerTx} {this.homeCurrency}</p>
-          <p className="label">Total Contract Balance</p>
-          <p className="description break-all">{this.homeStore.balance} {this.homeCurrency}</p>
-          <p className="label">Your {this.homeCurrency} Balance</p>
-          <p className="description break-all">{this.web3Store.defaultAccount.homeBalance}</p>
-        </div>
-        <form className="bridge-form">
-          <div className="bridge-form-controls">
-            <input ref="amount" type="text" className="bridge-form-input" id="amount" placeholder="0.345" />
-            <Fade in={this.state.reverse}>
-              <label htmlFor="amount" className="bridge-form-label">{currency}</label>
-            </Fade> 
-            <button onClick={this.onTransfer} type="button" className={`bridge-form-button ${reverse}`} />
-          </div>
-          <div className="bridge-form-footer">
-            <Fade in={this.state.reverse}>
-              <p>{netWorkNames}</p>
-             </Fade> 
-          </div>
-        </form>
-        <div className="bridge-network bridge-network_right">
-          <h1 className="bridge-network-name-container">
-            <img src={eth} width="50" height="50" alt="ETH" />
-            <span className="bridge-network-name">
-              Foreign: {this.web3Store.foreignNet.name}({this.web3Store.foreignNet.id})
-            </span>
-          </h1>
-          <p className="label">RPC url</p>
-          <p className="description">{foreignDisplayUrl}</p>
-          <p className="label">Foreign address</p>
-          <p className="description break-all">{this.foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
-          <p className="label">Token address</p>
-          <p className="description break-all">{this.foreignStore.tokenAddress}</p>
-          <p className="label">Current Withdraw limit</p>
-          <p className="description break-all">{this.foreignStore.maxCurrentDeposit} {this.foreignStore.symbol}</p>
-          <p className="label">Maximum Amount Per Transaction limit</p>
-          <p className="description break-all">{this.foreignStore.maxPerTx} {this.foreignStore.symbol}</p>
-          <p className="label">Minimum Amount Per Transaction</p>
-          <p className="description break-all">{this.foreignStore.minPerTx} {this.foreignStore.symbol}</p>
-          <p className="label">Total Supply</p>
-          <p className="description break-all">{this.foreignStore.totalSupply} {this.foreignStore.symbol}</p>
-          <p className="label">Your {this.foreignStore.symbol} Balance</p>
-          <p className="description break-all">{this.foreignStore.balance}</p>
-        </div>
+        <BridgeNetwork
+          isHome={true}
+          networkData={web3Store.homeNet}
+          url={web3Store.HOME_HTTP_PARITY_URL}
+          address={homeStore.HOME_BRIDGE_ADDRESS}
+          currency={homeCurrency}
+          maxCurrentLimit={homeStore.maxCurrentDeposit}
+          maxPerTx={homeStore.maxPerTx}
+          minPerTx={homeStore.minPerTx}
+          totalBalance={homeStore.balance}
+          balance={web3Store.defaultAccount.homeBalance} />
+        <BridgeForm
+          reverse={reverse}
+          currency={formCurrency}
+          from={from}
+          to={to}
+          onTransfer={this.onTransfer}
+          onInputChange={this.handleInputChange('amount')} />
+        <BridgeNetwork
+          isHome={false}
+          networkData={web3Store.foreignNet}
+          url={foreignDisplayUrl}
+          address={foreignStore.FOREIGN_BRIDGE_ADDRESS}
+          currency={foreignStore.symbol}
+          tokenAddress={foreignStore.tokenAddress}
+          maxCurrentLimit={foreignStore.maxCurrentDeposit}
+          maxPerTx={foreignStore.maxPerTx}
+          minPerTx={foreignStore.minPerTx}
+          totalBalance={foreignStore.totalSupply}
+          balance={foreignStore.balance} />
       </div>
-    );
+    )
   }
 }

@@ -4,3 +4,7 @@ export { RelayEvents } from './RelayEvents';
 export { Footer } from './Footer';
 export { SweetAlert } from './SweetAlert';
 export { Loading } from './Loading';
+export { Fade } from './Fade'
+export { BridgeForm } from './BridgeForm'
+export { BridgeNetwork } from './BridgeNetwork'
+export { EventList } from './EventList'
