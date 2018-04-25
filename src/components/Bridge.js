@@ -4,10 +4,10 @@ import Web3Utils from 'web3-utils'
 import swal from 'sweetalert'
 import BN from 'bignumber.js'
 import { BridgeForm } from './index'
+import { BridgeAddress } from './index'
 import { BridgeNetwork } from './index'
 import homeLogo from '../assets/images/logos/logo-poa-sokol.png'
 import foreignLogo from '../assets/images/logos/logo-ethereum.png'
-import walletIcon from '../assets/images/icons/icon-wallet.svg'
 import leftImage from '../assets/images/pattern-1.png'
 import rightImage from '../assets/images/pattern-2.png'
 
@@ -137,88 +137,54 @@ export class Bridge extends React.Component {
   render() {
     const { web3Store, homeStore, foreignStore } = this.props.RootStore
     const { reverse, homeCurrency } = this.state
-    const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
-    const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
     const from = reverse ? web3Store.foreignNet.name : web3Store.homeNet.name
     const to = reverse ? web3Store.homeNet.name : web3Store.foreignNet.name
     return(
       <div>
-        <div className="new_bridge">
+        <div className="bridge">
           <div className="container">
-            <div className="bridge-home">
-              <div className="bridge-home-container">
-                <div className="home-logo-container">
-                  <img className="home-logo" src={homeLogo} alt="Home logo"/>
-                </div>
-              </div>
-              <div className="home-address-container">
-                <img className="icon-wallet" src={walletIcon} alt="wallet icon"/>
-                <div>
-                  <p className="address-label">Home Address</p>
-                  <p className="address-description">{homeStore.HOME_BRIDGE_ADDRESS}</p>
-                </div>
-              </div>
-            </div>
+            <BridgeAddress
+              isHome={true}
+              logo={homeLogo}
+              address={homeStore.HOME_BRIDGE_ADDRESS}
+            />
             <div className="bridge-transfer">
               <div className="left-image-wrapper">
                 <img className="left-image" src={leftImage} alt=""/>
               </div>
-              <div className="bridge-new-form">
-                FORM
+              <div className="bridge-transfer-content">
+                <BridgeNetwork
+                  isHome={true}
+                  showModal={() => {}}
+                  networkData={web3Store.homeNet}
+                  currency={homeCurrency}
+                  balance={web3Store.defaultAccount.homeBalance} />
+                <BridgeForm
+                  reverse={reverse}
+                  currency={formCurrency}
+                  from={from}
+                  to={to}
+                  onTransfer={this.onTransfer}
+                  onInputChange={this.handleInputChange('amount')} />
+                <BridgeNetwork
+                  isHome={false}
+                  showModal={() => {}}
+                  networkData={web3Store.foreignNet}
+                  currency={foreignStore.symbol}
+                  balance={foreignStore.balance} />
               </div>
               <div className="right-image-wrapper">
                 <img className="right-image" src={rightImage} alt=""/>
               </div>
             </div>
-            <div className="bridge-foreign">
-              <div className="foreign-address-container">
-                <div>
-                  <p className="address-label">Foreign Address</p>
-                  <p className="address-description">{foreignStore.FOREIGN_BRIDGE_ADDRESS}</p>
-                </div>
-                <img className="icon-wallet" src={walletIcon} alt="wallet icon"/>
-              </div>
-              <div className="bridge-foreign-container">
-                <div className="foreign-logo-container">
-                  <img className="foreign-logo" src={foreignLogo} alt="Foreign logo"/>
-                </div>
-              </div>
-            </div>
+            <BridgeAddress
+              isHome={false}
+              logo={foreignLogo}
+              address={foreignStore.FOREIGN_BRIDGE_ADDRESS}
+            />
           </div>
         </div>
-        {/*<div className="bridge">
-          <BridgeNetwork
-            isHome={true}
-            networkData={web3Store.homeNet}
-            url={web3Store.HOME_HTTP_PARITY_URL}
-            address={homeStore.HOME_BRIDGE_ADDRESS}
-            currency={homeCurrency}
-            maxCurrentLimit={homeStore.maxCurrentDeposit}
-            maxPerTx={homeStore.maxPerTx}
-            minPerTx={homeStore.minPerTx}
-            totalBalance={homeStore.balance}
-            balance={web3Store.defaultAccount.homeBalance} />
-          <BridgeForm
-            reverse={reverse}
-            currency={formCurrency}
-            from={from}
-            to={to}
-            onTransfer={this.onTransfer}
-            onInputChange={this.handleInputChange('amount')} />
-          <BridgeNetwork
-            isHome={false}
-            networkData={web3Store.foreignNet}
-            url={foreignDisplayUrl}
-            address={foreignStore.FOREIGN_BRIDGE_ADDRESS}
-            currency={foreignStore.symbol}
-            tokenAddress={foreignStore.tokenAddress}
-            maxCurrentLimit={foreignStore.maxCurrentDeposit}
-            maxPerTx={foreignStore.maxPerTx}
-            minPerTx={foreignStore.minPerTx}
-            totalBalance={foreignStore.totalSupply}
-            balance={foreignStore.balance} />
-        </div>*/}
       </div>
     )
   }
