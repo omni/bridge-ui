@@ -13,7 +13,7 @@ export const BridgeAddress = ({ isHome, logo, address}) => {
     :
     (<div className="foreign-address-container">
       <div>
-        <p className="address-label">Home Address</p>
+        <p className="address-label">Foreign Address</p>
         <p className="address-description">{address}</p>
       </div>
       <img className="icon-wallet" src={walletIcon} alt="wallet icon"/>
