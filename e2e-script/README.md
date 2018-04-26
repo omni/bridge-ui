@@ -1,6 +1,7 @@
 ### e2e script for bridge-ui
 Configure startURL, homeAccount, foreignAccount in ```config.json```
 
+
 #### Tests
 
 ```
