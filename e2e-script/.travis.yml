@@ -1,6 +1,7 @@
 language: node_js
 node_js:
-  - "stable"
+  - "8"
+
 sudo: required
 dist: trusty
 addons:
@@ -10,9 +11,8 @@ addons:
     packages:
       - google-chrome-stable
 
-cache:
-  directories:
-  - node_modules
+install:
+
 
 before_script:
 
@@ -25,10 +25,15 @@ before_script:
   - sudo mv -f ~/chromedriver /usr/local/share/
   - sudo chmod +x /usr/local/share/chromedriver
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+  - whereis google-chrome
+  - npm install -g ganache-cli
 
 
 script:
-  - npm run e2e
-  - npm run coverage
+ - ganache-cli & npm run -script tstrpc
+
 after_script:
-  - npm run coveralls
+
+
+after_success:
+

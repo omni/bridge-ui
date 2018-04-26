@@ -1,14 +1,15 @@
 {
-  "name": "poabridgeui",
-  "version": "0.2.0",
+  "name": "bridge",
+  "version": "0.1.0",
   "private": true,
-  "homepage": "https://poanetwork.github.io/",
+  "homepage": "https://poanetwork.github.io/bridge-ui",
   "dependencies": {
     "bignumber.js": "^6.0.0",
     "coveralls": "^3.0.0",
     "gh-pages": "^1.1.0",
     "mobx": "^4.0.2",
     "mobx-react": "^5.0.0",
+    "mocha": "^5.1.1",
     "node-sass-chokidar": "^1.0.1",
     "nodemon": "^1.17.1",
     "npm": "^5.7.1",
@@ -20,7 +21,10 @@
     "react-scripts": "1.1.1",
     "react-transition-group": "^2.2.1",
     "sweetalert": "^2.1.0",
-    "web3": "^1.0.0-beta.30"
+    "web3": "^1.0.0-beta.30",
+    "selenium-webdriver": "^3.6.0",
+    "chromedriver": "^2.35.0",
+    "fs-extra": "^5.0.0"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/assets/stylesheets/application.scss -o src/assets/stylesheets --output-style=compressed",
@@ -28,6 +32,7 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
+    "e2e": "mocha -b ./e2e-script/test.js",
     "coverage": "react-app-rewired test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-app-rewired eject",
