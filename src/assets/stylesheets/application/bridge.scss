@@ -6,13 +6,10 @@
 }
 
 .bridge {
-
-  .container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 
   .bridge-home {
     width: 960px;
@@ -33,7 +30,7 @@
       .home-logo-container {
         height: 100%;
         border-radius: 10px;
-        border-bottom-right-radius: 0px;
+        border-bottom-right-radius: 0;
         background-color: #5c34a2;
         display: flex;
         justify-content: center;
@@ -78,7 +75,7 @@
       .foreign-logo-container {
         height: 100%;
         border-radius: 10px;
-        border-top-left-radius: 0px;
+        border-top-left-radius: 0;
         background-color: #7b5ab2;
         display: flex;
         justify-content: center;
@@ -178,6 +175,7 @@
 
       @media screen and (max-width: $mobile-width) {
         max-width: 92%;
+        flex-direction: column;
       }
 
       .network-container-home {
@@ -188,6 +186,10 @@
         flex-direction: column;
         padding: 30px 1% 30px 5%;
         align-items: flex-start;
+
+        @media screen and (max-width: $mobile-width) {
+          width: 80%;
+        }
       }
 
       .network-container-foreign {
@@ -198,6 +200,10 @@
         flex-direction: column;
         padding: 30px 5% 30px 1%;
         align-items: flex-end;
+
+        @media screen and (max-width: $mobile-width) {
+          width: 90%;
+        }
       }
 
       .bridge-network-data {
@@ -257,6 +263,10 @@
         width: 44%;
         max-width: 384px;
         height: 216px;
+
+        @media screen and (max-width: $mobile-width) {
+          width: 100%;
+        }
 
         .bridge-form {
           height: 156px;
@@ -329,5 +339,25 @@
       }
 
     }
+  }
+
+  .bridge-statistics-container {
+    align-self: center;
+    margin-top: 60px;
+
+    @media screen and (max-height: 720px) {
+      margin-top: 30px;
+    }
+  }
+
+  .bridge-statistics {
+    width: 960px;
+    display: flex;
+    justify-content: space-around;
+
+    @media screen and (max-width: $mobile-width) {
+      width: 100%;
+    }
+
   }
 }

@@ -78,3 +78,34 @@ strong {
 .break-all {
   word-break: break-all;
 }
+
+.separator {
+  width: 1px;
+  height: 51px;
+  background-color: #e4e4e4;
+}
+
+.datablock-container {
+  height: 60px;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: column;
+  align-items: center;
+
+  .datablock-value {
+    font-size: 30px;
+    font-weight: bold;
+    color: #5c34a2;
+  }
+
+  .datablock-type {
+    font-size: 18px;
+    color: #5c34a2;
+    margin-left: 10px;
+  }
+
+  .datablock-description {
+    font-size: 14px;
+    color: #333333;
+  }
+}

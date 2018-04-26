@@ -6,14 +6,11 @@ import BN from 'bignumber.js'
 import { BridgeForm } from './index'
 import { BridgeAddress } from './index'
 import { BridgeNetwork } from './index'
+import { BridgeStatistics } from './index'
 import homeLogo from '../assets/images/logos/logo-poa-sokol.png'
 import foreignLogo from '../assets/images/logos/logo-ethereum.png'
 import leftImage from '../assets/images/pattern-1.png'
 import rightImage from '../assets/images/pattern-2.png'
-
-
-
-
 
 @inject("RootStore")
 @observer
@@ -141,49 +138,51 @@ export class Bridge extends React.Component {
     const from = reverse ? web3Store.foreignNet.name : web3Store.homeNet.name
     const to = reverse ? web3Store.homeNet.name : web3Store.foreignNet.name
     return(
-      <div>
-        <div className="bridge">
-          <div className="container">
-            <BridgeAddress
-              isHome={true}
-              logo={homeLogo}
-              address={homeStore.HOME_BRIDGE_ADDRESS}
-            />
-            <div className="bridge-transfer">
-              <div className="left-image-wrapper">
-                <img className="left-image" src={leftImage} alt=""/>
-              </div>
-              <div className="bridge-transfer-content">
-                <BridgeNetwork
-                  isHome={true}
-                  showModal={() => {}}
-                  networkData={web3Store.homeNet}
-                  currency={homeCurrency}
-                  balance={web3Store.defaultAccount.homeBalance} />
-                <BridgeForm
-                  reverse={reverse}
-                  currency={formCurrency}
-                  from={from}
-                  to={to}
-                  onTransfer={this.onTransfer}
-                  onInputChange={this.handleInputChange('amount')} />
-                <BridgeNetwork
-                  isHome={false}
-                  showModal={() => {}}
-                  networkData={web3Store.foreignNet}
-                  currency={foreignStore.symbol}
-                  balance={foreignStore.balance} />
-              </div>
-              <div className="right-image-wrapper">
-                <img className="right-image" src={rightImage} alt=""/>
-              </div>
-            </div>
-            <BridgeAddress
-              isHome={false}
-              logo={foreignLogo}
-              address={foreignStore.FOREIGN_BRIDGE_ADDRESS}
-            />
+      <div className="bridge">
+        <BridgeAddress
+          isHome={true}
+          logo={homeLogo}
+          address={homeStore.HOME_BRIDGE_ADDRESS} />
+        <div className="bridge-transfer">
+          <div className="left-image-wrapper">
+            <img className="left-image" src={leftImage} alt=""/>
           </div>
+          <div className="bridge-transfer-content">
+            <BridgeNetwork
+              isHome={true}
+              showModal={() => {}}
+              networkData={web3Store.homeNet}
+              currency={homeCurrency}
+              balance={web3Store.defaultAccount.homeBalance} />
+            <BridgeForm
+              reverse={reverse}
+              currency={formCurrency}
+              from={from}
+              to={to}
+              onTransfer={this.onTransfer}
+              onInputChange={this.handleInputChange('amount')} />
+            <BridgeNetwork
+              isHome={false}
+              showModal={() => {}}
+              networkData={web3Store.foreignNet}
+              currency={foreignStore.symbol}
+              balance={foreignStore.balance} />
+          </div>
+          <div className="right-image-wrapper">
+            <img className="right-image" src={rightImage} alt=""/>
+          </div>
+        </div>
+        <BridgeAddress
+          isHome={false}
+          logo={foreignLogo}
+          address={foreignStore.FOREIGN_BRIDGE_ADDRESS} />
+        <div className="bridge-statistics-container">
+          <BridgeStatistics
+            gasValue={'454600'} // TODO
+            users={'10280'} // TODO
+            totalBridged={'275.15157657'} // TODO
+            homeBalance={web3Store.defaultAccount.homeBalance}
+            foreignSupply={foreignStore.totalSupply} />
         </div>
       </div>
     )
