@@ -7,8 +7,12 @@ import { BridgeForm } from './index'
 import { BridgeAddress } from './index'
 import { BridgeNetwork } from './index'
 import { BridgeStatistics } from './index'
+import { ModalContainer } from './ModalContainer'
+import { NetworkDetails } from './NetworkDetails'
 import homeLogo from '../assets/images/logos/logo-poa-sokol.png'
 import foreignLogo from '../assets/images/logos/logo-ethereum.png'
+import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple.png'
+import foreignLogoPurple from '../assets/images/logos/logo-ethereum-purple.png'
 import leftImage from '../assets/images/pattern-1.png'
 import rightImage from '../assets/images/pattern-2.png'
 
@@ -18,7 +22,9 @@ export class Bridge extends React.Component {
   state = {
     reverse: false,
     homeCurrency: 'POA',
-    amount:''
+    amount:'',
+    modalData: {},
+    showModal: false
   }
 
   handleInputChange = name => event => {
@@ -131,9 +137,52 @@ export class Bridge extends React.Component {
     }
   }
 
+  loadHomeDetails = () => {
+    const { web3Store, homeStore } = this.props.RootStore
+    const { homeCurrency } = this.state
+
+    const modalData = {
+      isHome: true,
+      networkData: web3Store.homeNet,
+      url: web3Store.HOME_HTTP_PARITY_URL,
+      logo: homeLogoPurple,
+      address: homeStore.HOME_BRIDGE_ADDRESS,
+      currency: homeCurrency,
+      maxCurrentLimit: homeStore.maxCurrentDeposit,
+      maxPerTx: homeStore.maxPerTx,
+      minPerTx: homeStore.minPerTx,
+      totalBalance: homeStore.balance,
+      balance: web3Store.defaultAccount.homeBalance
+    }
+
+    this.setState({ modalData, showModal: true })
+  }
+
+  loadForeignDetails = () => {
+    const { web3Store, foreignStore } = this.props.RootStore
+    const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
+    const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
+
+    const modalData = {
+      isHome: false,
+      networkData: web3Store.foreignNet,
+      url: foreignDisplayUrl,
+      logo: foreignLogoPurple,
+      address: foreignStore.FOREIGN_BRIDGE_ADDRESS,
+      currency: foreignStore.symbol,
+      maxCurrentLimit: foreignStore.maxCurrentDeposit,
+      maxPerTx: foreignStore.maxPerTx,
+      minPerTx: foreignStore.minPerTx,
+      totalBalance: foreignStore.totalSupply,
+      balance: foreignStore.balance
+    }
+
+    this.setState({ modalData, showModal: true })
+  }
+
   render() {
     const { web3Store, homeStore, foreignStore } = this.props.RootStore
-    const { reverse, homeCurrency } = this.state
+    const { reverse, homeCurrency, showModal, modalData } = this.state
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
     const from = reverse ? web3Store.foreignNet.name : web3Store.homeNet.name
     const to = reverse ? web3Store.homeNet.name : web3Store.foreignNet.name
@@ -150,7 +199,7 @@ export class Bridge extends React.Component {
           <div className="bridge-transfer-content">
             <BridgeNetwork
               isHome={true}
-              showModal={() => {}}
+              showModal={this.loadHomeDetails}
               networkData={web3Store.homeNet}
               currency={homeCurrency}
               balance={web3Store.defaultAccount.homeBalance} />
@@ -163,7 +212,7 @@ export class Bridge extends React.Component {
               onInputChange={this.handleInputChange('amount')} />
             <BridgeNetwork
               isHome={false}
-              showModal={() => {}}
+              showModal={this.loadForeignDetails}
               networkData={web3Store.foreignNet}
               currency={foreignStore.symbol}
               balance={foreignStore.balance} />
@@ -184,6 +233,12 @@ export class Bridge extends React.Component {
             homeBalance={web3Store.defaultAccount.homeBalance}
             foreignSupply={foreignStore.totalSupply} />
         </div>
+        <ModalContainer
+          hideModal={() => {this.setState({showModal: false})}}
+          showModal={showModal}
+        >
+          <NetworkDetails {...modalData}/>
+        </ModalContainer>
       </div>
     )
   }

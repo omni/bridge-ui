@@ -360,4 +360,18 @@
     }
 
   }
+
+  .network-details {
+    display: flex;
+    flex-direction: column;
+    min-width: 558px;
+
+    .details-logo-container {
+      background-color: #ffffff;
+    }
+
+    .details-body {
+      background-color: #ffffff;
+    }
+  }
 }
