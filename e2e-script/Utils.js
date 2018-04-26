@@ -20,7 +20,6 @@ class Utils {
 	static  getForeignAccount() {
 		try {
 			let obj = JSON.parse(fs.readFileSync(configFile), "utf8");
-			console.log(obj.foreignAccount);
 			return obj.foreignAccount;
 		}
 			catch (err) {

@@ -10,7 +10,7 @@ const MainPage=mnPage.MainPage;
 const user=require("./User.js");
 const User=user.User;
 
-test.describe('POA token-wizard. Test suite #1',  async function() {
+test.describe('e2e-test for bridge-ui, version 0.0.1"',  async function() {
 	this.timeout(2400000);//40 min
 	this.slow(1800000);
 
@@ -27,7 +27,6 @@ test.describe('POA token-wizard. Test suite #1',  async function() {
 
 	test.before( async function() {
 
-		console.log("e2e-test for bridge-ui, version 0.0.1");
 		driver = await Utils.startBrowserWithMetamask();
 		mainPage = new MainPage(driver);
 		homeAccount = new User (driver,Utils.getHomeAccount());
