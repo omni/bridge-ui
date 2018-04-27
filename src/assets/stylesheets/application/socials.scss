@@ -14,8 +14,8 @@
     vertical-align: top;
     width: 30px;
     height: 30px;
-    border-radius: 50%;
-    background-color: fade-out(#fff, 0.8);
+    border-radius: 3px;
+    background-color: #ffffff;
 
     &:not(:first-child) {
       margin-left: 10px;
@@ -26,52 +26,39 @@
     }
 
     &:before {
-      @include image-2x('../images/socials@2x.png', 16px, 69px);
       transform: translate(-50%, -50%);
-      content: '';
       position: absolute;
       left: 50%;
       top: 50%;
-      background-image: url(../images/socials.png);
     }
 
     &_github {
       &:before {
+        @include image-2x('../images/socials/git@2x.png', 16px, 16px);
+        content: '';
+        background-image: url(../images/socials/git.png);
         width: 16px;
         height: 16px;
-        background-position: 0 0;
-      }
-    }
-
-    &_oracles {
-      &:before {
-        width: 16px;
-        height: 14px;
-        background-position: 0 -16px;
-      }
-    }
-
-    &_reddit {
-      &:before {
-        width: 15px;
-        height: 13px;
-        background-position: 0 -30px;
       }
     }
 
     &_telegram {
       &:before {
+        @include image-2x('../images/socials/telegram@2x.png', 16px, 14px);
+        background-image: url(../images/socials/telegram.png);
+        content: '';
         width: 16px;
         height: 14px;
-        background-position: 0 -43px;
       }
     }
 
     &_twitter {
       &:before {
+        @include image-2x('../images/socials/tw@2x.png', 15px, 12px);
+        background-image: url(../images/socials/tw.png);
+        content: '';
         width: 15px;
         height: 12px;
-        background-position: 0 -57px;
       }
     }
   }
