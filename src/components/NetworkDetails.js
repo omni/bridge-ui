@@ -1,4 +1,6 @@
 import React from 'react'
+import copyIcon from '../assets/images/icons/copy.svg'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 export const NetworkDetails = ({
   isHome,
@@ -24,20 +26,39 @@ export const NetworkDetails = ({
           <img className={logoClass} src={logo} alt="home logo"/>
       </div>
       <div className="details-body">
-          <p className="label">RPC Url</p>
-          <p className="description">{url}</p>
-          <p className="label">{networkTitle} Address</p>
-          <p className="description break-all">{address}</p>
-          <p className="label">Current {action} Limit</p>
-          <p className="description break-all">{maxCurrentLimit} {currency}</p>
-          <p className="label">Maximum Amount Per Transaction Limit</p>
-          <p className="description break-all">{maxPerTx} {currency}</p>
-          <p className="label">Minimum Amount Per Transaction</p>
-          <p className="description break-all">{minPerTx} {currency}</p>
-          <p className="label">Total Contract Balance</p>
-          <p className="description break-all">{totalBalance} {currency}</p>
-          <p className="label">Your {currency} Balance</p>
-          <p className="description break-all">{balance}</p>
+        <p className="details-data-container">
+          <span className="details-label">RPC Url</span>
+          <span className="details-description">{url}</span>
+        </p>
+        <p className="details-data-container">
+          <span className="details-label">{networkTitle} Address</span>
+          <CopyToClipboard text={address}>
+            <span className="details-description details-copy">
+              {address.slice(0,27).concat('...')}
+              <img className="info-icon-right" src={copyIcon} alt=""/>
+            </span>
+          </CopyToClipboard>
+        </p>
+        <p className="details-data-container">
+          <span className="details-label">Current {action} Limit</span>
+          <span className="details-description-bold">{maxCurrentLimit} {currency}</span>
+        </p>
+        <p className="details-data-container">
+          <span className="details-label">Maximum Amount Per Transaction Limit</span>
+          <span className="details-description-bold">{maxPerTx} {currency}</span>
+        </p>
+        <p className="details-data-container">
+          <span className="details-label">Minimum Amount Per Transaction</span>
+          <span className="details-description-bold">{minPerTx} {currency}</span>
+        </p>
+        <p className="details-data-container">
+          <span className="details-label">Total Contract Balance</span>
+          <span className="details-description-bold">{totalBalance} {currency}</span>
+        </p>
+        <p className="details-data-container">
+          <span className="details-label">Your {currency} Balance</span>
+          <span className="details-description-bold">{balance} {currency}</span>
+        </p>
       </div>
     </div>
   )

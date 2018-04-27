@@ -1,5 +1,4 @@
 import React from 'react'
-import walletIcon from '../assets/images/icons/icon-wallet.svg'
 
 export const BridgeAddress = ({ isHome, logo}) => {
   const getAddress = () => isHome ?
