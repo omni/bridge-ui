@@ -1,23 +1,11 @@
 import React from 'react'
 import walletIcon from '../assets/images/icons/icon-wallet.svg'
 
-export const BridgeAddress = ({ isHome, logo, address}) => {
+export const BridgeAddress = ({ isHome, logo}) => {
   const getAddress = () => isHome ?
-    (<div className="home-address-container">
-      <img className="icon-wallet" src={walletIcon} alt="wallet icon"/>
-      <div>
-        <p className="address-label">Home Address</p>
-        <p className="address-description">{address}</p>
-      </div>
-    </div>)
+    (<div className="home-address-container" />)
     :
-    (<div className="foreign-address-container">
-      <div>
-        <p className="address-label">Foreign Address</p>
-        <p className="address-description">{address}</p>
-      </div>
-      <img className="icon-wallet" src={walletIcon} alt="wallet icon"/>
-    </div>)
+    (<div className="foreign-address-container" />)
 
   return isHome ?
     (<div className="bridge-home">

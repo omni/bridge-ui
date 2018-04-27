@@ -16,7 +16,7 @@ body {
   width: 100%;
   box-sizing: border-box;
   padding-bottom: $footer-height_desktop;
-  background-color: #fbfbfc;
+  background-color: #ffffff;
 
   @media screen and (max-width: $tablet-width) {
     padding-bottom: $footer-height_mobile;
@@ -107,4 +107,11 @@ strong {
     font-size: 14px;
     color: #333333;
   }
+}
+
+.app-container {
+  position: relative;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }

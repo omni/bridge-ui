@@ -10,7 +10,7 @@ import { BridgeStatistics } from './index'
 import { ModalContainer } from './ModalContainer'
 import { NetworkDetails } from './NetworkDetails'
 import homeLogo from '../assets/images/logos/logo-poa-sokol.png'
-import foreignLogo from '../assets/images/logos/logo-ethereum.png'
+import foreignLogo from '../assets/images/logos/logo-poa-20.png'
 import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple.png'
 import foreignLogoPurple from '../assets/images/logos/logo-ethereum-purple.png'
 import leftImage from '../assets/images/pattern-1.png'
@@ -181,64 +181,52 @@ export class Bridge extends React.Component {
   }
 
   render() {
-    const { web3Store, homeStore, foreignStore } = this.props.RootStore
+    const { web3Store, foreignStore } = this.props.RootStore
     const { reverse, homeCurrency, showModal, modalData } = this.state
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
-    const from = reverse ? web3Store.foreignNet.name : web3Store.homeNet.name
-    const to = reverse ? web3Store.homeNet.name : web3Store.foreignNet.name
     return(
-      <div className="bridge">
-        <BridgeAddress
-          isHome={true}
-          logo={homeLogo}
-          address={homeStore.HOME_BRIDGE_ADDRESS} />
-        <div className="bridge-transfer">
-          <div className="left-image-wrapper">
-            <img className="left-image" src={leftImage} alt=""/>
+      <div className="bridge-container">
+        <div className="bridge">
+          <BridgeAddress
+            isHome={true}
+            logo={homeLogo} />
+          <div className="bridge-transfer">
+            <div className="left-image-wrapper">
+              <img className="left-image" src={leftImage} alt=""/>
+            </div>
+            <div className="bridge-transfer-content">
+              <BridgeNetwork
+                isHome={true}
+                showModal={this.loadHomeDetails}
+                networkData={web3Store.homeNet}
+                currency={homeCurrency}
+                balance={web3Store.defaultAccount.homeBalance} />
+              <BridgeForm
+                reverse={reverse}
+                currency={formCurrency}
+                onTransfer={this.onTransfer}
+                onInputChange={this.handleInputChange('amount')} />
+              <BridgeNetwork
+                isHome={false}
+                showModal={this.loadForeignDetails}
+                networkData={web3Store.foreignNet}
+                currency={foreignStore.symbol}
+                balance={foreignStore.balance} />
+            </div>
+            <div className="right-image-wrapper">
+              <img className="right-image" src={rightImage} alt=""/>
+            </div>
           </div>
-          <div className="bridge-transfer-content">
-            <BridgeNetwork
-              isHome={true}
-              showModal={this.loadHomeDetails}
-              networkData={web3Store.homeNet}
-              currency={homeCurrency}
-              balance={web3Store.defaultAccount.homeBalance} />
-            <BridgeForm
-              reverse={reverse}
-              currency={formCurrency}
-              from={from}
-              to={to}
-              onTransfer={this.onTransfer}
-              onInputChange={this.handleInputChange('amount')} />
-            <BridgeNetwork
-              isHome={false}
-              showModal={this.loadForeignDetails}
-              networkData={web3Store.foreignNet}
-              currency={foreignStore.symbol}
-              balance={foreignStore.balance} />
-          </div>
-          <div className="right-image-wrapper">
-            <img className="right-image" src={rightImage} alt=""/>
-          </div>
+          <BridgeAddress
+            isHome={false}
+            logo={foreignLogo} />
+          <ModalContainer
+            hideModal={() => {this.setState({showModal: false})}}
+            showModal={showModal}
+          >
+            <NetworkDetails {...modalData}/>
+          </ModalContainer>
         </div>
-        <BridgeAddress
-          isHome={false}
-          logo={foreignLogo}
-          address={foreignStore.FOREIGN_BRIDGE_ADDRESS} />
-        <div className="bridge-statistics-container">
-          <BridgeStatistics
-            gasValue={'454600'} // TODO
-            users={'10280'} // TODO
-            totalBridged={'275.15157657'} // TODO
-            homeBalance={web3Store.defaultAccount.homeBalance}
-            foreignSupply={foreignStore.totalSupply} />
-        </div>
-        <ModalContainer
-          hideModal={() => {this.setState({showModal: false})}}
-          showModal={showModal}
-        >
-          <NetworkDetails {...modalData}/>
-        </ModalContainer>
       </div>
     )
   }

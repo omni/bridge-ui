@@ -3,6 +3,9 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
+  height: 80vh;
+  display: flex;
+  align-items: center;
 }
 
 .bridge {
@@ -25,7 +28,7 @@
     .bridge-home-container {
       width: 9%;
       min-width: 60px;
-      background-image: linear-gradient(to right, rgba(251,251,252, 1), rgba(251,251,252, 0.9));
+      background-color: #ffffff;
 
       .home-logo-container {
         height: 100%;
@@ -46,7 +49,7 @@
     .home-address-container {
       width: 92%;
       border-bottom-left-radius: 10px;
-      background-image: linear-gradient(to right, rgba(251,251,252, 0.9), rgba(251,251,252, 1));
+      background-color: #ffffff;
       display: flex;
       align-items: center;
 
@@ -70,7 +73,7 @@
     .bridge-foreign-container {
       width: 9%;
       min-width: 60px;
-      background-image: linear-gradient(to right, rgba(251,251,252, 0.9), rgba(251,251,252, 1));
+      background-color: #ffffff;
 
       .foreign-logo-container {
         height: 100%;
@@ -82,8 +85,8 @@
         align-items: center;
 
         .foreign-logo {
-          width: 28px;
-          height: 44px;
+          width: 54px;
+          height: 11px;
         }
       }
     }
@@ -91,7 +94,7 @@
     .foreign-address-container {
       width: 92%;
       border-top-right-radius: 10px;
-      background-image: linear-gradient(to right, rgba(251,251,252, 1), rgba(251,251,252, 0.9));
+      background-color: #ffffff;
       display: flex;
       justify-content: flex-end;
       align-items: center;
@@ -120,7 +123,7 @@
   }
 
   .bridge-transfer {
-    height: 216px;
+    height: 276px;
     display: flex;
     justify-content: center;
 
@@ -132,11 +135,11 @@
       background-color: #5c34a2;
 
       .left-image {
-        max-width: 272px;
-        height: 204px;
-        padding-top: 12px;
-        padding-right: 10px;
-        background-color: #fbfbfc;
+        max-width: 238px;
+        height: 271px;
+        padding-top: 5px;
+        padding-right: 5px;
+        background-color: #ffffff;
         border-top-right-radius: 10px;
 
         @media screen and (max-width: $mobile-width) {
@@ -150,11 +153,11 @@
 
 
       .right-image {
-        max-width: 272px;
-        height: 204px;
-        padding-bottom: 12px;
-        padding-left: 10px;
-        background-color: #fbfbfc;
+        max-width: 238px;
+        height: 271px;
+        padding-bottom: 5px;
+        padding-left: 5px;
+        background-color: #ffffff;
         border-bottom-left-radius: 10px;
 
         @media screen and (max-width: $mobile-width) {
@@ -180,11 +183,11 @@
 
       .network-container-home {
         width: 22%;
-        height: 156px;
+        height: 136px;
         display: flex;
         justify-content: space-evenly;
         flex-direction: column;
-        padding: 30px 1% 30px 5%;
+        padding: 70px 1% 70px 5%;
         align-items: flex-start;
 
         @media screen and (max-width: $mobile-width) {
@@ -194,11 +197,11 @@
 
       .network-container-foreign {
         width: 22%;
-        height: 156px;
+        height: 136px;
         display: flex;
         justify-content: space-evenly;
         flex-direction: column;
-        padding: 30px 5% 30px 1%;
+        padding: 70px 5% 70px 1%;
         align-items: flex-end;
 
         @media screen and (max-width: $mobile-width) {
@@ -218,6 +221,12 @@
       }
 
       .network-name {
+        padding-left: 5px;
+        font-size: 24px;
+        color: #ffffff;
+      }
+
+      .network-title {
         font-size: 24px;
         font-weight: bold;
         color: #ffffff;
@@ -259,21 +268,32 @@
         margin-left: 10px;
       }
 
+      .transfer-right {
+        background-image: url("../images/arrows-1.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
+      .transfer-left {
+        background-image: url("../images/arrows-2.svg");
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+
       .form-container {
         width: 44%;
         max-width: 384px;
-        height: 216px;
+        height: 276px;
 
         @media screen and (max-width: $mobile-width) {
           width: 100%;
         }
 
         .bridge-form {
-          height: 156px;
+          height: 276px;
           display: flex;
           flex-direction: column;
           justify-content: space-evenly;
-          padding: 30px 0 30px 0;
 
           @media screen and (max-width: 650px) {
             width: 100%;
@@ -309,7 +329,8 @@
 
           &-label {
             margin: 0 10px;
-            color: rgba(255, 255, 255, 0.5);
+            color: #ffffff;
+            font-weight: bold;
             text-transform: uppercase;
             font-size: 24px;
             line-height: 48px;
