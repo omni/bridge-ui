@@ -1,5 +1,6 @@
 import { action, observable } from "mobx";
 import { estimateGas } from './utils/web3'
+import { addPendingTransaction } from './utils/testUtils'
 
 class TxStore {
   @observable txs = []
@@ -34,6 +35,7 @@ class TxStore {
           console.log('txHash', hash)
           this.txHashToIndex[hash] = index;
           this.txs[index] = {status: 'pending', name: `Sending ${to} ${value}`, hash}
+          addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
           this.alertStore.pushError(e.message);

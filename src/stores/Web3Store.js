@@ -1,5 +1,6 @@
 import { action, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
+import { balanceLoaded } from './utils/testUtils'
 
 class Web3Store {
   @observable injectedWeb3 = {};
@@ -53,6 +54,7 @@ class Web3Store {
     try {
       this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
       this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
+      balanceLoaded()
     } catch(e){
       this.alertStore.pushError(e)
     }

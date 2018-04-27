@@ -2,6 +2,7 @@ import { action, observable } from 'mobx';
 import HOME_ABI from '../abis/HomeBridge.json';
 import { getBlockNumber, getBalance } from './utils/web3'
 import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
+import { removePendingTransaction } from './utils/testUtils'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -103,6 +104,10 @@ class HomeStore {
           this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.homeNet.name} for Tx ${event.returnValues.transactionHash}`)
           this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
+
+        if(confirmationEvents.length) {
+          removePendingTransaction()
+        }
       }
 
       return homeEvents
