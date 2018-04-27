@@ -4,96 +4,86 @@ const page=require('./Page.js');
 const Page=page.Page;
 const by = require('selenium-webdriver/lib/by');
 const By=by.By;
-
 const fieldAmount = By.id("amount");
-const buttonSend = By.className("bridge-form-button ");
+const buttonTransfer = By.className("bridge-form-button ");
 const buttonOk = By.className("swal-button swal-button--confirm");
-const fieldsDescription = By.className("description break-all");
-
+const fieldsBalance = By.className("network-balance");
+const classWeb3Loaded = By.className("web3-loaded");
+const classPendingTransaction = By.className("pending-transaction");
 class MainPage extends Page {
+  constructor(driver){
+    super(driver);
+	this.url;
+	this.fieldHomePOABalance;
+	this.fieldForeignPOABalance;
+  }
 
-	constructor(driver){
-		super(driver);
-		this.url;
-		this.fieldHomePOABalance;
-		this.fieldForeignPOABalance;
+  async initFieldsBalance() {
+    if (!(await this.waitUntilWeb3Loaded())) return null;
+	try {
+	 let array;
+	 array = await super.findWithWait(fieldsBalance);
+	 this.fieldHomePOABalance = array[0];
+	 this.fieldForeignPOABalance = array[1];
+	 return array;
+	} catch(err) {
+	  return null;
 	}
+  }
 
-	async initFields() {
-		await this.driver.sleep(500);
-		try {
-		const locator = fieldsDescription;
-		let array;
-		let counter = 60
-		do {
-			array = await super.findWithWait(locator);
+  async getHomePOABalance() {
+    await this.initFieldsBalance();
+	return parseFloat(await  this.fieldHomePOABalance.getText());
+  }
 
-		}
-		while (array.length<13);
-		this.fieldHomePOABalance = array[5];
-		this.fieldForeignPOABalance = array[12];
-        return array;
-		}
-		catch(err) {
-			return null;
-		}
+  async getForeignPOABalance() {
+	await this.initFieldsBalance();
+	return parseFloat(await  this.fieldForeignPOABalance.getText());
+  }
+
+  async fillFieldAmount(amount) {
+    try {
+      await super.fillWithWait(fieldAmount,amount);
+	  return true;
+	} catch (err) {
+	  return false;
 	}
+  }
 
-	async getHomePOABalance() {
-		let result;
-		do {
-			await this.initFields();
-			result = parseFloat(await  this.fieldHomePOABalance.getText());
-		}
-		while(isNaN(result));
-		return  result;
+  async clickButtonTransfer() {
+    return await super.clickWithWait(buttonTransfer);
+  }
 
-	}
+  async clickButtonOk() {
+	return await super.clickWithWait(buttonOk);
+  }
 
-	async getForeignPOABalance() {
+  async isPresentButtonOk() {
+    return await super.isElementDisplayed(buttonOk,180);
+  }
 
-		let result;
-		do {
-			await this.initFields();
-			result = parseFloat(await  this.fieldForeignPOABalance.getText());
-		}
-		while(isNaN(result));
-		return  result;
-	}
+  async waitUntilWeb3Loaded() {
+    return await this.waitUntilLocated(classWeb3Loaded,180);
+  }
 
-	async fillFieldAmount(amount){
-		try{
+  async isPendingTransaction() {
+    return await super.isElementLocated(classPendingTransaction);
+  }
 
-			//await super.clearField(fieldAmount);
-			await super.fillWithWait(fieldAmount,amount);
-			return true;
-		}
-		catch (err) {
-			return false;
-		}
-	}
+  async waitUntilTransactionDone() {
+    let counter = 60;
+	do {
+      await this.driver.sleep(500);
+      if (counter--<0) return false;
+	} while(await this.isPendingTransaction());
+	return true;
+  }
 
-	async clickButtonSend(){
-
-		return await super.clickWithWait(buttonSend);
-
-	}
-	async clickButtonOk(){
-
-		return await super.clickWithWait(buttonOk);
-
-	}
-
-	async isPresentButtonOk() {
-
-		return await super.waitUntilLocated(buttonOk);
-	}
-
-
+  async waitUntilButtonOkPresent() {
+    return await super.waitUntilDisplayed(buttonOk, 180);
+  }
 
 }
 module.exports={
-	MainPage:MainPage
-
-
-}
+  MainPage:MainPage
+};
