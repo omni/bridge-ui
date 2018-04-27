@@ -396,6 +396,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      .home-logo {
+        width: 52px;
+        height: 16px;
+      }
+
+      .foreign-logo {
+        width: 54px;
+        height: 11px;
+      }
     }
 
     .details-logo-container:after {
