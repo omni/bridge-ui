@@ -1,16 +1,69 @@
 .header {
   width: 100%;
-  margin-bottom: 40px;
   padding: 22px 0;
-  background-image: url(../images/bg.png);
+  background-color: #5c34a2;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
 
+  .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
   &-logo {
-    @extend %logos;
-    width: 182px;
-  	height: 35px;
+    display: block;
+    background-image: url(../images/logos/logo-top.png);
+    @include image-2x('../images/logos/logo-top@2x.png', 162px, 26px);
+    width: 162px;
+  	height: 26px;
   	background-position: 0 -24px;
   }
+
+
+  .links_container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    @media screen and (max-width: $mobile-width) {
+      margin-top: 20px;
+    }
+  }
+
+  .link {
+    margin-left: 30px;
+    line-height: 16px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #ffffff;
+  }
+
+  .link_text {
+    margin-left: 10px;
+  }
+
+  .icon_events {
+    width: 18px;
+    height: 16px;
+    background-image: url(../images/icons/icon-events.svg);
+    float: left;
+  }
+
+  .icon_status {
+    width: 18px;
+    height: 18px;
+    background-image: url(../images/icons/icon-status.svg);
+    float: left;
+  }
+
+  .icon_statistics {
+    width: 18px;
+    height: 18px;
+    background-image: url(../images/icons/icon-statistics.svg);
+    float: left;
+  }
+
 }

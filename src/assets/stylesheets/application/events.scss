@@ -1,3 +1,7 @@
+.events-container {
+  margin-top: 40px;
+}
+
 .events {
   @extend %flex-between;
   margin-bottom: 20px;

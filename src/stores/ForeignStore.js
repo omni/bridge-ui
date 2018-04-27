@@ -107,11 +107,7 @@ class ForeignStore {
     try {
       this.totalSupply = await getTotalSupply(this.tokenContract)
       this.web3Store.getWeb3Promise.then(async () => {
-        if(this.web3Store.defaultAccount.address && this.web3Store.metamaskNet.name === this.web3Store.foreignNet.name){
-          this.balance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
-        } else {
-          this.balance = `Please point metamask to ${this.web3Store.foreignNet.name}\n`
-        }
+        this.balance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
       })
     } catch(e) {
       console.error(e)

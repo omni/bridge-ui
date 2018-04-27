@@ -44,12 +44,12 @@ const getWeb3 = () => {
 export default getWeb3
 
 const networks = {
-  1: 'Foundation',
+  1: 'Main Net',
   3: 'Ropsten',
   4: 'Rinkeby',
-  42: 'Kovan',
-  77: 'POA Sokol',
-  99: 'POA Core'
+  42:'Kovan',
+  77:'Sokol',
+  99:'Main Net'
 }
 
 export const getNetworkName = (id) => networks[id] || 'Unknown'
