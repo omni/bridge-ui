@@ -13,6 +13,7 @@ import {
   getSymbol,
   getMessage
 } from './utils/contract'
+import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -112,6 +113,7 @@ class ForeignStore {
         } else {
           this.balance = `Please point metamask to ${this.web3Store.foreignNet.name}\n`
         }
+        balanceLoaded()
       })
     } catch(e) {
       console.error(e)
@@ -141,6 +143,10 @@ class ForeignStore {
           this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} for Tx ${event.returnValues.transactionHash}`)
           this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
+
+        if(confirmationEvents.length) {
+          removePendingTransaction()
+        }
       }
 
       return events
