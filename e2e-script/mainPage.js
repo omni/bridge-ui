@@ -1,15 +1,13 @@
-const utils=require('./Utils.js');
-const Utils=utils.Utils;
-const page=require('./Page.js');
-const Page=page.Page;
-const by = require('selenium-webdriver/lib/by');
-const By=by.By;
+const Page=require('./Page.js').Page;
+const By = require('selenium-webdriver/lib/by').By;
 const fieldAmount = By.id("amount");
 const buttonTransfer = By.className("bridge-form-button ");
 const buttonOk = By.className("swal-button swal-button--confirm");
 const fieldsBalance = By.className("network-balance");
 const classWeb3Loaded = By.className("web3-loaded");
 const classPendingTransaction = By.className("pending-transaction");
+const loadingContainer = By.className("loading-container");
+
 class MainPage extends Page {
   constructor(driver){
     super(driver);
@@ -21,11 +19,11 @@ class MainPage extends Page {
   async initFieldsBalance() {
     if (!(await this.waitUntilWeb3Loaded())) return null;
 	try {
-	 let array;
-	 array = await super.findWithWait(fieldsBalance);
-	 this.fieldHomePOABalance = array[0];
-	 this.fieldForeignPOABalance = array[1];
-	 return array;
+	  let array;
+	  array = await super.findWithWait(fieldsBalance);
+	  this.fieldHomePOABalance = array[0];
+	  this.fieldForeignPOABalance = array[1];
+	  return array;
 	} catch(err) {
 	  return null;
 	}
@@ -43,15 +41,22 @@ class MainPage extends Page {
 
   async fillFieldAmount(amount) {
     try {
-      await super.fillWithWait(fieldAmount,amount);
-	  return true;
+      await this.clickWithWait(fieldAmount);
+	  await this.fillWithWait(fieldAmount,amount);
+      return true;
 	} catch (err) {
 	  return false;
 	}
   }
 
   async clickButtonTransfer() {
-    return await super.clickWithWait(buttonTransfer);
+  	let counter = 10;
+  	do {
+  		await this.clickWithWait(buttonTransfer);
+  		if (counter--<0) return false;
+  		await this.driver.sleep(1000);
+  	} while (! await this.isDisplayedLoadingContainer())
+	return true;
   }
 
   async clickButtonOk() {
@@ -71,16 +76,19 @@ class MainPage extends Page {
   }
 
   async waitUntilTransactionDone() {
-    let counter = 60;
-	do {
-      await this.driver.sleep(500);
-      if (counter--<0) return false;
-	} while(await this.isPendingTransaction());
-	return true;
+   	return await this.waitUntilDisappear(classPendingTransaction,360);
   }
 
-  async waitUntilButtonOkPresent() {
-    return await super.waitUntilDisplayed(buttonOk, 180);
+  async waitUntilShowUpButtonOk() {
+    return await super.waitUntilDisplayed(buttonOk, 360);
+  }
+
+  async waitUntilShowUpLoadingContainer() {
+  	return await super.waitUntilDisplayed(loadingContainer, 180);
+  }
+
+  async isDisplayedLoadingContainer() {
+  	return await super.isElementDisplayed(loadingContainer);
   }
 
 }

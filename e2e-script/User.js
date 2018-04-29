@@ -1,10 +1,6 @@
-const meta=require('./MetaMask.js');
-const MetaMask=meta.MetaMask;
-const utils=require('./Utils.js');
-const Utils=utils.Utils;
 const fs = require('fs-extra');
-const mnPage=require('./mainPage.js');
-const MainPage=mnPage.MainPage;
+const MetaMask=require('./MetaMask.js').MetaMask;
+const MainPage=require('./mainPage.js').MainPage;
 
 class User {
   constructor(driver,file){
@@ -24,33 +20,33 @@ class User {
 
   async transferTokens (amount) {
     let mainPage = new MainPage(this.driver);
-	let mtMask = new MetaMask(this.driver);
+	let metaMask = new MetaMask(this.driver);
 	return (
 	  await mainPage.fillFieldAmount(amount) &&
 	  await mainPage.clickButtonTransfer() &&
-	  await mtMask.doTransaction() &&
-	  await mainPage.waitUntilButtonOkPresent() &&
+	  await metaMask.signTransaction() &&
+	  await mainPage.waitUntilShowUpButtonOk() &&
 	  await mainPage.clickButtonOk() &&
 	  await mainPage.waitUntilTransactionDone() &&
-	  await mainPage.waitUntilButtonOkPresent() &&
+	  await mainPage.waitUntilShowUpButtonOk() &&
 	  await mainPage.clickButtonOk()
     );
   }
 
   async setMetaMaskNetwork() {
     let metaMask = new MetaMask(this.driver);
-	await  metaMask.switchToNextPage();
-	await metaMask.setNetwork(this.networkID);
-	await  metaMask.switchToNextPage();
+	return await  metaMask.switchToNextPage() &&
+		   await metaMask.setNetwork(this.networkID) &&
+	       await  metaMask.switchToNextPage();
   }
 
   async setMetaMaskAccount() {
     let metaMask = new MetaMask(this.driver);
-    if (this.accountOrderInMetamask === "undefined") {
-	   await metaMask.importAccount(this);
-	} else {
-	  await metaMask.selectAccount(this);
-	}
+	if (this.accountOrderInMetamask === "undefined") {
+	  return await metaMask.importAccount(this);
+	} else
+	  return await metaMask.selectAccount(this);
+
   }
 }
 

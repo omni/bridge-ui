@@ -1,16 +1,11 @@
 let test = require('selenium-webdriver/testing');
 let assert = require('assert');
-const fs = require('fs-extra');
-const utils=require('./Utils.js');
-const Utils=utils.Utils;
-const mtMask=require('./MetaMask.js');
-const MetaMask=mtMask.MetaMask;
-const mnPage=require('./mainPage.js');
-const MainPage=mnPage.MainPage;
-const user=require("./User.js");
-const User=user.User;
+const Utils=require('./Utils.js').Utils;
+const MetaMask=require('./MetaMask.js').MetaMask;
+const MainPage=require('./mainPage.js').MainPage;
+const User=require("./User.js").User;
 
-test.describe('e2e-test for bridge-ui, version 1.0.1',  async function() {
+test.describe('e2e-test for bridge.poa, version 1.2.0',  async function() {
 	this.timeout(4*60000);
 	this.slow(1*60000);
 

@@ -1,8 +1,6 @@
 const key = require('selenium-webdriver').Key;
-const page=require('./Page.js');
-const Page=page.Page;
-const by = require('selenium-webdriver/lib/by');
-const By=by.By;
+const Page=require('./Page.js').Page;
+const By = require('selenium-webdriver/lib/by').By;
 const IDMetaMask="nkbihfbeogaeaoehlefnkodbefgpgknn";
 const URL="chrome-extension://"+IDMetaMask+"//popup.html";
 const buttonSubmit=By.className("confirm btn-green");
@@ -31,103 +29,98 @@ class MetaMask extends Page {
     super(driver);
     this.driver=driver;
     this.URL=URL;
-    this.name="Metamask :"
   }
 
-  async clickButtonSubmit() {
-    return await super.clickWithWait(buttonSubmit);
-  }
-
-  async submitTransaction() {
-    await this.clickButtonSubmit();
+  async clickButtonSubmitTransaction() {
+    return await this.clickWithWait(buttonSubmit);
   }
 
   async activate() {
-    await this.switchToNextPage();
-	await this.driver.get(this.URL);
-	await super.clickWithWait(buttonAccept);
-	let element = await this.driver.findElement(agreement);
-	const action=this.driver.actions();
-	await action.click(element).perform();
-	for (let i=0;i<15;i++) {
-      await action.sendKeys(key.TAB).perform();
-	}
-	await super.clickWithWait(buttonAccept);
-	let counter=50;
-      do {
-	    await this.driver.sleep(1000);
-		if (super.waitUntilLocated(fieldNewPass)) break;
-		} while(counter-->0);
-
-		if (counter<=0) throw Error("Metamask hasn't downloaded");
-		await super.clickWithWait(fieldNewPass);
-		await super.fillWithWait(fieldNewPass,pass);
-		await super.fillWithWait(fieldConfirmPass,pass);
-		await super.clickWithWait(buttonCreate);
-		await this.driver.sleep(2000);
-		await super.clickWithWait(buttonIveCopied);
-		await this.switchToNextPage();
+	return await this.switchToNextPage() &&
+	       await this.open(this.URL) &&
+	       await this.clickWithWait(buttonAccept) &&
+	       await this.clickWithWait(agreement) &&
+	       await this.clickKey(key.TAB,15) &&
+           await this.clickWithWait(buttonAccept) &&
+	       await this.waitUntilLocated(fieldNewPass) &&
+	       await this.clickWithWait(fieldNewPass) &&
+	       await this.fillWithWait(fieldNewPass,pass) &&
+	       await this.fillWithWait(fieldConfirmPass,pass) &&
+	       await this.clickWithWait(buttonCreate) &&
+	       await this.waitUntilDisplayed(buttonIveCopied) &&
+           await this.clickWithWait(buttonIveCopied) &&
+	       await this.switchToNextPage();
   }
 
   async importAccount(user) {
-    await  super.switchToNextPage();
-    await  this.setNetwork(user.networkID);
-    await  this.clickImportAccount();
-    await  super.fillWithWait(fieldPrivateKey,user.privateKey);
-    await  this.driver.sleep(1000);
-    await  super.clickWithWait(buttonImport);
-    user.accountOrderInMetamask=accountOrderNumber-1;
-    await super.switchToNextPage();
+	user.accountOrderInMetamask=accountOrderNumber-1;
+	return await  this.switchToNextPage() &&
+	       await  this.setNetwork(user.networkID) &&
+	       await  this.clickImportAccount() &&
+		   await  this.fillWithWait(fieldPrivateKey,user.privateKey) &&
+		   await  this.waitUntilDisplayed(buttonImport) &&
+		   await  this.clickWithWait(buttonImport) &&
+		   await  this.switchToNextPage();
   }
 
   async selectAccount(user) {
-    await  this.switchToNextPage();
-    await  this.setNetwork(user.networkID);
-    await super.clickWithWait(popupAccount);
-    await this.driver.executeScript( "document.getElementsByClassName('dropdown-menu-item')["+
-	                                  (user.accountOrderInMetamask)+"].click();");
-    await this.driver.sleep(1000);
-    await this.switchToNextPage();
+    try {
+	  await this.switchToNextPage();
+	  await this.setNetwork(user.networkID);
+	  await super.clickWithWait(popupAccount);
+	  await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')[" +
+	                                   user.accountOrderInMetamask + "].click();");
+	  await this.switchToNextPage();
+	  return true;
+    } catch(err) {
+      return false;
+    }
   }
 
   async clickImportAccount() {
-    await  super.clickWithWait(popupAccount);
-    await this.driver.executeScript( "document.getElementsByClassName('dropdown-menu-item')["+(accountOrderNumber+1)+"].click();");
-    accountOrderNumber++;
+    try {
+	  await super.clickWithWait(popupAccount);
+	  await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')["
+		                               + (accountOrderNumber + 1) + "].click();");
+	  accountOrderNumber++;
+	  return true;
+    } catch (err) {
+      return false;
+    }
   }
 
-  async doTransaction(refreshCount) {
+  async signTransaction(refreshCount) {
     await this.switchToNextPage();
-    let counter=0;
-	let timeLimit=5;
-    if (refreshCount !== undefined) timeLimit=refreshCount;
-	do {
+	let counter=5;
+    if (refreshCount !== undefined) counter = refreshCount;
+    do {
 	  await this.refresh();
 	  await super.waitUntilLocated(iconChangeAccount);
       if (await this.isElementDisplayed(buttonSubmit)) {
-	    await this.submitTransaction();
-        await  this.switchToNextPage();
-        return true;
-	  }
-	  counter++;
-	  if (counter>=timeLimit) {
-	    await this.switchToNextPage();
-	    return false;
-	  }
+	    return await this.clickButtonSubmitTransaction() &&
+		       await  this.switchToNextPage();
+      }
 	  await this.driver.sleep(3000);
-    } while(true);
+    } while(counter-->=0);
+
+	await this.switchToNextPage();
+	return false;
   }
 
   async setNetwork(provider) {
-    await super.clickWithWait(popupNetwork);
-    let orderNumber=networks.indexOf(provider);
-    if (orderNumber<0) await this.addNetwork(provider);
-	  else
-	  await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')["+orderNumber+"].click();");
+    try {
+	  await super.clickWithWait(popupNetwork);
+	  let orderNumber = networks.indexOf(provider);
+	  let script = "document.getElementsByClassName('dropdown-menu-item')["+orderNumber + "].click();"
+	  if (orderNumber < 0) await this.addNetwork(provider);
+	    else await this.driver.executeScript(script);
+	  return true;
+    } catch (err) {
+   	  return false;
+      }
   }
 
   async addNetwork(provider) {
-    await  this.driver.sleep(1000);//5000
     let url;
     switch(provider) {
       case 77: {
@@ -140,25 +133,17 @@ class MetaMask extends Page {
         networks.push(99);
         break;
       }
-      case 7762959: {
-      	url="https://sokol.poa.network";break;
-      } //Musicoin=>SOKOL
       default: {
-	      url="https://sokol.poa.network";
+	    url="https://sokol.poa.network";
       }
     }
     await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')["+
 	                                 (networks.length-1)+"].click();");
-    await this.driver.sleep(3000);
-    await super.fillWithWait(fieldNewRPCURL,url);
-    await this.driver.sleep(3000);
-    await super.clickWithWait(buttonSave);
-    await this.driver.sleep(1000);
-    await super.clickWithWait(arrowBackRPCURL);
-    return true;
+    return await super.fillWithWait(fieldNewRPCURL,url) &&
+           await super.clickWithWait(buttonSave) &&
+           await super.clickWithWait(arrowBackRPCURL);
   }
 }
-
 module.exports = {
   MetaMask:MetaMask
 };

@@ -9,6 +9,7 @@ class Page {
 
   async waitUntilDisplayed(element, Twaiting) {
     let counter = Twaiting;
+	if (counter === undefined) 	counter = 180;
 	try {
 	  do {
 	    await this.driver.sleep(300);
@@ -18,6 +19,21 @@ class Page {
 	} catch(err) {
 	  return false;
 	}
+  }
+
+  async waitUntilDisappear(element, Twaiting) {
+    let counter = Twaiting;
+	if (counter === undefined) 	counter = 180;
+	  try {
+	    do {
+	      await this.driver.sleep(300);
+	      if (! await this.isElementDisplayed(element)) return true;
+		} while (counter-- > 0);
+		return false;
+
+	  } catch(err) {
+		  return false;
+	  }
   }
 
   async waitUntilLocated(element, Twaiting) {
@@ -50,7 +66,7 @@ class Page {
   async clickWithWait(element) {
     try {
       let field;
-	  if (element.constructor.name!=="WebElement") {
+	  if (element.constructor.name !== "WebElement") {
 	    field = await this.driver.wait(webdriver.until.elementLocated(element), Twait);
 	  }
 	    else field = element;
@@ -65,7 +81,7 @@ class Page {
   async fillWithWait(element,text) {
     try {
       let field;
-	  if (element.constructor.name!== "WebElement") {
+	  if (element.constructor.name !== "WebElement") {
 	    field = await this.driver.wait(webdriver.until.elementLocated(element), Twait);
 	  }
 	    else field = element;
@@ -106,6 +122,7 @@ class Page {
 		}
 	  }
       await this.driver.switchTo().window(handle);
+	  await this.driver.sleep(500);
 	  return true;
 
 	} catch (err) {
@@ -125,6 +142,18 @@ class Page {
     await this.driver.get(url);
 	return this.getUrl();
   }
+
+  async clickKey(key, times) {
+	try {
+  	  const action=this.driver.actions();
+	  for (let i=0;i<times;i++)
+	    await action.sendKeys(key).perform();
+	    return true;
+	} catch (err) {
+	  return false;
+	}
+  }
+
 
 }
 module.exports = {
