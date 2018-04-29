@@ -6,16 +6,16 @@ class User {
   constructor(driver,file){
     try {
       this.driver = driver;
-	  let obj = JSON.parse(fs.readFileSync(file, "utf8"));
-	  this.account = obj.account;
-	  this.privateKey = obj.privateKey;
-	  this.networkID = obj.networkID;
-	  this.accountOrderInMetamask = "undefined";//for MetaMaskPage usage only
-	  this.name = file;
-	} catch (err) {
-	  console.log("instance User was not created");
-	  console.log(err);
-	}
+      let obj = JSON.parse(fs.readFileSync(file, "utf8"));
+      this.account = obj.account;
+      this.privateKey = obj.privateKey;
+      this.networkID = obj.networkID;
+      this.accountOrderInMetamask = "undefined";//for MetaMaskPage usage only
+      this.name = file;
+    } catch (err) {
+      console.log("instance User was not created");
+      console.log(err);
+    }
   }
 
   async transferTokens (amount) {
@@ -35,18 +35,17 @@ class User {
 
   async setMetaMaskNetwork() {
     let metaMask = new MetaMask(this.driver);
-	return await  metaMask.switchToNextPage() &&
-		   await metaMask.setNetwork(this.networkID) &&
-	       await  metaMask.switchToNextPage();
+    return await  metaMask.switchToNextPage() &&
+          await metaMask.setNetwork(this.networkID) &&
+          await  metaMask.switchToNextPage();
   }
 
   async setMetaMaskAccount() {
     let metaMask = new MetaMask(this.driver);
-	if (this.accountOrderInMetamask === "undefined") {
-	  return await metaMask.importAccount(this);
-	} else
-	  return await metaMask.selectAccount(this);
-
+    if (this.accountOrderInMetamask === "undefined") {
+      return await metaMask.importAccount(this);
+    } else
+      return await metaMask.selectAccount(this);
   }
 }
 
