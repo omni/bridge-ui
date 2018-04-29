@@ -11,56 +11,56 @@ const loadingContainer = By.className("loading-container");
 class MainPage extends Page {
   constructor(driver){
     super(driver);
-	this.url;
-	this.fieldHomePOABalance;
-	this.fieldForeignPOABalance;
+    this.url;
+    this.fieldHomePOABalance;
+    this.fieldForeignPOABalance;
   }
 
   async initFieldsBalance() {
     if (!(await this.waitUntilWeb3Loaded())) return null;
-	try {
-	  let array;
-	  array = await super.findWithWait(fieldsBalance);
-	  this.fieldHomePOABalance = array[0];
-	  this.fieldForeignPOABalance = array[1];
-	  return array;
-	} catch(err) {
-	  return null;
-	}
-  }
+    try {
+      let array;
+      array = await super.findWithWait(fieldsBalance);
+      this.fieldHomePOABalance = array[0];
+      this.fieldForeignPOABalance = array[1];
+      return array;
+    } catch(err) {
+      return null;
+    }
+ }
 
   async getHomePOABalance() {
     await this.initFieldsBalance();
-	return parseFloat(await  this.fieldHomePOABalance.getText());
+    return parseFloat(await  this.fieldHomePOABalance.getText());
   }
 
   async getForeignPOABalance() {
-	await this.initFieldsBalance();
-	return parseFloat(await  this.fieldForeignPOABalance.getText());
+    await this.initFieldsBalance();
+    return parseFloat(await  this.fieldForeignPOABalance.getText());
   }
 
   async fillFieldAmount(amount) {
     try {
       await this.clickWithWait(fieldAmount);
-	  await this.fillWithWait(fieldAmount,amount);
+      await this.fillWithWait(fieldAmount,amount);
       return true;
-	} catch (err) {
-	  return false;
-	}
+    } catch (err) {
+      return false;
+    }
   }
 
   async clickButtonTransfer() {
-  	let counter = 10;
-  	do {
-  		await this.clickWithWait(buttonTransfer);
-  		if (counter--<0) return false;
-  		await this.driver.sleep(1000);
-  	} while (! await this.isDisplayedLoadingContainer())
-	return true;
+    let counter = 10;
+    do {
+      await this.clickWithWait(buttonTransfer);
+      if (counter--<0) return false;
+      await this.driver.sleep(1000);
+    } while (! await this.isDisplayedLoadingContainer())
+    return true;
   }
 
   async clickButtonOk() {
-	return await super.clickWithWait(buttonOk);
+    return await super.clickWithWait(buttonOk);
   }
 
   async isPresentButtonOk() {
@@ -76,7 +76,7 @@ class MainPage extends Page {
   }
 
   async waitUntilTransactionDone() {
-   	return await this.waitUntilDisappear(classPendingTransaction,360);
+    return await this.waitUntilDisappear(classPendingTransaction,360);
   }
 
   async waitUntilShowUpButtonOk() {
@@ -84,11 +84,11 @@ class MainPage extends Page {
   }
 
   async waitUntilShowUpLoadingContainer() {
-  	return await super.waitUntilDisplayed(loadingContainer, 180);
+    return await super.waitUntilDisplayed(loadingContainer, 180);
   }
 
   async isDisplayedLoadingContainer() {
-  	return await super.isElementDisplayed(loadingContainer);
+    return await super.isElementDisplayed(loadingContainer);
   }
 
 }
