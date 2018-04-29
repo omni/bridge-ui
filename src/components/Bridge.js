@@ -69,7 +69,7 @@ export class Bridge extends React.Component {
         to: homeStore.HOME_BRIDGE_ADDRESS,
         from: web3Store.defaultAccount.address,
         value: Web3Utils.toHex(Web3Utils.toWei(amount)),
-        data: '0x00'
+        data: '0x'
       })} catch (e) {
         console.error(e)
       }
