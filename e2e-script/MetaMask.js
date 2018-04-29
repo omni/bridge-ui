@@ -41,14 +41,14 @@ class MetaMask extends Page {
 	       await this.clickWithWait(buttonAccept) &&
 	       await this.clickWithWait(agreement) &&
 	       await this.clickKey(key.TAB,15) &&
-           await this.clickWithWait(buttonAccept) &&
+               await this.clickWithWait(buttonAccept) &&
 	       await this.waitUntilLocated(fieldNewPass) &&
 	       await this.clickWithWait(fieldNewPass) &&
 	       await this.fillWithWait(fieldNewPass,pass) &&
 	       await this.fillWithWait(fieldConfirmPass,pass) &&
 	       await this.clickWithWait(buttonCreate) &&
 	       await this.waitUntilDisplayed(buttonIveCopied) &&
-           await this.clickWithWait(buttonIveCopied) &&
+               await this.clickWithWait(buttonIveCopied) &&
 	       await this.switchToNextPage();
   }
 
@@ -57,10 +57,10 @@ class MetaMask extends Page {
 	return await  this.switchToNextPage() &&
 	       await  this.setNetwork(user.networkID) &&
 	       await  this.clickImportAccount() &&
-		   await  this.fillWithWait(fieldPrivateKey,user.privateKey) &&
-		   await  this.waitUntilDisplayed(buttonImport) &&
-		   await  this.clickWithWait(buttonImport) &&
-		   await  this.switchToNextPage();
+	       await  this.fillWithWait(fieldPrivateKey,user.privateKey) &&
+	       await  this.waitUntilDisplayed(buttonImport) &&
+	       await  this.clickWithWait(buttonImport) &&
+	       await  this.switchToNextPage();
   }
 
   async selectAccount(user) {
@@ -90,25 +90,25 @@ class MetaMask extends Page {
   }
 
   async signTransaction(refreshCount) {
-    await this.switchToNextPage();
-	let counter=5;
-    if (refreshCount !== undefined) counter = refreshCount;
-    do {
+      await this.switchToNextPage();
+      let counter=5;
+      if (refreshCount !== undefined) counter = refreshCount;
+      do {
 	  await this.refresh();
 	  await super.waitUntilLocated(iconChangeAccount);
-      if (await this.isElementDisplayed(buttonSubmit)) {
+          if (await this.isElementDisplayed(buttonSubmit)) {
 	    return await this.clickButtonSubmitTransaction() &&
-		       await  this.switchToNextPage();
+	           await  this.switchToNextPage();
       }
-	  await this.driver.sleep(3000);
+          await this.driver.sleep(3000);
     } while(counter-->=0);
 
-	await this.switchToNextPage();
-	return false;
+      await this.switchToNextPage();
+      return false;
   }
 
   async setNetwork(provider) {
-    try {
+      try {
 	  await super.clickWithWait(popupNetwork);
 	  let orderNumber = networks.indexOf(provider);
 	  let script = "document.getElementsByClassName('dropdown-menu-item')["+orderNumber + "].click();"
@@ -116,32 +116,32 @@ class MetaMask extends Page {
 	    else await this.driver.executeScript(script);
 	  return true;
     } catch (err) {
-   	  return false;
+      return false;
       }
   }
 
   async addNetwork(provider) {
-    let url;
-    switch(provider) {
-      case 77: {
-       url="https://sokol.poa.network";
-       networks.push(77);
-       break;
-      }
-      case 99: {
-        url="https://core.poa.network";
-        networks.push(99);
-        break;
-      }
-      default: {
+      let url;
+      switch(provider) {
+        case 77: {
+         url="https://sokol.poa.network";
+         networks.push(77);
+         break;
+        }
+        case 99: {
+          url="https://core.poa.network";
+          networks.push(99);
+          break;
+        }
+        default: {
 	    url="https://sokol.poa.network";
       }
-    }
-    await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')["+
-	                                 (networks.length-1)+"].click();");
-    return await super.fillWithWait(fieldNewRPCURL,url) &&
-           await super.clickWithWait(buttonSave) &&
-           await super.clickWithWait(arrowBackRPCURL);
+  }
+      await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')["+
+	                              (networks.length-1)+"].click();");
+      return await super.fillWithWait(fieldNewRPCURL,url) &&
+             await super.clickWithWait(buttonSave) &&
+             await super.clickWithWait(arrowBackRPCURL);
   }
 }
 module.exports = {
