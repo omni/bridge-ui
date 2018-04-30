@@ -10,7 +10,7 @@ https://poanetwork.github.io/bridge-ui/#/
 ### Related repositories  
 Rust Binary: https://github.com/poanetwork/parity-bridge :hatched_chick:  
 Smart Contracts: https://github.com/poanetwork/poa-parity-bridge-contracts  :hatched_chick:  
-Ansible Deployment: https://github.com/poanetwork/deployment-bridge/tree/master/upgradable :hatching_chick:     
+Ansible Deployment: https://github.com/poanetwork/deployment-bridge/tree/master/upgradable-wo-parity :hatching_chick:     
 
 ## POA Bridge UI app
 A Cross-chain bridge provides interoperability between any Ethereum-compatible network such as Ethereum Foundation, Ethereum Classic, Ubiq, Expanse, POA Network, Rootstock, and many others.<br/>
