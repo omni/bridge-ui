@@ -7,10 +7,14 @@
 
 https://poanetwork.github.io/bridge-ui/#/
 
-### Related repositories  
-Rust Binary: https://github.com/poanetwork/poa-bridge :hatched_chick:  
-Smart Contracts: https://github.com/poanetwork/poa-bridge-contracts  :hatched_chick:  
-Ansible Deployment: https://github.com/poanetwork/deployment-bridge/tree/master/upgradable-wo-parity :hatching_chick:     
+### Related repositories 
+Name | Description
+--------- | ------- 
+POA Bridge Binary | https://github.com/poanetwork/poa-bridge 
+POA Bridge UI | https://github.com/poanetwork/bridge-ui
+POA Bridge Smart Contracts | https://github.com/poanetwork/poa-bridge-contracts
+POA Bridge Monitoring service | https://github.com/poanetwork/bridge-monitor
+POA Bridge Deployment scripts | https://github.com/poanetwork/deployment-bridge
 
 ## POA Bridge UI app
 A Cross-chain bridge provides interoperability between any Ethereum-compatible network such as Ethereum Foundation, Ethereum Classic, Ubiq, Expanse, POA Network, Rootstock, and many others.<br/>
@@ -64,6 +68,10 @@ To burn and send back to Home Network (ERC20 to POA20):
 - The address that you use to send from, the same address will be used to receive the coin on a Home chain
 
 The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should expect to see a Withdrawal Event on the Foreign Network (right-side - Ethereum Foundation). After some time, Validators submit signatures emitting SignedForWithdrawal event to the Foreign Network. Once the required number of signatures is reached, CollectedSignatures event is emitted on the Foreign Network. The ERC20 tokens are burned on the Foreign Network. This process generates a signed message which Validators submit on the Home Network. The user automatically receives their Native POA Coin.
+
+# Storage of funds
+When you send POA on Home Network(POA.network), it gets stored and locked into a smart contract on POA.network.
+When you send POA20 on Foreign Network (Ethereum Mainnet), it is automatically burnt and reduced from totalSupply, therefore it's not stored anywhere right after a sender initiated a transfer to Home network. Once the transfer is relayed, locked funds on Home network are withdrawn to the sender automatically.
 
 # Responsibilities and roles of the bridge:
 - Administrator Role(representation of a multisig contract):
