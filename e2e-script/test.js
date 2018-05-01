@@ -9,7 +9,7 @@ test.describe('e2e-test for bridge.poa, version 1.2.0',  async function() {
 	this.timeout(4*60000);
 	this.slow(1*60000);
 
-	const maxAmountPerTransactionLimit = 0.1;
+	const maxAmountPerTransactionLimit = 1;
 	let startUrl;
 	let driver;
 	let mainPage;
