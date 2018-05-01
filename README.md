@@ -8,8 +8,8 @@
 https://poanetwork.github.io/bridge-ui/#/
 
 ### Related repositories  
-Rust Binary: https://github.com/poanetwork/parity-bridge :hatched_chick:  
-Smart Contracts: https://github.com/poanetwork/poa-parity-bridge-contracts  :hatched_chick:  
+Rust Binary: https://github.com/poanetwork/poa-bridge :hatched_chick:  
+Smart Contracts: https://github.com/poanetwork/poa-bridge-contracts  :hatched_chick:  
 Ansible Deployment: https://github.com/poanetwork/deployment-bridge/tree/master/upgradable-wo-parity :hatching_chick:     
 
 ## POA Bridge UI app
@@ -82,11 +82,8 @@ The amount sent must be within the daily limits provided by the contracts. When 
 
 ## Dependencies
 
-- [poa-bridge-contracts](https://github.com/poanetwork/poa-parity-bridge-contracts/)
-- [parity node 1.9.5](https://www.parity.io/) for Home Network 
-- [parity node 1.9.5](https://www.parity.io/) for Foreign Network
+- [poa-bridge-contracts](https://github.com/poanetwork/poa-bridge-contracts/tree/0.1)
 - [node.js](https://nodejs.org/en/download/)
-- [jq](https://stedolan.github.io/jq/)
 - [metamask](https://metamask.io/)
 - happy mood and patience
 
@@ -95,42 +92,57 @@ The amount sent must be within the daily limits provided by the contracts. When 
 `mkdir sokol-kovan-bridge && cd sokol-kovan-bridge`  
 
 ### 2. Deploy Sokol <-> Kovan Bridge contracts:  
-In this example, I'm going to use the same address for `HOME_PROXY_OWNER` and `FOREIGN_PROXY_OWNER`.   
-Example: `0x08660156928d768D26D3eeF642c11527FDca0891`  
-For `HOME_VALIDATORS` and `FOREIGN_VALIDATORS` I'm also going to use the same address.   
-Example: `0x7A6a585dB8cDFa88B9e8403c054ec2e912E9D32E`  
-Feel free to use diffrent on both chain, for simplicity of this tutorial, I'm going to reuse them on both chains.
+Prepare temporary eth address for deployment
+```
+DEPLOYMENT_ACCOUNT_ADDRESS=0x08660156928d768D26D3eeF642c11527FDca0891
+DEPLOYMENT_ACCOUNT_PRIVATE_KEY=67..14
+```
 
-  * `HOME_PROXY_OWNER` and  `FOREIGN_PROXY_OWNER`: Generate New Ethereum Private Key https://www.myetherwallet.com/#generate-wallet
-  * `HOME_VALIDATORS` and `FOREIGN_VALIDATORS`: Generate New Ethereum Keystore File JSON and its password https://www.myetherwallet.com/#generate-wallet
-  * Fund Home accounts using Sokol Faucet URL:
+  * For the following addresses, you can reuse same address, but for production deployment it's highly recommended to use different, preferrably multisig wallets in order to split control of responsibilities. For simplicity, I'm going to use same address for all 6 following values:
+```
+HOME_OWNER_MULTISIG=0x08660156928d768D26D3eeF642c11527FDca0891
+HOME_UPGRADEABLE_ADMIN_VALIDATORS=0x08660156928d768D26D3eeF642c11527FDca0891
+HOME_UPGRADEABLE_ADMIN_BRIDGE=0x08660156928d768D26D3eeF642c11527FDca0891
+FOREIGN_OWNER_MULTISIG=0x08660156928d768D26D3eeF642c11527FDca0891
+FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS=0x08660156928d768D26D3eeF642c11527FDca0891
+FOREIGN_UPGRADEABLE_ADMIN_BRIDGE=0x08660156928d768D26D3eeF642c11527FDca0891
+```
+  * `VALIDATORS` : Generate New Ethereum Keystore File JSON and its password https://www.myetherwallet.com/#generate-wallet
+  * Fund Home accounts(`Validators`) using Sokol Faucet URL:
   https://faucet-sokol.herokuapp.com/ 
   * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) to Foreign Accounts. Get 5 Keth to 1 acc, and transfer from it to all others.
-  * `git clone https://github.com/poanetwork/poa-parity-bridge-contracts.git`
+  * `git clone --branch 0.1 https://github.com/poanetwork/poa-bridge-contracts.git`
   * Make sure that you have a fresh installation of Node.js (version > 8)
    If not, you can update your main installation or use https://github.com/creationix/nvm 
-  * `cd poa-parity-bridge-contracts && npm install`
-  * `./node_modules/.bin/truffle compile`
+  * `cd poa-bridge-contracts && npm install`
+  * `npm run compile`
   * `cd ./deploy && npm install`
   * `cp .env.example .env`
   * `nano .env`
 ```rust
+DEPLOYMENT_ACCOUNT_ADDRESS=0xb8988b690910913c97a090c3a6f80fad8b3a4683
+DEPLOYMENT_ACCOUNT_PRIVATE_KEY=67..14
+
 HOME_RPC_URL=https://sokol.poa.network
-HOME_PROXY_OWNER=0x08660156928d768D26D3eeF642c11527FDca0891
-HOME_PROXY_OWNER_PRIVATE_KEY=INSERT_PRIVATE_KEY_HERE
-HOME_REQUIRED_NUMBER_OF_VALIDATORS=1
-HOME_VALIDATORS="0x7A6a585dB8cDFa88B9e8403c054ec2e912E9D32E"
+HOME_OWNER_MULTISIG=0xdd2BcC1e053aBB1DfA6c1F3D6C7842f57d61440F
+HOME_UPGRADEABLE_ADMIN_VALIDATORS=0xdd2BcC1e053aBB1DfA6c1F3D6C7842f57d61440F
+HOME_UPGRADEABLE_ADMIN_BRIDGE=0xdd2BcC1e053aBB1DfA6c1F3D6C7842f57d61440F
 HOME_DAILY_LIMIT=1000000000000000000
 HOME_MAX_AMOUNT_PER_TX=100000000000000000
 HOME_MIN_AMOUNT_PER_TX=10000000000000000
+
 FOREIGN_RPC_URL=https://kovan.infura.io/mew
-FOREIGN_PROXY_OWNER=0x08660156928d768D26D3eeF642c11527FDca0891
-FOREIGN_PROXY_OWNER_PRIVATE_KEY=INSERT_PRIVATE_KEY_HERE
-FOREIGN_REQUIRED_NUMBER_OF_VALIDATORS=1
-FOREIGN_VALIDATORS="0x7A6a585dB8cDFa88B9e8403c054ec2e912E9D32E"
+FOREIGN_OWNER_MULTISIG=0xb8988b690910913c97a090c3a6f80fad8b3a4683
+FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS=0xb8988b690910913c97a090c3a6f80fad8b3a4683
+FOREIGN_UPGRADEABLE_ADMIN_BRIDGE=0xb8988b690910913c97a090c3a6f80fad8b3a4683
 FOREIGN_DAILY_LIMIT=1000000000000000000
 FOREIGN_MAX_AMOUNT_PER_TX=100000000000000000
 FOREIGN_MIN_AMOUNT_PER_TX=10000000000000000
+
+REQUIRED_NUMBER_OF_VALIDATORS=1
+VALIDATORS="0xb506698581484572b6ccfbd6c976f0948775eace"
+GET_RECEIPT_INTERVAL_IN_MILLISECONDS=3000
+
 GAS_PRICE=1
 ```
 
@@ -138,22 +150,25 @@ GAS_PRICE=1
 
 Name | Description
 --------- | -------
+DEPLOYMENT_ACCOUNT_ADDRESS | Temporary  account from which all contracts will be deployed
+DEPLOYMENT_ACCOUNT_PRIVATE_KEY | private key from temp account
 HOME_RPC_URL | Public RPC Node URL for Home Network  
-HOME_PROXY_OWNER | Address of Administrator role on Home network  
-HOME_PROXY_OWNER_PRIVATE_KEY | Private key of HOME_PROXY_OWNER  
-HOME_REQUIRED_NUMBER_OF_VALIDATORS | Minimum Number of validators in order to Withdraw Funds on POA network Sokol  
-HOME_VALIDATORS | array of validators on Home network. Space separated.  
+HOME_OWNER_MULTISIG | Address of Administrator role on Home network to change parameters of the bridge and validator's contract
+HOME_UPGRADEABLE_ADMIN_VALIDATORS | Address from which Validator's contract could be upgraded
+HOME_UPGRADEABLE_ADMIN_BRIDGE | Address from which HomeBridge's contract could be upgraded
 HOME_DAILY_LIMIT | Daily Limit in Wei. Example above is `1 eth`  
 HOME_MAX_AMOUNT_PER_TX | Max limit per 1 tx in Wei. Example above is `0.1 eth`  
 HOME_MIN_AMOUNT_PER_TX | Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
 FOREIGN_RPC_URL | Public RPC Node URL for Foreign Network  
-FOREIGN_PROXY_OWNER | Address of Administrator role on Foreign network  
-FOREIGN_PROXY_OWNER_PRIVATE_KEY | Private key of FOREIGN_PROXY_OWNER  
-FOREIGN_REQUIRED_NUMBER_OF_VALIDATORS | Minimum Number of validators in order to mint ERC20 token on Foreign network  
-FOREIGN_VALIDATORS | array of validators on Home network. Space separated.  
+FOREIGN_OWNER_MULTISIG | Address of Administrator role on FOREIGN network to change parameters of the bridge and validator's contract
+FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS | Address from which Validator's contract could be upgraded
+FOREIGN_UPGRADEABLE_ADMIN_BRIDGE | Address from which HomeBridge's contract could be upgraded
 FOREIGN_DAILY_LIMIT | Daily Limit in Wei. Example above is `1 eth`  
 FOREIGN_MAX_AMOUNT_PER_TX | Max limit per 1 tx in Wei. Example above is `0.1 eth`  
 FOREIGN_MIN_AMOUNT_PER_TX | Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
+VALIDATORS | array of validators on Home and Foreign network. Space separated.  
+REQUIRED_NUMBER_OF_VALIDATORS | Minimum Number of validators in order to Withdraw Funds on POA network Sokol  
+GET_RECEIPT_INTERVAL_IN_MILLISECONDS | Interval that is used to wait for tx to be mined( 3 sec in example)
 GAS_PRICE |  Gas Price to use for every tx on both networks in gwei  
 
 3. run `node deploy.js`  
@@ -171,127 +186,19 @@ The deployment information is also located in `bridgeDeploymentResults.json`
 When you are done, go back to `sokol-kovan-bridge` folder   
 `cd ../../`
 
-
-## 4. Setting up Validator Node
-
-Folder structure:
-```bash
-.
-└── sokol-kovan-bridge
-    └── poa-parity-bridge-contracts
-```
-1. Install parity (Current setup was tested against parity 1.9.5) https://www.parity.io/
-2. Setup Home Network node. In this example, we will use `sokol-node` folder  
-`mkdir sokol-node && cd sokol-node`  
-
-Example: POA-Sokol:
-  * Download Sokol spec.json file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/spec.json)  
-`curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/spec.json`  
-  * Download Sokol bootnodes.txt file from [here](https://github.com/poanetwork/poa-chain-spec/blob/sokol/bootnodes.txt)  
-`curl -O https://raw.githubusercontent.com/poanetwork/poa-chain-spec/sokol/bootnodes.txt`  
-  * For the `0xETH_ACCOUNT_VALIDATOR_SOKOL` ETH public key provided in the config below:  
-    * create `parity_password` file and store password in plaintext format  
-    `nano parity_password`  
-    `Password123`  
-    Exit from `nano` by Ctrl-O and Ctrl-X  
-  * Create the folders `sokol-datadir/keys/Sokol` and insert your JSON keystore there   
-    `mkdir -p sokol-datadir/keys/Sokol`  
-  * Move your JSON Keystore file that you generated from MyEtherWallet  
-    `mv UTC--YOUR_FILE_FOR_HOME_VALIDATOR_ACCOUNT_THAT_YOU_GENERATED_FROM_MEW sokol-datadir/keys/Sokol`   
-  * Fund this address from Sokol Faucet if you haven't done so: https://faucet-sokol.herokuapp.com/  
-  * Create sokol.toml file replace below `0xETH_ACCOUNT_VALIDATOR_SOKOL` which should match `HOME_VALIDATORS`
-  (same address that is in your JSON Keystore file)    
-`touch sokol.toml`  
-```bash
-# Sokol
-[parity]
-chain = "spec.json" # For Sokol https://github.com/poanetwork/poa-chain-spec/blob/sokol/spec.json
-base_path = "sokol-datadir" #folder where the blockchain will be synced and keys stored
-[network]
-port = 30305
-discovery=true
-reserved_peers = "./bootnodes.txt" #bootnodes file For Sokol: https://github.com/poanetwork/poa-chain-spec/blob/sokol/bootnodes.txt
-[rpc]
-cors = ["all"]
-interface = "all"
-hosts = ["all"]
-port = 8545 # port needed for truffle.js config 
-apis = ["web3", "eth", "net", "parity", "rpc", "secretstore", "traces"]
-[websockets]
-disable = true
-[account]
-unlock = ["0xETH_ACCOUNT_VALIDATOR_SOKOL"] # Please provide your HOME_VALIDATOR account here
-password = ["parity_password"] # specify password for the  key above
-
-```
-
-Run your Home(sokol) node  
-```bash
-parity --config sokol.toml --nat=none --no-ui  
-```
-Open separate terminal window and go to your `sokol-kovan-bridge` folder  
-`cd ..`  
-
-## 4. Setup Foreign Network node.
-  * Create folder `kovan-node`  
-  `mkdir kovan-node && cd kovan-node`  
-  * Get JSON Keystore file that you used for `FOREIGN_VALIDATORS` variable above  
-Example: `UTC--2018-04-11T02-07-51.479Z--4561b919f97adb462384ebffc7a3e6aeaa133db6`  
-  * Fund this address if you haven't done so from Kovan Faucet:  https://gitter.im/kovan-testnet/faucet  
-  For the `0xETH_ACCOUNT_VALIDATOR_KOVAN` ETH public key provided in the config above:  
-  * create `parity_password` file and store password in plaintext format  
-    `nano parity_password`  
-    `Password123`  
-    Exit from `nano` by Ctrl-O and Ctrl-X  
-  * Create the folders `kovan-datadir/keys/kovan` and insert your JSON keystore there  
-  `mkdir -p kovan-datadir/keys/kovan`  
-  `mv UTC--YOUR_FILE_FOR_FOREIGN_VALIDATOR_ACCOUNT_THAT_YOU_GENERATED_FROM_MEW kovan-datadir/keys/kovan`  
-  * Create `config.toml` file and replace below `0xETH_ACCOUNT_VALIDATOR_KOVAN` which should match `FOREIGN_VALIDATORS`  
-`touch config.toml`
-
-```bash
-# Kovan
-[parity]
-chain = "kovan" # Parity comes in with built-in kovan spec file
-base_path = "kovan-datadir" #folder where the blockchain will be synced and keys stored
-[network]
-port = 30308 # make sure it's different from sokol.toml network port
-discovery=true
-[rpc]
-cors = ["all"]
-interface = "all"
-hosts = ["all"]
-port = 8591 # port needed for truffle.js config. Please make sure it's different from sokol.toml
-apis = ["web3", "eth", "net", "parity", "rpc", "secretstore", "traces"]
-[websockets]
-disable = true
-[account]
-unlock = ["0xETH_ACCOUNT_VALIDATOR_KOVAN"] # Please provide your FOREIGN_VALIDATOR ETH public address that you generated in MyEtherWallet
-password = ["parity_password"] # specify password for the  key above
-
-```
-
-Run your Foreign(Kovan) node
-```bash
-parity --config config.toml --nat=none --no-ui
-```
-Open separate terminal window and go to your `sokol-kovan-bridge` folder
-`cd ..`
-
-## 5. Install parity-bridge binary
+## 5. Install poa-bridge binary
 
 * Install `rust` and `cargo`: [installation instructions.](https://www.rust-lang.org/en-US/install.html)
 
 * Install `solc` and add it to `$PATH`: [installation instructions.](https://solidity.readthedocs.io/en/develop/installing-solidity.html)
 
-* `git clone https://github.com/poanetwork/parity-bridge.git`
-* `cd parity-bridge`
+* `git clone https://github.com/poanetwork/poa-bridge.git`
+* `cd poa-bridge`
 * Run:
 
 ```
 cargo build -p bridge-cli --release
 ```
-6. Install [jq](https://stedolan.github.io/jq/)
 7. Go back to directory up.
 `cd ..`
 8. Create an empty file `HomeBridge_bytecode.bin`. Even the contract is deployed separetely, the bridge is still looking for the file holding contract bytecode.
@@ -307,37 +214,38 @@ touch ForeignBridge_bytecode.bin
 Replace
 `0xETH_ACCOUNT_VALIDATOR_SOKOL` to your `HOME_VALIDATORS` address   
 `0xETH_ACCOUNT_VALIDATOR_KOVAN` to your `FOREIGN_VALIDATORS` address  
-`ipc` should be full path to your kovan/sokol jsonrpc.ipc file
-Example: MacOSX: `/Users/USERNAME/....`  
+and `authorities` to your `VALIDATORS` from .env deploy.js above
 
 ```yaml
+keystore = "keys"
 estimated_gas_cost_of_withdraw = 0
+
 [home]
-#account which you specified as validator on Home network
-account = "0xETH_ACCOUNT_VALIDATOR_SOKOL" 
-#Full  IPC path to your HOME node
-ipc = "/Users/USERNAME/sokol-kovan-bridge/sokol-node/sokol-datadir/jsonrpc.ipc"
-# How many block confirmation to wait to send a tx
+account = "0xETH_ACCOUNT_VALIDATOR_SOKOL"
 required_confirmations = 0
+rpc_host = "https://sokol.poa.network"
+rpc_port = 443
+password = "password.txt"
 
 [home.contract]
-
 bin = "HomeBridge_bytecode.bin"
 
 [foreign]
 account = "0xETH_ACCOUNT_VALIDATOR_KOVAN"
-ipc = "/Users/USERNAME/sokol-kovan-bridge/kovan-node/kovan-datadir/jsonrpc.ipc"
 required_confirmations = 0
+rpc_host = "https://kovan.infura.io/mew"
+rpc_port = 443
+password = "password.txt"
 
 [foreign.contract]
 bin = "ForeignBridge_bytecode.bin"
 
 [authorities]
 accounts = [
-  "0xETH_ACCOUNT_VALIDATOR_KOVAN"
+  "0x..",
+  "0x.."
 ]
 required_signatures = 1
-
 [transactions]
 home_deploy = { gas = 3000000, gas_price = 1000000000 }
 foreign_deploy = { gas = 3000000, gas_price = 1000000000 }
@@ -348,7 +256,7 @@ withdraw_confirm = { gas = 3000000, gas_price = 1000000000 }
 11. Create db.toml file  
 `nano db.toml`  
 Insert addresses from  
-`cat poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq 'del(.[].bytecode)'`  
+`cat poa-bridge-contracts/deploy/bridgeDeploymentResults.json`  
 ```yaml
 home_contract_address = "0xE46...E0a" #YOUR HOME CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#3 
 foreign_contract_address = "0x90...3eA" #YOUR FOREIGN CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#4
@@ -360,6 +268,10 @@ checked_withdraw_confirm = 6342830 # last checked withdraw events on Foreign net
 ```
 Exit `nano` by Ctrl-O and Ctrl-X  
 
+* mkdir `keys`
+* put validator JSON keystore into `keys` folder
+* create `password.txt` file and insert your password for the key
+
 12. At this step your folder structure should look like this
 ```bash
 .
@@ -368,14 +280,12 @@ Exit `nano` by Ctrl-O and Ctrl-X
     ├── HomeBridge_bytecode.bin
     ├── config.toml
     ├── db.toml
-    ├── parity-bridge
-    ├── kovan-node
-    ├── sokol-node
-    └── poa-parity-bridge-contracts
+    ├── poa-bridge
+    └── poa-bridge-contracts
 ```
 13. Run the bridge app:
 ```
-env RUST_LOG=info ./parity-bridge/target/release/bridge --config config.toml --database db.toml
+env RUST_LOG=info ./poa-bridge/target/release/bridge --config config.toml --database db.toml
 ```
 
 If everything went well, you should see some logs from the  bridge:
@@ -383,10 +293,16 @@ If everything went well, you should see some logs from the  bridge:
 INFO:bridge: Parsing cli arguments
 INFO:bridge: Loading config
 INFO:bridge: Starting event loop
-INFO:bridge: Establishing ipc connection
+INFO:bridge: Home rpc host https://sokol.poa.network
+INFO:bridge: Establishing connection:
+INFO:bridge:   using RPC connection
+INFO:bridge: Acquiring home & foreign chain ids
+INFO:bridge: Home chain ID: 77 Foreign chain ID: 42
 INFO:bridge: Deploying contracts (if needed)
 INFO:bridge: Loaded database
 INFO:bridge: Starting listening to events
+INFO:bridge::bridge: Retrieved home contract balance
+INFO:bridge::bridge: Retrieved foreign contract balance
 INFO:bridge::bridge::deposit_relay: got 0 new deposits to relay
 INFO:bridge::bridge::deposit_relay: relaying 0 deposits
 INFO:bridge::bridge::deposit_relay: deposit relay completed
@@ -395,13 +311,8 @@ INFO:bridge::bridge::withdraw_relay: fetching messages and signatures
 INFO:bridge::bridge::withdraw_relay: fetching messages and signatures complete
 INFO:bridge::bridge::withdraw_relay: relaying 0 withdraws
 INFO:bridge::bridge::withdraw_relay: relaying withdraws complete
-INFO:bridge::bridge::withdraw_confirm: got 0 new withdraws to sign
-INFO:bridge::bridge::withdraw_confirm: signing
-INFO:bridge::bridge::withdraw_confirm: signing complete
-INFO:bridge::bridge::withdraw_confirm: submitting 0 signatures
-INFO:bridge::bridge::withdraw_confirm: submitting signatures complete
 INFO:bridge::bridge::withdraw_relay: waiting for signed withdraws to relay
-INFO:bridge::bridge::withdraw_confirm: waiting for new withdraws that should get signed
+INFO:bridge::bridge::withdraw_confirm: got 0 new withdraws to sign
 ```
 Open separate terminal window and go to your `sokol-kovan-bridge` folder
 
@@ -415,7 +326,7 @@ Open separate terminal window and go to your `sokol-kovan-bridge` folder
 4. Please create .env file [.env.example](.env.example)  
 `cp .env.example .env`  
 5. Insert addresses from  
-`cat ../poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json | jq 'del(.[].bytecode)'`  
+`cat ../poa-bridge-contracts/deploy/bridgeDeploymentResults.json`  
 ```bash
 REACT_APP_HOME_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
 REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
@@ -426,7 +337,7 @@ Explanation:
 
 Name | Description
 --------- | -------
-REACT_APP_HOME_BRIDGE_ADDRESS | address that you have deployed at step#3. Should also be recorded at `sokol-kovan-bridge/poa-parity-bridge-contracts/deploy/bridgeDeploymentResults.json`
+REACT_APP_HOME_BRIDGE_ADDRESS | address that you have deployed at step#3. Should also be recorded at `sokol-kovan-bridge/poa-bridge-contracts/deploy/bridgeDeploymentResults.json`
 REACT_APP_FOREIGN_BRIDGE_ADDRESS | address that you have deployed at step#3.
 REACT_APP_FOREIGN_HTTP_PARITY_URL | http public rpc node for Foreign Network
 REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
@@ -445,3 +356,13 @@ To run tests
 To run tests with coverage
 
 `npm run coverage`
+
+## Optional 
+- Ansible playbooks for deployment:
+  https://github.com/poanetwork/deployment-bridge/tree/master/upgradable-wo-parity
+
+  In order to simplify deployment for production environments, we have created ansible playbook that allow you
+  to deploy separate bridge instances for your validators.
+- Bridge Monitoring: https://github.com/poanetwork/bridge-monitor
+
+  In order to setup PagerDuty alerts for all administrators of the bridge, there is monitoring server that needs to deployed separately to make sure it notifies all interested parties of the status of the bridge contracts.
