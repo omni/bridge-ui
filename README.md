@@ -71,9 +71,9 @@ The amount sent must be within the daily limits provided by the contracts. When 
   - set daily limits on both bridges
   - set maximum per transaction limit on both bridges
   - set minimum required signatures from validators in order to relay a user's transaction
-- Administrator for Validator Contract (representation of a multisig contract):
+- Super Administrator for Validator Contract (representation of a multisig contract):
   - upgrade contracts in case of vulnerability
-- Upgrade administrator for Bridge Contract (representation of a multisig contract):
+- Super Administrator for Bridge Contract (representation of a multisig contract):
   - upgrade contracts in case of vulnerability
 - Validator Role :
   - provide 100% uptime to relay transactions
