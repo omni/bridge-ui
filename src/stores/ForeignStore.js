@@ -147,7 +147,7 @@ class ForeignStore {
 
       return events
     } catch(e) {
-      this.alertStore.pushError(`Cannot establish connection to Home Network.\n
+      this.alertStore.pushError(`Cannot establish connection to Foreign Network.\n
                  Please make sure you have set it up in env variables`)
     }
   }
