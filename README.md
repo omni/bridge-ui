@@ -289,7 +289,6 @@ INFO:bridge: Establishing connection:
 INFO:bridge:   using RPC connection
 INFO:bridge: Acquiring home & foreign chain ids
 INFO:bridge: Home chain ID: 77 Foreign chain ID: 42
-INFO:bridge: Deploying contracts (if needed)
 INFO:bridge: Loaded database
 INFO:bridge: Starting listening to events
 INFO:bridge::bridge: Retrieved home contract balance
