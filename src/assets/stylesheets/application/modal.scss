@@ -9,6 +9,10 @@
     position: relative;
     min-height: 410px;
 
+    @media screen and (max-width: $mobile-width) {
+      min-width: 100%;
+    }
+
     .title {
       margin-bottom: 20px;
       text-transform: uppercase;

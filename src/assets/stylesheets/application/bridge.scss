@@ -479,4 +479,88 @@
     }
 
   }
+
+  .transfer-alert {
+    display: flex;
+    width: 600px;
+    height: 378px;
+    border-radius: 8px;
+    background-color: #ffffff;
+
+    @media screen and (max-width: $mobile-width) {
+      flex-direction: column;
+      width: 100%;
+      height: auto;
+    }
+
+    .image-container {
+      width: 166px;
+
+      @media screen and (max-width: $mobile-width) {
+        width: 100%;
+      }
+
+      .arrows-icon {
+        width: 124px;
+        height: 128px;
+        margin-top: 39px;
+        margin-left: 42px;
+      }
+    }
+
+    .alert-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 374px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      padding-right: 60px;
+
+      @media screen and (max-width: $mobile-width) {
+        width: 100%;
+        padding-left: 5px;
+        padding-top: 0;
+      }
+
+      .transfer-title {
+        font-size: 44px;
+        color: #5c34a2;
+      }
+
+      .transfer-description {
+        font-size: 14px;
+        color: #5c34a2;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .transfer-buttons {
+
+        .transfer-confirm {
+          width: 91px;
+          height: 40px;
+          color: #ffffff;
+          font-size: 15px;
+          font-weight: bold;
+          border-radius: 3px;
+          background-color: #60db97;
+          text-decoration: none;
+        }
+
+        .transfer-cancel {
+          width: 76px;
+          height: 40px;
+          border-radius: 3px;
+          color: #5c34a2;
+          font-size: 15px;
+          font-weight: bold;
+          background-color: #ffffff;
+          border: solid 1px #5c34a2;
+          text-decoration: none;
+          margin-left: 20px;
+        }
+      }
+    }
+  }
 }

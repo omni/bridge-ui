@@ -8,6 +8,7 @@ import { BridgeAddress } from './index'
 import { BridgeNetwork } from './index'
 import { ModalContainer } from './ModalContainer'
 import { NetworkDetails } from './NetworkDetails'
+import { TransferAlert } from './TransferAlert'
 import homeLogo from '../assets/images/logos/logo-poa-sokol@2x.png'
 import foreignLogo from '../assets/images/logos/logo-poa-20@2x.png'
 import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
@@ -23,7 +24,9 @@ export class Bridge extends React.Component {
     homeCurrency: 'POA',
     amount:'',
     modalData: {},
-    showModal: false
+    confirmationData: {},
+    showModal: false,
+    showConfirmation: false
   }
 
   handleInputChange = name => event => {
@@ -132,9 +135,35 @@ export class Bridge extends React.Component {
   isGreaterThan = (amount, base) => new BN(amount).gt(new BN(base))
 
   onTransfer = async (e) => {
+    e.preventDefault()
+
+    const amount = this.state.amount.trim();
+    if(!amount){
+      swal("Error", "Please specify amount", "error")
+      return
+    }
+
+    const { reverse, homeCurrency } = this.state
+    const { foreignStore, web3Store } = this.props.RootStore
+    const homeDisplayName = 'POA ' + web3Store.homeNet.name
+    const foreignDisplayName = 'ETH ' + web3Store.foreignNet.name
+
+    const confirmationData = {
+      from: reverse ? foreignDisplayName : homeDisplayName,
+      to: reverse ? homeDisplayName : foreignDisplayName,
+      fromCurrency: reverse ? foreignStore.symbol : homeCurrency,
+      toCurrency: reverse ? homeCurrency : foreignStore.symbol,
+      amount
+    }
+
+    this.setState({ showConfirmation: true, confirmationData})
+  }
+
+  onTransferConfirmation = async () => {
     const { alertStore } = this.props.RootStore
     const { reverse } = this.state
-    e.preventDefault()
+
+    this.setState({showConfirmation: false, confirmationData: {}})
     alertStore.setLoading(true)
     const amount = this.state.amount.trim();
     if(!amount){
@@ -199,7 +228,7 @@ export class Bridge extends React.Component {
 
   render() {
     const { web3Store, foreignStore } = this.props.RootStore
-    const { reverse, homeCurrency, showModal, modalData } = this.state
+    const { reverse, homeCurrency, showModal, modalData, showConfirmation, confirmationData } = this.state
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
     return(
       <div className="bridge-container">
@@ -242,6 +271,14 @@ export class Bridge extends React.Component {
             showModal={showModal}
           >
             <NetworkDetails {...modalData}/>
+          </ModalContainer>
+          <ModalContainer
+            showModal={showConfirmation}
+          >
+            <TransferAlert
+              onConfirmation={this.onTransferConfirmation}
+              onCancel={() => {this.setState({showConfirmation: false, confirmationData: {}})}}
+              {...confirmationData} />
           </ModalContainer>
         </div>
       </div>
