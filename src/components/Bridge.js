@@ -86,6 +86,7 @@ export class Bridge extends React.Component {
       alertStore.pushError("Insufficient balance")
     } else {
       try {
+        alertStore.setLoading(true)
         return txStore.doSend({
         to: homeStore.HOME_BRIDGE_ADDRESS,
         from: web3Store.defaultAccount.address,
@@ -120,6 +121,7 @@ export class Bridge extends React.Component {
       alertStore.pushError(`Insufficient token balance. Your balance is ${foreignStore.balance} ${foreignStore.symbol}`)
     } else {
       try {
+        alertStore.setLoading(true)
         return await txStore.erc677transferAndCall({
         to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
         from: web3Store.defaultAccount.address,
@@ -164,7 +166,6 @@ export class Bridge extends React.Component {
     const { reverse } = this.state
 
     this.setState({showConfirmation: false, confirmationData: {}})
-    alertStore.setLoading(true)
     const amount = this.state.amount.trim();
     if(!amount){
       swal("Error", "Please specify amount", "error")
