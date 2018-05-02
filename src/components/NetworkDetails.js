@@ -1,6 +1,7 @@
 import React from 'react'
 import copyIcon from '../assets/images/icons/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import numeral from 'numeral'
 
 export const NetworkDetails = ({
   isHome,
@@ -53,11 +54,11 @@ export const NetworkDetails = ({
         </p>
         <p className="details-data-container">
           <span className="details-label">Total Contract Balance</span>
-          <span className="details-description-bold">{totalBalance} {currency}</span>
+          <span className="details-description-bold">{numeral(totalBalance).format('0.00')} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>
-          <span className="details-description-bold">{balance} {currency}</span>
+          <span className="details-description-bold">{numeral(balance).format('0.00')} {currency}</span>
         </p>
       </div>
     </div>

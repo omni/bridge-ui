@@ -192,6 +192,8 @@
 
         @media screen and (max-width: $mobile-width) {
           width: 80%;
+          height: auto;
+          padding: 5px 1% 5px 5%;
         }
       }
 
@@ -206,6 +208,8 @@
 
         @media screen and (max-width: $mobile-width) {
           width: 90%;
+          height: auto;
+          padding: 5px 5% 5px 1%;
         }
       }
 
@@ -287,6 +291,7 @@
 
         @media screen and (max-width: $mobile-width) {
           width: 100%;
+          height: auto;
         }
 
         .bridge-form {
@@ -298,6 +303,7 @@
           @media screen and (max-width: 650px) {
             width: 100%;
             margin: 30px 0;
+            height: auto;
           }
 
           &-controls {
@@ -387,6 +393,10 @@
     flex-direction: column;
     min-width: 558px;
 
+    @media screen and (max-width: $mobile-width) {
+      min-width: 100%;
+    }
+
     .details-logo-container {
       width: 85px;
       height: 80px;
@@ -433,6 +443,11 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+
+      @media screen and (max-width: $mobile-width) {
+        width: 85%;
+        padding: 15px;
+      }
 
       .details-data-container {
         display: flex;
