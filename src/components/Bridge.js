@@ -31,13 +31,31 @@ export class Bridge extends React.Component {
       [name]: event.target.value
     })
   }
-  componentDidMount(){
+  componentDidMount() {
+    const { web3Store } = this.props.RootStore
+    web3Store.getWeb3Promise.then(() => {
+      if(!web3Store.metamaskNet.id || !web3Store.foreignNet.id) {
+        this.forceUpdate()
+      } else {
+        const reverse = web3Store.metamaskNet.id.toString() === web3Store.foreignNet.id.toString()
+        if (reverse) {
+          this.setState({
+            reverse
+          })
+        }
+      }
+    })
+  }
+
+  componentDidUpdate() {
     const { web3Store } = this.props.RootStore
     web3Store.getWeb3Promise.then(() => {
       const reverse = web3Store.metamaskNet.id.toString() === web3Store.foreignNet.id.toString()
-      this.setState({
-        reverse
-      })
+      if (reverse !== this.state.reverse) {
+        this.setState({
+          reverse
+        })
+      }
     })
   }
 
