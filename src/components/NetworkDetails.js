@@ -10,16 +10,19 @@ export const NetworkDetails = ({
   logo,
   address,
   currency,
-  tokenAddress,
   maxCurrentLimit,
   maxPerTx,
   minPerTx,
+  tokenAddress,
+  totalSupply,
   totalBalance,
   balance
  }) => {
   const networkTitle = isHome ? 'Home' : 'Foreign'
   const action = isHome ? 'Deposit' : 'Withdraw'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
+  const totalTitle = isHome ? 'Total Contract Balance' : 'Total Supply'
+  const totalAmount = isHome ? totalBalance : totalSupply
 
   return (
     <div className="network-details">
@@ -52,9 +55,20 @@ export const NetworkDetails = ({
           <span className="details-label">Minimum Amount Per Transaction</span>
           <span className="details-description-bold">{minPerTx} {currency}</span>
         </p>
+        {!isHome && (
+          <p className="details-data-container">
+            <span className="details-label">Token Address</span>
+            <CopyToClipboard text={tokenAddress}>
+            <span className="details-description details-copy">
+              {tokenAddress.slice(0,27).concat('...')}
+              <img className="info-icon-right" src={copyIcon} alt=""/>
+            </span>
+            </CopyToClipboard>
+          </p>
+        )}
         <p className="details-data-container">
-          <span className="details-label">Total Contract Balance</span>
-          <span className="details-description-bold">{numeral(totalBalance).format('0.00')} {currency}</span>
+          <span className="details-label">{totalTitle}</span>
+          <span className="details-description-bold">{numeral(totalAmount).format('0.00')} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>

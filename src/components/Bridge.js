@@ -220,7 +220,8 @@ export class Bridge extends React.Component {
       maxCurrentLimit: foreignStore.maxCurrentDeposit,
       maxPerTx: foreignStore.maxPerTx,
       minPerTx: foreignStore.minPerTx,
-      totalBalance: foreignStore.totalSupply,
+      tokenAddress: foreignStore.tokenAddress,
+      totalSupply: foreignStore.totalSupply,
       balance: foreignStore.balance
     }
 
