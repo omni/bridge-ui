@@ -2,7 +2,7 @@
   "name": "bridge",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://poanetwork.github.io/bridge-ui",
+  "homepage": "https://poanetwork.github.io/",
   "dependencies": {
     "bignumber.js": "^6.0.0",
     "coveralls": "^3.0.0",
