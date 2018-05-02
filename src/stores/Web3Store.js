@@ -59,6 +59,10 @@ class Web3Store {
   @action
   async getBalances(){
     try {
+      const accounts = await this.injectedWeb3.eth.getAccounts()
+      if(accounts[0] !== this.defaultAccount.address) {
+        this.defaultAccount.address = accounts[0]
+      }
       this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
       this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
       balanceLoaded()
