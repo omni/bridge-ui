@@ -208,19 +208,11 @@ When you are done, go back to `sokol-kovan-bridge` folder
 * Run:
 
 ```
-cargo build -p bridge-cli --release
+make
 ```
 7. Go back to directory up.
 `cd ..`
-8. Create an empty file `HomeBridge_bytecode.bin`. Even the contract is deployed separetely, the bridge is still looking for the file holding contract bytecode.
-```bash
-touch HomeBridge_bytecode.bin
-```
-9. Create an empty file `ForeignBridge_bytecode.bin`:
-```bash
-touch ForeignBridge_bytecode.bin
-```
-10. Create `config.toml` file  
+8. Create `config.toml` file  
 `nano config.toml`  
 Replace
 `0xETH_ACCOUNT_VALIDATOR_SOKOL` to your `HOME_VALIDATORS` address   
@@ -229,7 +221,6 @@ and `authorities` to your `VALIDATORS` from .env deploy.js above
 
 ```yaml
 keystore = "keys"
-estimated_gas_cost_of_withdraw = 0
 
 [home]
 account = "0xETH_ACCOUNT_VALIDATOR_SOKOL"
@@ -238,9 +229,6 @@ rpc_host = "https://sokol.poa.network"
 rpc_port = 443
 password = "password.txt"
 
-[home.contract]
-bin = "HomeBridge_bytecode.bin"
-
 [foreign]
 account = "0xETH_ACCOUNT_VALIDATOR_KOVAN"
 required_confirmations = 0
@@ -248,31 +236,25 @@ rpc_host = "https://kovan.infura.io/mew"
 rpc_port = 443
 password = "password.txt"
 
-[foreign.contract]
-bin = "ForeignBridge_bytecode.bin"
-
 [authorities]
 accounts = [
   "0x..",
   "0x.."
 ]
 required_signatures = 1
+
 [transactions]
-home_deploy = { gas = 3000000, gas_price = 1000000000 }
-foreign_deploy = { gas = 3000000, gas_price = 1000000000 }
 deposit_relay = { gas = 3000000, gas_price = 1000000000 }
 withdraw_relay = { gas = 3000000, gas_price = 1000000000 }
 withdraw_confirm = { gas = 3000000, gas_price = 1000000000 }
 ```
-11. Create db.toml file  
+9. Create db.toml file  
 `nano db.toml`  
 Insert addresses from  
 `cat poa-bridge-contracts/deploy/bridgeDeploymentResults.json`  
 ```yaml
 home_contract_address = "0xE46...E0a" #YOUR HOME CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#3 
 foreign_contract_address = "0x90...3eA" #YOUR FOREIGN CONTRACT ADDRESS THAT YOU DEPLOYED IN STEP#4
-home_deploy = 1400663 # block number at which the contract was created for home contract you can find in `bridgeDeploymentResults.json`
-foreign_deploy = 6342830 # block number at which the contract was created for foreign contract you can find in `bridgeDeploymentResults.json`
 checked_deposit_relay = 1400663 # last checked deposits events on Home network
 checked_withdraw_relay = 6342830 # last checked withdraw events on Foreign network
 checked_withdraw_confirm = 6342830 # last checked withdraw events on Foreign network
@@ -283,18 +265,16 @@ Exit `nano` by Ctrl-O and Ctrl-X
 * put validator JSON keystore into `keys` folder
 * create `password.txt` file and insert your password for the key
 
-12. At this step your folder structure should look like this
+10. At this step your folder structure should look like this
 ```bash
 .
 └── sokol-kovan-bridge
-    ├── ForeignBridge_bytecode.bin
-    ├── HomeBridge_bytecode.bin
     ├── config.toml
     ├── db.toml
     ├── poa-bridge
     └── poa-bridge-contracts
 ```
-13. Run the bridge app:
+11. Run the bridge app:
 ```
 env RUST_LOG=info ./poa-bridge/target/release/bridge --config config.toml --database db.toml
 ```
@@ -309,7 +289,6 @@ INFO:bridge: Establishing connection:
 INFO:bridge:   using RPC connection
 INFO:bridge: Acquiring home & foreign chain ids
 INFO:bridge: Home chain ID: 77 Foreign chain ID: 42
-INFO:bridge: Deploying contracts (if needed)
 INFO:bridge: Loaded database
 INFO:bridge: Starting listening to events
 INFO:bridge::bridge: Retrieved home contract balance
@@ -327,7 +306,7 @@ INFO:bridge::bridge::withdraw_confirm: got 0 new withdraws to sign
 ```
 Open separate terminal window and go to your `sokol-kovan-bridge` folder
 
-14. Install UI app
+12. Install UI app
 
 ## Installation of the UI app
 
