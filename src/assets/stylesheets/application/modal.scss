@@ -9,6 +9,14 @@
     position: relative;
     min-height: 410px;
 
+    @media screen and (max-width: $tablet-width) {
+      top: 30px;
+    }
+
+    @media screen and (max-width: $mobile-width) {
+      min-width: 100%;
+    }
+
     .title {
       margin-bottom: 20px;
       text-transform: uppercase;
@@ -39,6 +47,11 @@
 
       &:hover {
         cursor: pointer;
+      }
+
+      @media screen and (max-width: $mobile-width) {
+        top: 40px;
+        right: 0px;
       }
     }
   }

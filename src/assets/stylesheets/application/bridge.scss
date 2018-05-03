@@ -6,6 +6,10 @@
   height: 80vh;
   display: flex;
   align-items: center;
+
+  @media screen and (max-width: $tablet-width) {
+    height: 512px;
+  }
 }
 
 .bridge {
@@ -21,7 +25,7 @@
     background-image: linear-gradient(to right, #5c34a2, #7b5ab2);
     align-self: center;
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width) {
       width: 100%;
     }
 
@@ -66,7 +70,7 @@
     background-image: linear-gradient(to right, #5c34a2, #7b5ab2);
     align-self: center;
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width) {
       width: 100%;
     }
 
@@ -116,7 +120,7 @@
     font-weight: bold;
     color: #5c34a2;
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width) {
       font-size: 9px;
     }
 
@@ -127,7 +131,7 @@
     display: flex;
     justify-content: center;
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width) {
       height: auto;
     }
 
@@ -142,7 +146,7 @@
         background-color: #ffffff;
         border-top-right-radius: 10px;
 
-        @media screen and (max-width: $mobile-width) {
+        @media screen and (max-width: $tablet-width) {
           display: none;
         }
       }
@@ -160,7 +164,7 @@
         background-color: #ffffff;
         border-bottom-left-radius: 10px;
 
-        @media screen and (max-width: $mobile-width) {
+        @media screen and (max-width: $tablet-width) {
           display: none;
         }
       }
@@ -176,7 +180,7 @@
       display: flex;
       flex-wrap: wrap;
 
-      @media screen and (max-width: $mobile-width) {
+      @media screen and (max-width: $tablet-width) {
         max-width: 92%;
         flex-direction: column;
       }
@@ -190,8 +194,10 @@
         padding: 70px 1% 70px 5%;
         align-items: flex-start;
 
-        @media screen and (max-width: $mobile-width) {
+        @media screen and (max-width: $tablet-width) {
           width: 80%;
+          height: auto;
+          padding: 5px 1% 5px 5%;
         }
       }
 
@@ -204,8 +210,10 @@
         padding: 70px 5% 70px 1%;
         align-items: flex-end;
 
-        @media screen and (max-width: $mobile-width) {
+        @media screen and (max-width: $tablet-width) {
           width: 90%;
+          height: auto;
+          padding: 5px 5% 5px 1%;
         }
       }
 
@@ -285,8 +293,10 @@
         max-width: 384px;
         height: 276px;
 
-        @media screen and (max-width: $mobile-width) {
+        @media screen and (max-width: $tablet-width) {
           width: 100%;
+          height: auto;
+          align-self: center;
         }
 
         .bridge-form {
@@ -295,9 +305,10 @@
           flex-direction: column;
           justify-content: space-evenly;
 
-          @media screen and (max-width: 650px) {
+          @media screen and (max-width: $tablet-width) {
             width: 100%;
             margin: 30px 0;
+            height: auto;
           }
 
           &-controls {
@@ -376,7 +387,7 @@
     display: flex;
     justify-content: space-around;
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width) {
       width: 100%;
     }
 
@@ -386,6 +397,10 @@
     display: flex;
     flex-direction: column;
     min-width: 558px;
+
+    @media screen and (max-width: $tablet-width) {
+      min-width: 100%;
+    }
 
     .details-logo-container {
       width: 85px;
@@ -434,6 +449,16 @@
       flex-direction: column;
       justify-content: space-between;
 
+      @media screen and (max-width: $tablet-width) {
+        width: 85%;
+        padding: 15px;
+      }
+
+      @media screen and (max-width: $tablet-width) and (min-width: $mobile-width) {
+        height: 200px;
+        padding: 22px;
+      }
+
       .details-data-container {
         display: flex;
         justify-content: space-between;
@@ -478,5 +503,89 @@
       box-shadow: 10px 0 0 0 #fff;
     }
 
+  }
+
+  .transfer-alert {
+    display: flex;
+    width: 600px;
+    height: 378px;
+    border-radius: 8px;
+    background-color: #ffffff;
+
+    @media screen and (max-width: $tablet-width) {
+      flex-direction: column;
+      width: 100%;
+      height: auto;
+    }
+
+    .image-container {
+      width: 166px;
+
+      @media screen and (max-width: $tablet-width) {
+        width: 100%;
+      }
+
+      .arrows-icon {
+        width: 124px;
+        height: 128px;
+        margin-top: 39px;
+        margin-left: 42px;
+      }
+    }
+
+    .alert-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      width: 374px;
+      padding-top: 40px;
+      padding-bottom: 40px;
+      padding-right: 60px;
+
+      @media screen and (max-width: $tablet-width) {
+        width: 100%;
+        padding-left: 5px;
+        padding-top: 0;
+      }
+
+      .transfer-title {
+        font-size: 44px;
+        color: #5c34a2;
+      }
+
+      .transfer-description {
+        font-size: 14px;
+        color: #5c34a2;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      .transfer-buttons {
+
+        .transfer-confirm {
+          width: 91px;
+          height: 40px;
+          color: #ffffff;
+          font-size: 15px;
+          font-weight: bold;
+          border-radius: 3px;
+          background-color: #60db97;
+          text-decoration: none;
+        }
+
+        .transfer-cancel {
+          width: 76px;
+          height: 40px;
+          border-radius: 3px;
+          color: #5c34a2;
+          font-size: 15px;
+          font-weight: bold;
+          background-color: #ffffff;
+          border: solid 1px #5c34a2;
+          text-decoration: none;
+          margin-left: 20px;
+        }
+      }
+    }
   }
 }
