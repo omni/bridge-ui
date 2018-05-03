@@ -8,6 +8,7 @@ const classWeb3Loaded = By.className("web3-loaded");
 const classPendingTransaction = By.className("pending-transaction");
 const loadingContainer = By.className("loading-container");
 const buttonTransferConfirm = By.className("transfer-confirm");
+const buttonDisclaimerConfirm = By.className("disclaimer-confirm");
 
 class MainPage extends Page {
   constructor(driver) {
@@ -95,6 +96,16 @@ class MainPage extends Page {
   async isDisplayedLoadingContainer() {
     return await super.isElementDisplayed(loadingContainer);
   }
+
+  async confirmDisclaimer() {
+    return await super.waitUntilDisplayed(buttonDisclaimerConfirm, 180) &&
+           await this.clickButtonDisclaimerConfirm();
+  }
+
+  async clickButtonDisclaimerConfirm() {
+    return await super.clickWithWait(buttonDisclaimerConfirm);
+  }
+
 
 }
 

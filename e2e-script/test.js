@@ -40,6 +40,12 @@ test.describe('e2e-test for bridge.poa, version 1.3.0', async function () {
       return await assert.equal(result, startUrl, "Test FAILED. User is not able to open bridge-ui main page");
     });
 
+  test.it('Home page: disclaimer is displayed  ',
+    async function () {
+      let result = await  mainPage.confirmDisclaimer();
+      return await assert.equal(result, true, "Test FAILED. Disclaimer is not displayed");
+    });
+
   test.it('Main page: foreign POA balance is displayed ',
     async function () {
       foreignBalanceBefore = await mainPage.getForeignPOABalance();

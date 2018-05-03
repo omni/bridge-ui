@@ -26,11 +26,7 @@ class User {
       await mainPage.waitUntilShowUpButtonTransferConfirm() &&
       await mainPage.clickButtonTransferConfirm() &&
       await metaMask.signTransaction() &&
-      await mainPage.waitUntilShowUpButtonOk() &&
-      await mainPage.clickButtonOk() &&
-      await mainPage.waitUntilTransactionDone() &&
-      await mainPage.waitUntilShowUpButtonOk() &&
-      await mainPage.clickButtonOk();
+      await mainPage.waitUntilTransactionDone()
   }
 
   async setMetaMaskNetwork() {
