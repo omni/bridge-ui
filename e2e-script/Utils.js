@@ -1,18 +1,18 @@
 const webdriver = require('selenium-webdriver'),
-      chrome = require('selenium-webdriver/chrome');
+  chrome = require('selenium-webdriver/chrome');
 const fs = require('fs-extra');
-const configFile='./e2e-script/config.json';
+const configFile = './e2e-script/config.json';
 
 class Utils {
 
-  static  async getHomeAccount() {
+  static async getHomeAccount() {
     try {
       let obj = JSON.parse(fs.readFileSync(configFile), "utf8");
       return obj.homeAccount;
     } catch (err) {
       return null;
     }
- }
+  }
 
   static async getForeignAccount() {
     try {
@@ -32,7 +32,7 @@ class Utils {
     }
   }
 
-  static async  startBrowserWithMetamask() {
+  static async startBrowserWithMetamask() {
     let source = './e2e-script/MetaMask.crx';
     let options = new chrome.Options();
     await options.addExtensions(source);
@@ -43,7 +43,8 @@ class Utils {
   }
 
 }
+
 module.exports = {
-  Utils:Utils
+  Utils: Utils
 }
 

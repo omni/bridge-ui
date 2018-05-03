@@ -1,9 +1,9 @@
 const fs = require('fs-extra');
-const MetaMask=require('./MetaMask.js').MetaMask;
-const MainPage=require('./mainPage.js').MainPage;
+const MetaMask = require('./MetaMask.js').MetaMask;
+const MainPage = require('./mainPage.js').MainPage;
 
 class User {
-  constructor(driver,file){
+  constructor(driver, file) {
     try {
       this.driver = driver;
       let obj = JSON.parse(fs.readFileSync(file, "utf8"));
@@ -18,26 +18,26 @@ class User {
     }
   }
 
-  async transferTokens (amount) {
+  async transferTokens(amount) {
     let mainPage = new MainPage(this.driver);
-	let metaMask = new MetaMask(this.driver);
-	return await mainPage.fillFieldAmount(amount) &&
-	       await mainPage.clickButtonTransfer() &&
-	       await mainPage.waitUntilShowUpButtonTransferConfirm() &&
-	       await mainPage.clickButtonTransferConfirm() &&
-	       await metaMask.signTransaction() &&
-	       await mainPage.waitUntilShowUpButtonOk() &&
-	       await mainPage.clickButtonOk() &&
-	       await mainPage.waitUntilTransactionDone() &&
-	       await mainPage.waitUntilShowUpButtonOk() &&
-	       await mainPage.clickButtonOk();
+    let metaMask = new MetaMask(this.driver);
+    return await mainPage.fillFieldAmount(amount) &&
+      await mainPage.clickButtonTransfer() &&
+      await mainPage.waitUntilShowUpButtonTransferConfirm() &&
+      await mainPage.clickButtonTransferConfirm() &&
+      await metaMask.signTransaction() &&
+      await mainPage.waitUntilShowUpButtonOk() &&
+      await mainPage.clickButtonOk() &&
+      await mainPage.waitUntilTransactionDone() &&
+      await mainPage.waitUntilShowUpButtonOk() &&
+      await mainPage.clickButtonOk();
   }
 
   async setMetaMaskNetwork() {
     let metaMask = new MetaMask(this.driver);
     return await  metaMask.switchToNextPage() &&
-           await metaMask.setNetwork(this.networkID) &&
-           await  metaMask.switchToNextPage();
+      await metaMask.setNetwork(this.networkID) &&
+      await  metaMask.switchToNextPage();
   }
 
   async setMetaMaskAccount() {
@@ -50,5 +50,5 @@ class User {
 }
 
 module.exports = {
-  User:User
+  User: User
 };
