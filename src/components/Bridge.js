@@ -250,6 +250,7 @@ export class Bridge extends React.Component {
                 currency={homeCurrency}
                 balance={web3Store.defaultAccount.homeBalance} />
               <BridgeForm
+                displayArrow={!web3Store.metamaskNotSetted}
                 reverse={reverse}
                 currency={formCurrency}
                 onTransfer={this.onTransfer}
