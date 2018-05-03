@@ -11,7 +11,7 @@ export const BridgeNetwork = ({
 }) => {
   const containerName = isHome ? 'home' : 'foreign'
   const networkTitle = isHome ? 'POA' : 'ETH'
-  const formattedBalance = numeral(balance).format('0.00')
+  const formattedBalance = numeral(balance).format('0.00', Math.floor)
 
   const showMore = () => isHome ?
     (<div className="bridge-network-data" onClick={showModal}>

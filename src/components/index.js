@@ -12,4 +12,5 @@ export { BridgeAddress } from './BridgeAddress'
 export { DataBlock } from './DataBlock'
 export { BridgeStatistics } from './BridgeStatistics'
 export { NetworkDetails } from './NetworkDetails'
-
+export { Disclaimer } from './Disclaimer'
+export { ModalContainer } from './ModalContainer'

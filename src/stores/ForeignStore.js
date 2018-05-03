@@ -136,7 +136,8 @@ class ForeignStore {
       if(this.waitingForConfirmation.size) {
         const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
-          this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} for Tx ${event.returnValues.transactionHash}`)
+          this.alertStore.setLoadingStepIndex(3)
+          setTimeout(() => {this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} on Tx ${event.returnValues.transactionHash}`)}, 2000)
           this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
 

@@ -68,11 +68,11 @@ export const NetworkDetails = ({
         )}
         <p className="details-data-container">
           <span className="details-label">{totalTitle}</span>
-          <span className="details-description-bold">{numeral(totalAmount).format('0.00')} {currency}</span>
+          <span className="details-description-bold">{numeral(totalAmount).format('0.00', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>
-          <span className="details-description-bold">{numeral(balance).format('0.00')} {currency}</span>
+          <span className="details-description-bold">{numeral(balance).format('0.00', Math.floor)} {currency}</span>
         </p>
       </div>
     </div>

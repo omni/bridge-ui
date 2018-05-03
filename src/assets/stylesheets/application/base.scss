@@ -17,6 +17,7 @@ body {
   box-sizing: border-box;
   padding-bottom: $footer-height_desktop;
   background-color: #ffffff;
+  font-family: 'Nunito', sans-serif;
 
   @media screen and (max-width: $tablet-width) {
     padding-bottom: $footer-height_mobile;

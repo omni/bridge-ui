@@ -1,6 +1,7 @@
 import { action, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 import { balanceLoaded } from './utils/testUtils'
+import swal from 'sweetalert'
 
 class Web3Store {
   @observable injectedWeb3 = {};
@@ -13,6 +14,7 @@ class Web3Store {
   @observable errors = [];
 
   @observable getWeb3Promise = null;
+  @observable metamaskNotSetted = false;
 
   @observable homeNet = {id: '', name: ''};
   @observable foreignNet = {id: '', name: ''};
@@ -30,9 +32,19 @@ class Web3Store {
     }).catch((e) => {
       console.error(e,'web3 not loaded')
       this.errors.push(e.message)
+      this.metamaskNotSetted = true
+      const errorNode = document.createElement("div")
+      errorNode.innerHTML = "You need to install metamask and select an account. Please follow the instructions on the POA Network <a href='https://github.com/poanetwork/wiki/wiki/POA-Network-on-MetaMask' target='blank'>wiki</a> and reload the page."
+      swal({
+        title: "Error",
+        content: errorNode,
+        icon: "error",
+        type: "error"
+      });
     })
-    this.setWeb3Home();
-    this.setWeb3Foreign();
+    this.setWeb3Home()
+    this.setWeb3Foreign()
+    this.checkMetamaskConfig()
   }
 
   @action
@@ -68,6 +80,20 @@ class Web3Store {
       balanceLoaded()
     } catch(e){
       this.alertStore.pushError(e)
+    }
+  }
+
+  @action
+  checkMetamaskConfig() {
+    if(!this.metamaskNotSetted) {
+      if(this.metamaskNet.name === '' || this.homeNet.name === '' || this.foreignNet.name === '') {
+        setTimeout(() => {this.checkMetamaskConfig()}, 1000)
+        return
+      }
+      if(this.metamaskNet.name !== this.homeNet.name && this.metamaskNet.name !== this.foreignNet.name) {
+        this.metamaskNotSetted = true
+        this.alertStore.pushError(`You are on an unknown network on metamask. Please select POA ${this.homeNet.name} or ETH ${this.foreignNet.name} in order to communicate with the bridge.`)
+      }
     }
   }
 

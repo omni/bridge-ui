@@ -174,10 +174,8 @@ export class Bridge extends React.Component {
     try {
       if(reverse){
         await this._sendToForeign(amount)
-        alertStore.setLoading(false)
       } else {
         await this._sendToHome(amount)
-        alertStore.setLoading(false)
       }
     } catch(e) {
       alertStore.setLoading(false)
@@ -250,6 +248,7 @@ export class Bridge extends React.Component {
                 currency={homeCurrency}
                 balance={web3Store.defaultAccount.homeBalance} />
               <BridgeForm
+                displayArrow={!web3Store.metamaskNotSetted}
                 reverse={reverse}
                 currency={formCurrency}
                 onTransfer={this.onTransfer}

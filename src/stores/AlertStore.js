@@ -3,6 +3,13 @@ import { action, observable } from "mobx";
 class AlertStore {
   @observable alerts = [];
   @observable showLoading = false;
+  @observable loadingStepIndex = -1;
+  loadingSteps = [
+    'Loading',
+    'Waiting for Block Confirmations...',
+    'Getting Required Signatures from Validators...',
+    'Transfer Complete'
+  ];
 
   @action 
   pushError(message){
@@ -25,6 +32,20 @@ class AlertStore {
   @action
   setLoading(status) {
     this.showLoading = status;
+    this.loadingStepIndex = 0;
+  }
+
+  @action
+  setLoadingStepIndex(index) {
+    this.loadingStepIndex = index;
+    console.log(this.loadingSteps[index])
+    if(index === this.loadingSteps.length - 1) {
+      setTimeout(() => { this.setLoading(false)}, 2000)
+    }
+  }
+
+  shouldDisplayLoadingSteps() {
+    return this.loadingStepIndex !== -1
   }
 
 }
