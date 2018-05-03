@@ -21,23 +21,23 @@ class User {
   async transferTokens (amount) {
     let mainPage = new MainPage(this.driver);
 	let metaMask = new MetaMask(this.driver);
-	return (
-	  await mainPage.fillFieldAmount(amount) &&
-	  await mainPage.clickButtonTransfer() &&
-	  await metaMask.signTransaction() &&
-	  await mainPage.waitUntilShowUpButtonOk() &&
-	  await mainPage.clickButtonOk() &&
-	  await mainPage.waitUntilTransactionDone() &&
-	  await mainPage.waitUntilShowUpButtonOk() &&
-	  await mainPage.clickButtonOk()
-    );
+	return await mainPage.fillFieldAmount(amount) &&
+	       await mainPage.clickButtonTransfer() &&
+	       await mainPage.waitUntilShowUpButtonTransferConfirm() &&
+	       await mainPage.clickButtonTransferConfirm() &&
+	       await metaMask.signTransaction() &&
+	       await mainPage.waitUntilShowUpButtonOk() &&
+	       await mainPage.clickButtonOk() &&
+	       await mainPage.waitUntilTransactionDone() &&
+	       await mainPage.waitUntilShowUpButtonOk() &&
+	       await mainPage.clickButtonOk();
   }
 
   async setMetaMaskNetwork() {
     let metaMask = new MetaMask(this.driver);
     return await  metaMask.switchToNextPage() &&
-          await metaMask.setNetwork(this.networkID) &&
-          await  metaMask.switchToNextPage();
+           await metaMask.setNetwork(this.networkID) &&
+           await  metaMask.switchToNextPage();
   }
 
   async setMetaMaskAccount() {

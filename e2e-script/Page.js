@@ -24,15 +24,15 @@ class Page {
   async waitUntilDisappear(element, Twaiting) {
     let counter = Twaiting;
 	if (counter === undefined) 	counter = 180;
-	  try {
-	    do {
-	      await this.driver.sleep(300);
-	      if (! await this.isElementDisplayed(element)) return true;
-	    } while (counter-- > 0);
-	    return false;
-	  } catch(err) {
-	    return false;
-	  }
+	try {
+	  do {
+	    await this.driver.sleep(300);
+	    if (! await this.isElementDisplayed(element)) return true;
+	  } while (counter-- > 0);
+	  return false;
+	} catch(err) {
+	  return false;
+	}
   }
 
   async waitUntilLocated(element, Twaiting) {

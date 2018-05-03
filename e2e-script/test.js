@@ -30,7 +30,7 @@ test.describe('e2e-test for bridge.poa, version 1.2.0',  async function() {
 	});
 
 	test.after(async function() {
-		await driver.quit();
+		//await driver.quit();
 	});
 
 	test.it('User is able to open main page of bridge-ui  ',

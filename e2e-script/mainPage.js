@@ -7,6 +7,7 @@ const fieldsBalance = By.className("network-balance");
 const classWeb3Loaded = By.className("web3-loaded");
 const classPendingTransaction = By.className("pending-transaction");
 const loadingContainer = By.className("loading-container");
+const buttonTransferConfirm = By.className("transfer-confirm");
 
 class MainPage extends Page {
   constructor(driver){
@@ -50,17 +51,15 @@ class MainPage extends Page {
   }
 
   async clickButtonTransfer() {
-    let counter = 10;
-    do {
-      await this.clickWithWait(buttonTransfer);
-      if (counter--<0) return false;
-      await this.driver.sleep(1000);
-    } while (! await this.isDisplayedLoadingContainer())
-    return true;
+    return await this.clickWithWait(buttonTransfer);
   }
 
   async clickButtonOk() {
     return await super.clickWithWait(buttonOk);
+  }
+
+  async clickButtonTransferConfirm() {
+    return await super.clickWithWait(buttonTransferConfirm);
   }
 
   async isPresentButtonOk() {
@@ -81,6 +80,10 @@ class MainPage extends Page {
 
   async waitUntilShowUpButtonOk() {
     return await super.waitUntilDisplayed(buttonOk, 360);
+  }
+
+  async waitUntilShowUpButtonTransferConfirm() {
+	return await super.waitUntilDisplayed(buttonTransferConfirm, 360);
   }
 
   async waitUntilShowUpLoadingContainer() {
