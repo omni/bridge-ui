@@ -5,7 +5,7 @@ const MetaMask = require('./MetaMask.js').MetaMask;
 const MainPage = require('./mainPage.js').MainPage;
 const User = require("./User.js").User;
 
-test.describe('e2e-test for bridge.poa, version 1.2.0', async function () {
+test.describe('e2e-test for bridge.poa, version 1.3.0', async function () {
   this.timeout(4 * 60000);
   this.slow(1 * 60000);
 
