@@ -101,7 +101,8 @@ class HomeStore {
       if(this.waitingForConfirmation.size) {
         const confirmationEvents = homeEvents.filter((event) => event.event === "Withdraw" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
-          this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.homeNet.name} for Tx ${event.returnValues.transactionHash}`)
+          this.alertStore.setLoadingStepIndex(3)
+          setTimeout(() => {this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.homeNet.name} on Tx ${event.returnValues.transactionHash}`)}, 2000)
           this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
 

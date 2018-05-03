@@ -35,10 +35,12 @@ class TxStore {
           console.log('txHash', hash)
           this.txHashToIndex[hash] = index;
           this.txs[index] = {status: 'pending', name: `Sending ${to} ${value}`, hash}
+          this.alertStore.setLoadingStepIndex(1)
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          this.alertStore.pushError(e.message);
+          this.alertStore.setLoading(false)
+          this.alertStore.pushError('Transaction rejected on Metamask');
         })
       } catch(e) {
         this.alertStore.pushError(e.message);
@@ -87,8 +89,7 @@ class TxStore {
         if(res.status === '0x1'){
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
-          this.alertStore.pushSuccess(`${hash} Mined successfully on ${this.web3Store.metamaskNet.name} at block number ${res.blockNumber}`)
-
+          this.alertStore.setLoadingStepIndex(2)
           if(this.web3Store.metamaskNet.name === this.web3Store.homeNet.name) {
             this.foreignStore.addWaitingForConfirmation(hash)
           } else {

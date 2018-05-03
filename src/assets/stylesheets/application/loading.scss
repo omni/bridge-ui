@@ -23,7 +23,7 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background-color: rgba(78,44,137, 0.8);
+    background-color: rgba(78,44,137, 0.9);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,5 +44,17 @@
     &:nth-child(2) {
       animation-delay: .1s;
     }
+  }
+
+  &-text {
+    text-align: center;
+    width: 500px;
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 3;
+    letter-spacing: normal;
+    color: #ffffff;
   }
 }
