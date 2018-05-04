@@ -4,6 +4,8 @@ import DepositWithdraw from './events/DepositWithdraw';
 import SignedForDeposit from './events/SignedForDeposit';
 import CollectedSignatures from './events/CollectedSignatures';
 import { EventList } from './index'
+import { EventsListHeader } from './index'
+import { Event } from './index'
 
 
 const WAIT_INTERVAL = 700;
@@ -15,6 +17,13 @@ export class RelayEvents extends React.Component {
   constructor(props){
     super(props)
     this.timer = null;
+    this.colors = {
+      'Deposit': 'green',
+      'Withdraw': 'red',
+      'SignedForDeposit': 'purple',
+      'SignedForWithdraw': 'purple',
+      'CollectedSignatures': 'blue'
+    }
   }
 
   onHomeBlockFilter = async (value) => {
@@ -85,23 +94,29 @@ export class RelayEvents extends React.Component {
     }
   }
 
-  getHomeEvents = (homeStore, foreignStore) => {
+  getHomeEvents = (homeStore) => {
     return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}, index) =>
-      <DepositWithdraw
-        home={true}
-        eventName={event}
-        transactionHash={transactionHash}
-        blockNumber={blockNumber}
-        recipient={returnValues.recipient}
-        value={returnValues.value}
-        homeTxHash={returnValues.transactionHash}
-        filter={homeStore.filter || foreignStore.filter}
-        key={index} />)
+      ({
+        color: this.colors[event],
+        eventName: event,
+        transactionHash,
+        recipient: returnValues.recipient,
+        value: returnValues.value,
+        blockNumber
+      }))
   }
 
   getForeignEvents = (foreignStore, homeStore) => {
     return foreignStore.events.slice()
       .map(({ event, transactionHash, signedTxHash, blockNumber, returnValues}, index) => {
+        return ({
+          color: this.colors[event],
+          eventName: event,
+          transactionHash,
+          recipient: returnValues.recipient,
+          value: returnValues.value,
+          blockNumber
+        })
         if(event === 'Deposit' || event === 'Withdraw') {
           return (
             <DepositWithdraw
@@ -150,27 +165,44 @@ export class RelayEvents extends React.Component {
     const home = this.getHomeEvents(homeStore, foreignStore)
     const foreign = this.getForeignEvents(foreignStore, homeStore)
 
-    const homeDescription = `Home: ${web3Store.homeNet.name}(${web3Store.homeNet.id})`
-    const foreignDescription = `Foreign: ${web3Store.foreignNet.name}(${web3Store.foreignNet.id})`
-
     return(
-      <div className="events-container">
-        <h1 className="events-title">Events</h1>
-        <div className="events">
-          <div className="events-side events-side_left">
-            <EventList
-              events={home}
-              description={homeDescription}
-              handleChange={this.handleChangeHome}
-              handleKeyDown={this.handleKeyDownHome} />
-          </div>
-          <div className="events-side events-side_right">
-            <EventList
-              events={foreign}
-              description={foreignDescription}
-              handleChange={this.handleChangeForeign}
-              handleKeyDown={this.handleKeyDownForeign} />
-          </div>
+      <div className="events-page">
+        <div className="events-container">
+          <EventsListHeader />
+          {/*<Event
+            color="green"
+            eventName='Deposit'
+            transactionHash='0x9eb77805a52adeab7468bff1410d7cdda7be3c9dbda4cf898c4ef14949db08e2'
+            recipient='0x1d6e4254651080db23a7a42315bC60c78a8BEf57'
+            value='110000000000'
+            blockNumber='7126085'
+          />
+          <Event
+            color="red"
+            eventName='Withdraw'
+            transactionHash='0x9eb77805a52adeab7468bff1410d7cdda7be3c9dbda4cf898c4ef14949db08e2'
+            recipient='0x1d6e4254651080db23a7a42315bC60c78a8BEf57'
+            value='110000000000'
+            blockNumber='7126085'
+          />*/}
+          {home.map(event => <Event key={event.transactionHash} {...event} />)}
+          {foreign.map(event => <Event key={event.transactionHash+event.eventName} {...event} />)}
+          {/*<div className="events">
+            <div className="events-side events-side_left">
+              <EventList
+                events={home}
+                description={homeDescription}
+                handleChange={this.handleChangeHome}
+                handleKeyDown={this.handleKeyDownHome} />
+            </div>
+            <div className="events-side events-side_right">
+              <EventList
+                events={foreign}
+                description={foreignDescription}
+                handleChange={this.handleChangeForeign}
+                handleKeyDown={this.handleKeyDownForeign} />
+            </div>
+          </div>*/}
         </div>
       </div>
     );
