@@ -13,6 +13,10 @@
       top: 30px;
     }
 
+    @media screen and (max-width: 600px) {
+      top: 60px;
+    }
+
     @media screen and (max-width: $mobile-width) {
       min-width: 100%;
       top: 0;
@@ -50,9 +54,13 @@
         cursor: pointer;
       }
 
+      @media screen and (max-width: 600px) {
+        right: -10px;
+      }
+
       @media screen and (max-width: $mobile-width) {
-        top: 40px;
-        right: 0px;
+        top: -40px;
+        right: 0;
       }
     }
   }

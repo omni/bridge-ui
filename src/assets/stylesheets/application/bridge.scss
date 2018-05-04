@@ -412,6 +412,10 @@
       justify-content: center;
       align-items: center;
 
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
+
       .home-logo {
         width: 52px;
         height: 16px;
@@ -429,6 +433,10 @@
       height: 10px;
       width: 20px;
       bottom: 0;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
     .details-logo-container:after {
@@ -436,6 +444,10 @@
       top: 70px;
       border-radius: 0 0 0 10px;
       box-shadow: -10px 0 0 0 #fff;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
     .details-body {
@@ -451,17 +463,27 @@
 
       @media screen and (max-width: $tablet-width) {
         width: 85%;
-        padding: 15px;
+        height: 430px;
+        padding: 20px 15px 20px 15px;
+        align-self: center;
+        border-radius: 10px 10px 10px 10px;
       }
 
-      @media screen and (max-width: $tablet-width) and (min-width: $mobile-width) {
-        height: 200px;
-        padding: 22px;
+      @media screen and (max-width: $tablet-width) and (min-width: 415px) {
+        height: 300px;
+
+        @media screen and (max-width: 600px) {
+          height: 250px;
+        }
       }
 
       .details-data-container {
         display: flex;
         justify-content: space-between;
+
+        @media screen and (max-width: $tablet-width) {
+         flex-direction: column;
+        }
 
         .details-label {
           font-size: 14px;
@@ -494,6 +516,10 @@
       height: 10px;
       width: 20px;
       bottom: 0;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
     .details-body:before {
@@ -501,6 +527,10 @@
       top: 80px;
       border-radius: 0 10px 0 0;
       box-shadow: 10px 0 0 0 #fff;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
   }
