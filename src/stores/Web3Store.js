@@ -33,14 +33,7 @@ class Web3Store {
       console.error(e,'web3 not loaded')
       this.errors.push(e.message)
       this.metamaskNotSetted = true
-      const errorNode = document.createElement("div")
-      errorNode.innerHTML = "You need to install metamask and select an account. Please follow the instructions on the POA Network <a href='https://github.com/poanetwork/wiki/wiki/POA-Network-on-MetaMask' target='blank'>wiki</a> and reload the page."
-      swal({
-        title: "Error",
-        content: errorNode,
-        icon: "error",
-        type: "error"
-      });
+      this.showInstallMetamaskAlert()
     })
     this.setWeb3Home()
     this.setWeb3Foreign()
@@ -95,6 +88,17 @@ class Web3Store {
         this.alertStore.pushError(`You are on an unknown network on metamask. Please select POA ${this.homeNet.name} or ETH ${this.foreignNet.name} in order to communicate with the bridge.`)
       }
     }
+  }
+
+  showInstallMetamaskAlert() {
+    const errorNode = document.createElement("div")
+    errorNode.innerHTML = "You need to install metamask and select an account. Please follow the instructions on the POA Network <a href='https://github.com/poanetwork/wiki/wiki/POA-Network-on-MetaMask' target='blank'>wiki</a> and reload the page."
+    swal({
+      title: "Error",
+      content: errorNode,
+      icon: "error",
+      type: "error"
+    });
   }
 
 }
