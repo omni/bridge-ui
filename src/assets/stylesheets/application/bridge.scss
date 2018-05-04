@@ -604,8 +604,9 @@
 
   @media screen and (max-width: $tablet-width) {
     flex-direction: column;
-    width: 100%;
+    width: 92%;
     height: auto;
+    margin-left: 4%;
   }
 
   .image-container {
@@ -633,8 +634,9 @@
     padding-right: 46px;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
-      padding-left: 5px;
+      padding: 10px 0;
+      width: 88%;
+      align-self: center;
     }
 
     .alert-corner {
@@ -646,6 +648,13 @@
       font-size: 44px;
       color: #5c34a2;
       line-height: 1;
+
+      @media screen and (max-width: $tablet-width) {
+        font-size: 30px;
+        padding-top: 2%;
+        padding-bottom: 2%;
+      }
+
     }
 
     .disclaimer-description {
@@ -654,6 +663,11 @@
       padding-top: 10px;
       padding-bottom: 10px;
       line-height: 1.71;
+
+      @media screen and (max-width: $tablet-width) {
+        padding-left: 1%;
+        padding-right: 1%;
+      }
     }
 
     .disclaimer-buttons {
