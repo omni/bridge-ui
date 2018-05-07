@@ -353,14 +353,19 @@
           }
 
           .bridge-form-input-container {
+            display: flex;
+            justify-content: space-between;
+            width: 292px;
+
             @media screen and (max-width: $tablet-width) {
               background-color: rgba(251,251,252, 0.2);
               border-radius: 3px 3px 0 0;
+              width: 100%;
             }
           }
 
           &-input {
-            width: 185px;
+            width: 165px;
             height: 48px;
             padding-left: 16px;
             background-color: transparent;
