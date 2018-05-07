@@ -26,7 +26,7 @@
     align-self: center;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
+      display: none
     }
 
     .bridge-home-container {
@@ -71,7 +71,7 @@
     align-self: center;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
+      display: none
     }
 
     .bridge-foreign-container {
@@ -132,7 +132,7 @@
     justify-content: center;
 
     @media screen and (max-width: $tablet-width) {
-      height: auto;
+      height: 389px;
     }
 
     .left-image-wrapper {
@@ -183,6 +183,23 @@
       @media screen and (max-width: $tablet-width) {
         max-width: 92%;
         flex-direction: column;
+        border-radius: 8px;
+      }
+
+      .bridge-transfer-content-background {
+        width: 880px;
+        flex-shrink: 0;
+        display: flex;
+        flex-wrap: wrap;
+
+        @media screen and (max-width: $tablet-width) {
+          width: auto;
+          flex-direction: column;
+          background-image: url("../images/arrows-down@2x.png");
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: 164px 203px;
+        }
       }
 
       .network-container-home {
@@ -195,9 +212,11 @@
         align-items: flex-start;
 
         @media screen and (max-width: $tablet-width) {
-          width: 80%;
-          height: auto;
-          padding: 5px 1% 5px 5%;
+          width: auto;
+          align-self: center;
+          height: 136px;
+          padding: 5px 0 5px 0;
+          align-items: center;
         }
       }
 
@@ -211,9 +230,11 @@
         align-items: flex-end;
 
         @media screen and (max-width: $tablet-width) {
-          width: 90%;
-          height: auto;
-          padding: 5px 5% 5px 1%;
+          width: auto;
+          align-self: center;
+          height: 136px;
+          padding: 5px 0 5px 0;
+          align-items: center;
         }
       }
 
@@ -280,12 +301,20 @@
         background-image: url("../images/arrows-1.svg");
         background-position: center;
         background-repeat: no-repeat;
+
+        @media screen and (max-width: $tablet-width) {
+          background-image: none;
+        }
       }
 
       .transfer-left {
         background-image: url("../images/arrows-2.svg");
         background-position: center;
         background-repeat: no-repeat;
+
+        @media screen and (max-width: $tablet-width) {
+          background-image: none;
+        }
       }
 
       .form-container {
@@ -295,7 +324,7 @@
 
         @media screen and (max-width: $tablet-width) {
           width: 100%;
-          height: auto;
+          height: 97px;
           align-self: center;
         }
 
@@ -307,7 +336,6 @@
 
           @media screen and (max-width: $tablet-width) {
             width: 100%;
-            margin: 30px 0;
             height: auto;
           }
 
@@ -316,10 +344,23 @@
             padding: 8px 8px 8px 0;
             border-radius: 5px;
             background-color: rgba(251,251,252, 0.2);
+
+            @media screen and (max-width: $tablet-width) {
+              flex-direction: column;
+              padding: 8px 8px 8px 8px;
+              background-color: unset;
+            }
+          }
+
+          .bridge-form-input-container {
+            @media screen and (max-width: $tablet-width) {
+              background-color: rgba(251,251,252, 0.2);
+              border-radius: 3px 3px 0 0;
+            }
           }
 
           &-input {
-            min-width: 0;
+            width: 185px;
             height: 48px;
             padding-left: 16px;
             background-color: transparent;
@@ -331,10 +372,18 @@
               font-size: 24px;
               font-weight: bold;
               color: rgba(255, 255, 255, 0.7);
+
+              @media screen and (max-width: $tablet-width) {
+                font-size: 18px;
+              }
             }
 
             &::placeholder {
               opacity: 0.3;
+            }
+
+            @media screen and (max-width: $tablet-width) {
+              font-size: 18px;
             }
           }
 
@@ -345,6 +394,10 @@
             text-transform: uppercase;
             font-size: 24px;
             line-height: 48px;
+
+            @media screen and (max-width: $tablet-width) {
+              font-size: 18px;
+            }
           }
 
           &-button {
@@ -357,6 +410,11 @@
             background-color: #60db97;
             color: #ffffff;
             font-weight: bold;
+
+            @media screen and (max-width: $tablet-width) {
+              width: 100%;
+              border-radius: 0 0 3px 3px;
+            }
 
             &:hover {
               opacity: 0.8;

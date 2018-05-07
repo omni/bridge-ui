@@ -241,24 +241,26 @@ export class Bridge extends React.Component {
               <img className="left-image" src={leftImage} alt=""/>
             </div>
             <div className="bridge-transfer-content">
-              <BridgeNetwork
-                isHome={true}
-                showModal={this.loadHomeDetails}
-                networkData={web3Store.homeNet}
-                currency={homeCurrency}
-                balance={web3Store.defaultAccount.homeBalance} />
-              <BridgeForm
-                displayArrow={!web3Store.metamaskNotSetted}
-                reverse={reverse}
-                currency={formCurrency}
-                onTransfer={this.onTransfer}
-                onInputChange={this.handleInputChange('amount')} />
-              <BridgeNetwork
-                isHome={false}
-                showModal={this.loadForeignDetails}
-                networkData={web3Store.foreignNet}
-                currency={foreignStore.symbol}
-                balance={foreignStore.balance} />
+              <div className="bridge-transfer-content-background">
+                <BridgeNetwork
+                  isHome={true}
+                  showModal={this.loadHomeDetails}
+                  networkData={web3Store.homeNet}
+                  currency={homeCurrency}
+                  balance={web3Store.defaultAccount.homeBalance} />
+                <BridgeForm
+                  displayArrow={!web3Store.metamaskNotSetted}
+                  reverse={reverse}
+                  currency={formCurrency}
+                  onTransfer={this.onTransfer}
+                  onInputChange={this.handleInputChange('amount')} />
+                <BridgeNetwork
+                  isHome={false}
+                  showModal={this.loadForeignDetails}
+                  networkData={web3Store.foreignNet}
+                  currency={foreignStore.symbol}
+                  balance={foreignStore.balance} />
+              </div>
             </div>
             <div className="right-image-wrapper">
               <img className="right-image" src={rightImage} alt=""/>
