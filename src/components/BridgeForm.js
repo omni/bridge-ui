@@ -1,7 +1,7 @@
 import React from 'react'
 
 export const BridgeForm = ({ reverse, currency, onTransfer, onInputChange, displayArrow}) => (
-  <div className={`form-container ${displayArrow ? (reverse ? 'transfer-left' : 'transfer-right') : ''}` }>
+  <div className={`form-container ${displayArrow ? 'transfer-right' : ''}` }>
     <form className="bridge-form">
       <div className="bridge-form-controls">
         <div className="bridge-form-input-container">

@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const BridgeAddress = ({ isHome, logo}) => {
+export const BridgeAddress = ({ isHome, reverse, logo}) => {
   const getAddress = () => isHome ?
     (<div className="home-address-container" />)
     :
@@ -10,7 +10,7 @@ export const BridgeAddress = ({ isHome, logo}) => {
     (<div className="bridge-home">
       <div className="bridge-home-container">
         <div className="home-logo-container">
-          <img className="home-logo" src={logo} alt="home logo"/>
+          <img className={reverse ? 'foreign-logo' : 'home-logo'} src={logo} alt="home logo"/>
         </div>
       </div>
       {getAddress()}
@@ -20,7 +20,7 @@ export const BridgeAddress = ({ isHome, logo}) => {
       {getAddress()}
       <div className="bridge-foreign-container">
         <div className="foreign-logo-container">
-          <img className="foreign-logo" src={logo} alt="foreign logo"/>
+          <img className={reverse ? 'home-logo' : 'foreign-logo'} src={logo} alt="foreign logo"/>
         </div>
       </div>
     </div>)
