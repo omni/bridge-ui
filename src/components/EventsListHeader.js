@@ -1,11 +1,11 @@
 import React from 'react'
 
-export const EventsListHeader = ({selected, homeName, homeValue, foreignName, foreignValue, onChangeList}) => (
+export const EventsListHeader = ({selected, homeName, homeValue, foreignName, foreignValue, onChangeList, handleChange, handleKeyDown}) => (
   <div>
     <div className="events-header">
       <span className="events-header-title">Events</span>
       <div className="events-filter-container">
-        <input type="text" className="events-filter" placeholder="Tx Hash or Block Number..." />
+        <input onChange={handleChange} onKeyDown={handleKeyDown} type="text" className="events-filter" placeholder="Tx Hash or Block Number..." />
         <select value={selected} onChange={onChangeList} className="events-select">
           <option value={homeValue}>{homeName}</option>
           <option value={foreignValue}>{foreignName}</option>

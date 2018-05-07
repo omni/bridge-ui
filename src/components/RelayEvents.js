@@ -130,7 +130,6 @@ export class RelayEvents extends React.Component {
   render(){
     const { homeStore, foreignStore, web3Store } = this.props.RootStore
     const { selectedList } = this.state
-    console.log('selectedList', selectedList, this.homeValue, this.foreingValue)
     const home = this.getHomeEvents(homeStore, foreignStore)
     const foreign = this.getForeignEvents(foreignStore, homeStore)
 
@@ -138,6 +137,8 @@ export class RelayEvents extends React.Component {
       <div className="events-page">
         <div className="events-container">
           <EventsListHeader
+            handleChange={selectedList === this.homeValue ? this.handleChangeHome : this.handleChangeForeign}
+            handleKeyDown={selectedList === this.homeValue ? this.handleKeyDownHome : this.handleKeyDownForeign}
             onChangeList={this.onChangeList}
             selected={selectedList}
             homeName={'POA ' + web3Store.homeNet.name}
