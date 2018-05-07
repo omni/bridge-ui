@@ -163,7 +163,7 @@ export class Bridge extends React.Component {
   }
 
   onTransferConfirmation = async () => {
-    const { alertStore } = this.props.RootStore
+    const { alertStore, web3Store } = this.props.RootStore
     const { reverse } = this.state
 
     this.setState({showConfirmation: false, confirmationData: {}})
@@ -172,6 +172,12 @@ export class Bridge extends React.Component {
       swal("Error", "Please specify amount", "error")
       return
     }
+
+    if(web3Store.metamaskNotSetted && web3Store.metamaskNet.name === '') {
+      web3Store.showInstallMetamaskAlert()
+      return
+    }
+
     try {
       if(reverse){
         await this._sendToForeign(amount)
