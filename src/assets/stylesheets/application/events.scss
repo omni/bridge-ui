@@ -118,12 +118,15 @@
         font-weight: bold;
         text-align: left;
         color: #ffffff;
+        padding: 5px;
+        margin-right: 5px;
       }
 
       .event-txhash {
         font-size: 14px;
         text-align: left;
         color: #5c34a2;
+        text-decoration: none;
       }
     }
 
@@ -131,6 +134,7 @@
       font-size: 14px;
       text-align: left;
       color: #5c34a2;
+      text-decoration: none;
     }
 
     .event-value {

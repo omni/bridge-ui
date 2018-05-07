@@ -1,14 +1,14 @@
 import React from 'react'
 
-export const EventsListHeader = () => (
+export const EventsListHeader = ({selected, homeName, homeValue, foreignName, foreignValue, onChangeList}) => (
   <div>
     <div className="events-header">
       <span className="events-header-title">Events</span>
       <div className="events-filter-container">
         <input type="text" className="events-filter" placeholder="Tx Hash or Block Number..." />
-        <select className="events-select">
-          <option value="77">POA Sokol</option>
-          <option value="42">Eth Kovan</option>
+        <select value={selected} onChange={onChangeList} className="events-select">
+          <option value={homeValue}>{homeName}</option>
+          <option value={foreignValue}>{foreignName}</option>
         </select>
       </div>
     </div>
