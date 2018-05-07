@@ -155,7 +155,8 @@ export class Bridge extends React.Component {
       to: reverse ? homeDisplayName : foreignDisplayName,
       fromCurrency: reverse ? foreignStore.symbol : homeCurrency,
       toCurrency: reverse ? homeCurrency : foreignStore.symbol,
-      amount
+      amount,
+      reverse
     }
 
     this.setState({ showConfirmation: true, confirmationData})

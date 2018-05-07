@@ -611,7 +611,7 @@
   .transfer-alert {
     display: flex;
     width: 600px;
-    height: 378px;
+    height: 265px;
     border-radius: 8px;
     background-color: #ffffff;
 
@@ -657,11 +657,32 @@
       }
 
       .transfer-title {
-        font-size: 44px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
         color: #5c34a2;
+        font-size: 14px;
+
+        .alert-logo-box{
+          width: 50px;
+          height: 50px;
+          border-radius: 4px;
+          background-color: #5c34a2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .icon_arrow_right {
+          width: 14px;
+          height: 10px;
+          border-radius: 1px;
+        }
+
       }
 
       .transfer-description {
+        line-height: 1.71;
         font-size: 14px;
         color: #5c34a2;
         padding-top: 10px;
