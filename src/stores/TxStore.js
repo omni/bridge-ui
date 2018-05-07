@@ -82,20 +82,29 @@ class TxStore {
   }
 
   async getTxStatus(hash) {
-    console.log('GET TX STATUS', hash)
     const web3 = this.web3Store.injectedWeb3;
     web3.eth.getTransactionReceipt(hash, (error, res) => {
       if(res && res.blockNumber){
         if(res.status === '0x1'){
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
-          this.alertStore.setLoadingStepIndex(2)
           if(this.web3Store.metamaskNet.name === this.web3Store.homeNet.name) {
             this.foreignStore.addWaitingForConfirmation(hash)
           } else {
-            this.homeStore.addWaitingForConfirmation(hash)
+            const blockConfirmations = this.foreignStore.latestBlockNumber - res.blockNumber
+            if(blockConfirmations >= 8) {
+              this.alertStore.setBlockConfirmations(blockConfirmations)
+              this.alertStore.setLoadingStepIndex(2)
+              this.homeStore.addWaitingForConfirmation(hash)
+            } else {
+              if(blockConfirmations > 0) {
+                this.alertStore.setBlockConfirmations(blockConfirmations)
+              }
+              this.getTxStatus(hash)
+            }
           }
         } else {
+          this.alertStore.setLoading(false)
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `error`
           this.txs[index].name = `Mined but with errors. Perhaps out of gas`
