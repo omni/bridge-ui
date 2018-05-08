@@ -4,6 +4,7 @@ class AlertStore {
   @observable alerts = [];
   @observable showLoading = false;
   @observable loadingStepIndex = -1;
+  @observable blockConfirmations = 0
   loadingSteps = [
     'Loading',
     'Waiting for Block Confirmations...',
@@ -33,6 +34,12 @@ class AlertStore {
   setLoading(status) {
     this.showLoading = status;
     this.loadingStepIndex = 0;
+    this.blockConfirmations = 0
+  }
+
+  @action
+  setBlockConfirmations(blocks) {
+    this.blockConfirmations = blocks
   }
 
   @action
