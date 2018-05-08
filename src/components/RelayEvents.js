@@ -24,7 +24,7 @@ export class RelayEvents extends React.Component {
     this.homeValue = '0'
     this.foreingValue = '1'
     this.state = {
-      selectedList: '1'
+      selectedList: '0'
     }
   }
 
@@ -123,7 +123,6 @@ export class RelayEvents extends React.Component {
   }
 
   onChangeList = (e) => {
-    console.log( e.target.value)
     this.setState({selectedList: e.target.value})
   }
 

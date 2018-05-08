@@ -116,3 +116,11 @@ strong {
   margin-left: auto;
   margin-right: auto;
 }
+
+.only-mobile {
+  display: none;
+  
+  @media screen and (max-width: $tablet-width) {
+    display: inherit;
+  }
+}
