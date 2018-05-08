@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx';
 import HOME_ABI from '../abis/HomeBridge.json';
+import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
 import { getBlockNumber, getBalance } from './utils/web3'
 import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'
@@ -20,6 +21,9 @@ class HomeStore {
   @observable maxCurrentDeposit = "";
   @observable maxPerTx = "";
   @observable latestBlockNumber = 0;
+  @observable validators = []
+  @observable homeBridgeValidators = ''
+  @observable requiredSignatures = 0
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
@@ -41,6 +45,7 @@ class HomeStore {
     this.getEvents()
     this.getBalance()
     this.getCurrentLimit()
+    this.getValidators()
     setInterval(() => {
       this.getEvents()
       this.getBalance()
@@ -160,6 +165,27 @@ class HomeStore {
 
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
+  }
+
+  @action
+  async getValidators(){
+    try {
+      const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
+      this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
+
+      let ValidatorAdded = await this.homeBridgeValidators.getPastEvents('ValidatorAdded', {fromBlock: 0});
+      let ValidatorRemoved = await this.homeBridgeValidators.getPastEvents('ValidatorRemoved', {fromBlock: 0});
+      let homeAddedValidators = ValidatorAdded.map(val => {
+        return val.returnValues.validator
+      })
+      const homeRemovedValidators = ValidatorRemoved.map(val => {
+        return val.returnValues.validator
+      })
+      this.validators =  homeAddedValidators.filter(val => !homeRemovedValidators.includes(val));
+      this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
+    } catch(e){
+      console.error(e)
+    }
   }
 }
 

@@ -1,0 +1,50 @@
+.status-page {
+  display: flex;
+  justify-content: center;
+
+  .status-page-container {
+    width: 960px;
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (max-width: $tablet-width) {
+      width: 100%;
+    }
+
+    .status-title {
+      font-size: 24px;
+      line-height: 3;
+      text-align: left;
+      color: #333333;
+    }
+
+    .status-configuration-container {
+      display: flex;
+      flex-direction: column;
+
+      .status-configuration-data {
+        display: flex;
+        justify-content: space-evenly;
+
+        @media screen and (max-width: $tablet-width) {
+          flex-direction: column;
+        }
+      }
+    }
+
+    .status-authorities-container {
+      display: flex;
+      flex-direction: column;
+      margin-top: 80px;
+
+      .status-authorities-data {
+        display: flex;
+        flex-direction: column;
+
+        .authority {
+          display: flex;
+        }
+      }
+    }
+  }
+}
