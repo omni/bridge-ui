@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
 import HOME_ABI from '../abis/HomeBridge.json';
 import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
-import { getBlockNumber, getBalance } from './utils/web3'
+import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
 import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'
 
@@ -107,7 +107,12 @@ class HomeStore {
         const confirmationEvents = homeEvents.filter((event) => event.event === "Withdraw" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
-          setTimeout(() => {this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.homeNet.name} on Tx ${event.returnValues.transactionHash}`)}, 2000)
+          const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
+          setTimeout(() => {
+            this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.homeNet.name} on Tx 
+              <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;">
+              ${event.transactionHash}</a>`)}
+            , 2000)
           this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
 
@@ -165,6 +170,7 @@ class HomeStore {
 
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
+    this.setBlockFilter(0)
   }
 
   @action

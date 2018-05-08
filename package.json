@@ -5,7 +5,9 @@
   "homepage": "https://poanetwork.github.io/",
   "dependencies": {
     "bignumber.js": "^6.0.0",
+    "chromedriver": "^2.35.0",
     "coveralls": "^3.0.0",
+    "fs-extra": "^5.0.0",
     "gh-pages": "^1.1.0",
     "mobx": "^4.0.2",
     "mobx-react": "^5.0.0",
@@ -22,11 +24,9 @@
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.1.1",
     "react-transition-group": "^2.2.1",
-    "sweetalert": "^2.1.0",
-    "web3": "^1.0.0-beta.30",
     "selenium-webdriver": "^3.6.0",
-    "chromedriver": "^2.35.0",
-    "fs-extra": "^5.0.0"
+    "sweetalert": "^2.1.0",
+    "web3": "^1.0.0-beta.30"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/assets/stylesheets/application.scss -o src/assets/stylesheets --output-style=compressed",

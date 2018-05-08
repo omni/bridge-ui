@@ -1,7 +1,7 @@
 import { action, observable } from 'mobx';
 import FOREIGN_ABI from '../abis/ForeignBridge.json';
 import ERC677_ABI from '../abis/ERC677.json';
-import { getBlockNumber } from './utils/web3'
+import { getBlockNumber, getExplorerUrl } from './utils/web3'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -140,7 +140,12 @@ class ForeignStore {
           if(blockConfirmations > 8) {
             this.alertStore.setBlockConfirmations(8)
             this.alertStore.setLoadingStepIndex(3)
-            setTimeout(() => {this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} on Tx ${event.returnValues.transactionHash}`)}, 2000)
+            const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
+            setTimeout(() => {
+              this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} on Tx
+              <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
+              ${event.transactionHash}</a>`)}
+            , 2000)
             this.waitingForConfirmation.delete(event.returnValues.transactionHash)
           } else if (blockConfirmations === 8) {
             this.alertStore.setBlockConfirmations(blockConfirmations)
@@ -214,6 +219,7 @@ class ForeignStore {
 
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
+    this.setBlockFilter(0)
   }
 }
 
