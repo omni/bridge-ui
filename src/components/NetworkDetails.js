@@ -1,5 +1,6 @@
 import React from 'react'
 import copyIcon from '../assets/images/icons/copy.svg'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
 import { getExplorerUrl } from '../stores/utils/web3'
 
@@ -37,10 +38,14 @@ export const NetworkDetails = ({
         </p>
         <p className="details-data-container">
           <span className="details-label">{networkTitle} Address</span>
-            <a href={explorerPath+address} target="_blank" className="details-description details-copy">
-              {address.slice(0,27).concat('...')}
-              <img className="info-icon-right" src={copyIcon} alt=""/>
-            </a>
+            <span className="details-description details-copy">
+              <a className="details-description"  href={explorerPath+address} target="_blank" >
+                {address.slice(0,27).concat('...')}
+              </a>
+              <CopyToClipboard text={address}>
+                <img className="info-icon-right" src={copyIcon} alt=""/>
+              </CopyToClipboard>
+            </span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Current {action} Limit</span>
@@ -57,10 +62,14 @@ export const NetworkDetails = ({
         {!isHome && (
           <p className="details-data-container">
             <span className="details-label">Token Address</span>
-            <a href={explorerPath+tokenAddress} target="_blank" className="details-description details-copy">
-              {tokenAddress.slice(0,27).concat('...')}
-              <img className="info-icon-right" src={copyIcon} alt=""/>
-            </a>
+            <span className="details-description details-copy">
+              <a className="details-description" href={explorerPath+tokenAddress} target="_blank" >
+                {tokenAddress.slice(0,27).concat('...')}
+              </a>
+              <CopyToClipboard text={tokenAddress}>
+                <img className="info-icon-right" src={copyIcon} alt=""/>
+              </CopyToClipboard>
+            </span>
           </p>
         )}
         <p className="details-data-container">
