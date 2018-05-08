@@ -7,11 +7,11 @@ class AlertStore {
   loadingSteps = [
     'Loading',
     'Waiting for Block Confirmations...',
-    'Getting Required Signatures from Validators...',
+    'Validators Verifying Transaction...',
     'Transfer Complete'
   ];
 
-  @action 
+  @action
   pushError(message){
     console.error("Error: ", message)
     const error = {label: "Error", message, type: "error"}
