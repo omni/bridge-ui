@@ -1,0 +1,81 @@
+.statistics-page {
+  display: flex;
+  justify-content: center;
+
+  .statistics-page-container {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (max-width: $tablet-width) {
+      width: 90%;
+    }
+
+    .statistics-title {
+      font-size: 24px;
+      line-height: 3;
+      text-align: left;
+      color: #333333;
+    }
+
+    .statistics-bridge-container {
+      display: flex;
+      flex-direction: column;
+      padding-top: 30px;
+
+      .statistics-bridge-data {
+        display: flex;
+        justify-content: space-evenly;
+
+        @media screen and (max-width: $tablet-width) {
+          flex-direction: column;
+        }
+      }
+    }
+
+    .statistics-transaction-container {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 90px;
+
+      .statistics-deposit-container {
+        width: 40%;
+      }
+
+      .statistics-withdraw-container {
+        width: 40%;
+      }
+
+      .statistics-bridge-data {
+        display: flex;
+        justify-content: space-evenly;
+
+        @media screen and (max-width: $tablet-width) {
+          flex-direction: column;
+        }
+      }
+    }
+
+    .statistics-chart-container {
+      margin-top: 80px;
+    }
+  }
+
+  .statistics-left-container {
+    width: 15%;
+    padding-top: 25px;
+
+    @media screen and (max-width: $mobile-width) {
+      display: none;
+    }
+  }
+
+  .statistics-right-container {
+    width: 15%;
+    padding-top: 25px;
+    overflow: hidden;
+    @media screen and (max-width: $mobile-width) {
+      display: none;
+    }
+  }
+}

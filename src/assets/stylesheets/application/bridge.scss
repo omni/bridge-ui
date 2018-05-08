@@ -455,17 +455,6 @@
     }
   }
 
-  .bridge-statistics {
-    width: 960px;
-    display: flex;
-    justify-content: space-around;
-
-    @media screen and (max-width: $tablet-width) {
-      width: 100%;
-    }
-
-  }
-
   .network-details {
     display: flex;
     flex-direction: column;
