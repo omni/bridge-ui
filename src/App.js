@@ -8,7 +8,8 @@ import { setItem, getItem, DISCLAIMER_KEY } from './components/utils/localstorag
 
 export class App extends React.Component {
   state = {
-    showDisclaimer: false
+    showDisclaimer: false,
+    showMobileMenu: false
   }
 
   componentDidMount() {
@@ -23,14 +24,24 @@ export class App extends React.Component {
     this.setState({showDisclaimer: false})
   }
 
+  toggleMobileMenu = () => {
+    this.setState(prevState => ({ showMobileMenu: !prevState.showMobileMenu}))
+  }
+
   render() {
-    const { showDisclaimer } = this.state
+    const { showDisclaimer, showMobileMenu } = this.state
     return (
       <div>
         <Route component={Loading}/>
         <Route component={SweetAlert}/>
-        <Route component={Header}/>
+        <Route render={() =>
+          <Header
+            showMobileMenu={showMobileMenu}
+            onMenuToggle={this.toggleMobileMenu}
+          />
+        }/>
         <div className="app-container">
+          {showMobileMenu && <Route render={() => <div className="mobile-menu-open"/>}/>}
           <Route exact path="/" component={Bridge}/>
           <Route exact path="/events" component={RelayEvents}/>
         </div>

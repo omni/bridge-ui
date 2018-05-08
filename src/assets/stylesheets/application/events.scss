@@ -1,5 +1,8 @@
 .events-container {
   margin-top: 40px;
+  @media screen and (max-width: $tablet-width) {
+    margin-top: 0;
+  }
 }
 
 .events {

@@ -26,7 +26,7 @@
     align-self: center;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
+      display: none
     }
 
     .bridge-home-container {
@@ -46,6 +46,11 @@
         .home-logo {
           width: 52px;
           height: 16px;
+        }
+
+        .foreign-logo {
+          width: 54px;
+          height: 11px;
         }
       }
     }
@@ -71,7 +76,7 @@
     align-self: center;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
+      display: none
     }
 
     .bridge-foreign-container {
@@ -91,6 +96,11 @@
         .foreign-logo {
           width: 54px;
           height: 11px;
+        }
+
+        .home-logo {
+          width: 52px;
+          height: 16px;
         }
       }
     }
@@ -132,7 +142,7 @@
     justify-content: center;
 
     @media screen and (max-width: $tablet-width) {
-      height: auto;
+      height: 389px;
     }
 
     .left-image-wrapper {
@@ -183,6 +193,23 @@
       @media screen and (max-width: $tablet-width) {
         max-width: 92%;
         flex-direction: column;
+        border-radius: 8px;
+      }
+
+      .bridge-transfer-content-background {
+        width: 880px;
+        flex-shrink: 0;
+        display: flex;
+        flex-wrap: wrap;
+
+        @media screen and (max-width: $tablet-width) {
+          width: auto;
+          flex-direction: column;
+          background-image: url("../images/arrows-down@2x.png");
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: 164px 203px;
+        }
       }
 
       .network-container-home {
@@ -195,9 +222,11 @@
         align-items: flex-start;
 
         @media screen and (max-width: $tablet-width) {
-          width: 80%;
-          height: auto;
-          padding: 5px 1% 5px 5%;
+          width: auto;
+          align-self: center;
+          height: 136px;
+          padding: 5px 0 5px 0;
+          align-items: center;
         }
       }
 
@@ -211,9 +240,11 @@
         align-items: flex-end;
 
         @media screen and (max-width: $tablet-width) {
-          width: 90%;
-          height: auto;
-          padding: 5px 5% 5px 1%;
+          width: auto;
+          align-self: center;
+          height: 136px;
+          padding: 5px 0 5px 0;
+          align-items: center;
         }
       }
 
@@ -280,12 +311,20 @@
         background-image: url("../images/arrows-1.svg");
         background-position: center;
         background-repeat: no-repeat;
+
+        @media screen and (max-width: $tablet-width) {
+          background-image: none;
+        }
       }
 
       .transfer-left {
         background-image: url("../images/arrows-2.svg");
         background-position: center;
         background-repeat: no-repeat;
+
+        @media screen and (max-width: $tablet-width) {
+          background-image: none;
+        }
       }
 
       .form-container {
@@ -295,7 +334,7 @@
 
         @media screen and (max-width: $tablet-width) {
           width: 100%;
-          height: auto;
+          height: 97px;
           align-self: center;
         }
 
@@ -307,7 +346,6 @@
 
           @media screen and (max-width: $tablet-width) {
             width: 100%;
-            margin: 30px 0;
             height: auto;
           }
 
@@ -316,10 +354,28 @@
             padding: 8px 8px 8px 0;
             border-radius: 5px;
             background-color: rgba(251,251,252, 0.2);
+
+            @media screen and (max-width: $tablet-width) {
+              flex-direction: column;
+              padding: 8px 8px 8px 8px;
+              background-color: unset;
+            }
+          }
+
+          .bridge-form-input-container {
+            display: flex;
+            justify-content: space-between;
+            width: 292px;
+
+            @media screen and (max-width: $tablet-width) {
+              background-color: rgba(251,251,252, 0.2);
+              border-radius: 3px 3px 0 0;
+              width: 100%;
+            }
           }
 
           &-input {
-            min-width: 0;
+            width: 165px;
             height: 48px;
             padding-left: 16px;
             background-color: transparent;
@@ -331,10 +387,18 @@
               font-size: 24px;
               font-weight: bold;
               color: rgba(255, 255, 255, 0.7);
+
+              @media screen and (max-width: $tablet-width) {
+                font-size: 18px;
+              }
             }
 
             &::placeholder {
               opacity: 0.3;
+            }
+
+            @media screen and (max-width: $tablet-width) {
+              font-size: 18px;
             }
           }
 
@@ -345,6 +409,10 @@
             text-transform: uppercase;
             font-size: 24px;
             line-height: 48px;
+
+            @media screen and (max-width: $tablet-width) {
+              font-size: 18px;
+            }
           }
 
           &-button {
@@ -357,6 +425,11 @@
             background-color: #60db97;
             color: #ffffff;
             font-weight: bold;
+
+            @media screen and (max-width: $tablet-width) {
+              width: 100%;
+              border-radius: 0 0 3px 3px;
+            }
 
             &:hover {
               opacity: 0.8;
@@ -412,6 +485,10 @@
       justify-content: center;
       align-items: center;
 
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
+
       .home-logo {
         width: 52px;
         height: 16px;
@@ -429,6 +506,10 @@
       height: 10px;
       width: 20px;
       bottom: 0;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
     .details-logo-container:after {
@@ -436,6 +517,10 @@
       top: 70px;
       border-radius: 0 0 0 10px;
       box-shadow: -10px 0 0 0 #fff;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
     .details-body {
@@ -451,17 +536,27 @@
 
       @media screen and (max-width: $tablet-width) {
         width: 85%;
-        padding: 15px;
+        height: 430px;
+        padding: 20px 15px 20px 15px;
+        align-self: center;
+        border-radius: 10px 10px 10px 10px;
       }
 
-      @media screen and (max-width: $tablet-width) and (min-width: $mobile-width) {
-        height: 200px;
-        padding: 22px;
+      @media screen and (max-width: $tablet-width) and (min-width: 415px) {
+        height: 300px;
+
+        @media screen and (max-width: 600px) {
+          height: 250px;
+        }
       }
 
       .details-data-container {
         display: flex;
         justify-content: space-between;
+
+        @media screen and (max-width: $tablet-width) {
+         flex-direction: column;
+        }
 
         .details-label {
           font-size: 14px;
@@ -494,6 +589,10 @@
       height: 10px;
       width: 20px;
       bottom: 0;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
     .details-body:before {
@@ -501,6 +600,10 @@
       top: 80px;
       border-radius: 0 10px 0 0;
       box-shadow: 10px 0 0 0 #fff;
+
+      @media screen and (max-width: $tablet-width) {
+        display: none;
+      }
     }
 
   }
@@ -508,7 +611,7 @@
   .transfer-alert {
     display: flex;
     width: 600px;
-    height: 378px;
+    height: 265px;
     border-radius: 8px;
     background-color: #ffffff;
 
@@ -554,11 +657,32 @@
       }
 
       .transfer-title {
-        font-size: 44px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
         color: #5c34a2;
+        font-size: 14px;
+
+        .alert-logo-box{
+          width: 50px;
+          height: 50px;
+          border-radius: 4px;
+          background-color: #5c34a2;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .icon_arrow_right {
+          width: 14px;
+          height: 10px;
+          border-radius: 1px;
+        }
+
       }
 
       .transfer-description {
+        line-height: 1.71;
         font-size: 14px;
         color: #5c34a2;
         padding-top: 10px;
@@ -604,8 +728,9 @@
 
   @media screen and (max-width: $tablet-width) {
     flex-direction: column;
-    width: 100%;
+    width: 92%;
     height: auto;
+    margin-left: 4%;
   }
 
   .image-container {
@@ -633,8 +758,9 @@
     padding-right: 46px;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
-      padding-left: 5px;
+      padding: 10px 0;
+      width: 88%;
+      align-self: center;
     }
 
     .alert-corner {
@@ -646,6 +772,13 @@
       font-size: 44px;
       color: #5c34a2;
       line-height: 1;
+
+      @media screen and (max-width: $tablet-width) {
+        font-size: 30px;
+        padding-top: 2%;
+        padding-bottom: 2%;
+      }
+
     }
 
     .disclaimer-description {
@@ -654,6 +787,11 @@
       padding-top: 10px;
       padding-bottom: 10px;
       line-height: 1.71;
+
+      @media screen and (max-width: $tablet-width) {
+        padding-left: 1%;
+        padding-right: 1%;
+      }
     }
 
     .disclaimer-buttons {

@@ -1,10 +1,11 @@
 import React from 'react'
 
 export const BridgeForm = ({ reverse, currency, onTransfer, onInputChange, displayArrow}) => (
-  <div className={`form-container ${displayArrow ? (reverse ? 'transfer-left' : 'transfer-right') : ''}` }>
+  <div className={`form-container ${displayArrow ? 'transfer-right' : ''}` }>
     <form className="bridge-form" onSubmit={onTransfer}>
       <div className="bridge-form-controls">
-        <input
+        <div className="bridge-form-input-container">
+          <input
           onChange={onInputChange}
           name='amount'
           pattern="[0-9]+([.][0-9]{1,18})?"
@@ -12,8 +13,11 @@ export const BridgeForm = ({ reverse, currency, onTransfer, onInputChange, displ
           className="bridge-form-input"
           id="amount"
           placeholder="0.345" />
-        <label htmlFor="amount" className="bridge-form-label">{currency}</label>
-        <button type="submit" className="bridge-form-button">Transfer</button>
+          <label htmlFor="amount" className="bridge-form-label">{currency}</label>
+        </div>
+        <div>
+          <button type="submit" className="bridge-form-button">Transfer</button>
+        </div>
       </div>
     </form>
   </div>
