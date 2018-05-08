@@ -26,7 +26,7 @@ export class StatusPage extends React.Component {
             <span className='status-authorities-title status-title'>Authorities</span>
             <div className='status-authorities-data'>
               {homeStore.validators.map((validator,i) => (
-                <Authority key={validator} address={validator} number={(i+1)} logo={(i+1) % 4} />
+                <Authority key={validator} address={validator} number={(i+1)} logoIndex={(i) % 3} />
               ))}
             </div>
           </div>

@@ -8,7 +8,7 @@
     flex-direction: column;
 
     @media screen and (max-width: $tablet-width) {
-      width: 100%;
+      width: 90%;
     }
 
     .status-title {
@@ -21,6 +21,7 @@
     .status-configuration-container {
       display: flex;
       flex-direction: column;
+      padding-top: 30px;
 
       .status-configuration-data {
         display: flex;
@@ -37,12 +38,54 @@
       flex-direction: column;
       margin-top: 80px;
 
+      .status-authorities-title {
+        padding-bottom: 30px;
+      }
+
       .status-authorities-data {
         display: flex;
         flex-direction: column;
 
         .authority {
           display: flex;
+          padding-bottom: 20px;
+
+          .authority-number {
+            font-size: 30px;
+            font-weight: bold;
+            line-height: 59px;
+            text-align: left;
+            color: #5c34a2;
+            padding-right: 20px;
+
+            @media screen and (max-width: $tablet-width) {
+              padding-right: 5px;
+            }
+          }
+
+          .authority-logo {
+            padding-left: 20px;
+            width: 59px;
+            height: 59px;
+
+            @media screen and (max-width: $tablet-width) {
+              display: none;
+            }
+          }
+
+          .authority-address {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 59px;
+            text-align: left;
+            color: #333333;
+            padding-left: 20px;
+
+            @media screen and (max-width: $tablet-width) {
+              font-size: 12px;
+              padding-left: 0;
+            }
+          }
         }
       }
     }
