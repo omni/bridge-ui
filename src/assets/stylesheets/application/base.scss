@@ -126,3 +126,11 @@ strong {
     background-color: rgba(78,44,137, 0.9);
   }
 }
+
+.only-mobile {
+  display: none;
+
+  @media screen and (max-width: $tablet-width) {
+    display: inherit;
+  }
+}

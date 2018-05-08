@@ -8,20 +8,34 @@ class AlertStore {
   loadingSteps = [
     'Loading',
     'Waiting for Block Confirmations...',
-    'Getting Required Signatures from Validators...',
+    'Validators Verifying Transaction...',
     'Transfer Complete'
   ];
 
-  @action 
+  @action
   pushError(message){
     console.error("Error: ", message)
-    const error = {label: "Error", message, type: "error"}
+    const node = document.createElement("div")
+    node.innerHTML = message
+    const error = {
+      title: "Error",
+      content: node,
+      icon: "error",
+      type: "error"
+    }
     this.alerts.push(error)
   }
 
   @action
   pushSuccess(message){
-    const success = {label: "Success", message, type: "success"}
+    const node = document.createElement("div")
+    node.innerHTML = message
+    const success = {
+      title: "Success",
+      content: node,
+      icon: "success",
+      type: "success"
+    }
     this.alerts.push(success)
   }
 

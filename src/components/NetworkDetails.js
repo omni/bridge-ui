@@ -2,6 +2,7 @@ import React from 'react'
 import copyIcon from '../assets/images/icons/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
+import { getExplorerUrl } from '../stores/utils/web3'
 
 export const NetworkDetails = ({
   isHome,
@@ -23,6 +24,7 @@ export const NetworkDetails = ({
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
   const totalTitle = isHome ? 'Total Contract Balance' : 'Total Supply'
   const totalAmount = isHome ? totalBalance : totalSupply
+  const explorerPath = getExplorerUrl(networkData.id) + (isHome ? 'account/' : 'address/')
 
   return (
     <div className="network-details">
@@ -36,12 +38,14 @@ export const NetworkDetails = ({
         </p>
         <p className="details-data-container">
           <span className="details-label">{networkTitle} Address</span>
-          <CopyToClipboard text={address}>
             <span className="details-description details-copy">
-              {address.slice(0,27).concat('...')}
-              <img className="info-icon-right" src={copyIcon} alt=""/>
+              <a className="details-description"  href={explorerPath+address} target="_blank" >
+                {address.slice(0,27).concat('...')}
+              </a>
+              <CopyToClipboard text={address}>
+                <img className="info-icon-right" src={copyIcon} alt=""/>
+              </CopyToClipboard>
             </span>
-          </CopyToClipboard>
         </p>
         <p className="details-data-container">
           <span className="details-label">Current {action} Limit</span>
@@ -58,12 +62,14 @@ export const NetworkDetails = ({
         {!isHome && (
           <p className="details-data-container">
             <span className="details-label">Token Address</span>
-            <CopyToClipboard text={tokenAddress}>
             <span className="details-description details-copy">
-              {tokenAddress.slice(0,27).concat('...')}
-              <img className="info-icon-right" src={copyIcon} alt=""/>
+              <a className="details-description" href={explorerPath+tokenAddress} target="_blank" >
+                {tokenAddress.slice(0,27).concat('...')}
+              </a>
+              <CopyToClipboard text={tokenAddress}>
+                <img className="info-icon-right" src={copyIcon} alt=""/>
+              </CopyToClipboard>
             </span>
-            </CopyToClipboard>
           </p>
         )}
         <p className="details-data-container">
