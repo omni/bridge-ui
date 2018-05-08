@@ -4,13 +4,13 @@ import infoIcon from '../assets/images/icons/icon-info.svg'
 
 export const BridgeNetwork = ({
   isHome,
+  networkTitle,
   networkData,
   currency,
   balance,
   showModal
 }) => {
   const containerName = isHome ? 'home' : 'foreign'
-  const networkTitle = isHome ? 'POA' : 'ETH'
   const formattedBalance = numeral(balance).format('0.00', Math.floor)
 
   const showMore = () => isHome ?

@@ -155,7 +155,8 @@ export class Bridge extends React.Component {
       to: reverse ? homeDisplayName : foreignDisplayName,
       fromCurrency: reverse ? foreignStore.symbol : homeCurrency,
       toCurrency: reverse ? homeCurrency : foreignStore.symbol,
-      amount
+      amount,
+      reverse
     }
 
     this.setState({ showConfirmation: true, confirmationData})
@@ -241,30 +242,35 @@ export class Bridge extends React.Component {
         <div className="bridge">
           <BridgeAddress
             isHome={true}
-            logo={homeLogo} />
+            reverse={reverse}
+            logo={reverse ? foreignLogo : homeLogo} />
           <div className="bridge-transfer">
             <div className="left-image-wrapper">
               <img className="left-image" src={leftImage} alt=""/>
             </div>
             <div className="bridge-transfer-content">
-              <BridgeNetwork
-                isHome={true}
-                showModal={this.loadHomeDetails}
-                networkData={web3Store.homeNet}
-                currency={homeCurrency}
-                balance={web3Store.defaultAccount.homeBalance} />
-              <BridgeForm
-                displayArrow={!web3Store.metamaskNotSetted}
-                reverse={reverse}
-                currency={formCurrency}
-                onTransfer={this.onTransfer}
-                onInputChange={this.handleInputChange('amount')} />
-              <BridgeNetwork
-                isHome={false}
-                showModal={this.loadForeignDetails}
-                networkData={web3Store.foreignNet}
-                currency={foreignStore.symbol}
-                balance={foreignStore.balance} />
+              <div className="bridge-transfer-content-background">
+                <BridgeNetwork
+                  isHome={true}
+                  networkTitle={reverse ? 'ETH' : 'POA'}
+                  showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
+                  networkData={reverse ? web3Store.foreignNet : web3Store.homeNet}
+                  currency={reverse ? foreignStore.symbol : homeCurrency}
+                  balance={reverse ? foreignStore.balance : web3Store.defaultAccount.homeBalance} />
+                <BridgeForm
+                  displayArrow={!web3Store.metamaskNotSetted}
+                  reverse={reverse}
+                  currency={formCurrency}
+                  onTransfer={this.onTransfer}
+                  onInputChange={this.handleInputChange('amount')} />
+                <BridgeNetwork
+                  isHome={false}
+                  networkTitle={reverse ? 'POA' : 'ETH'}
+                  showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
+                  networkData={reverse ? web3Store.homeNet : web3Store.foreignNet}
+                  currency={reverse ? homeCurrency : foreignStore.symbol}
+                  balance={reverse ? web3Store.defaultAccount.homeBalance : foreignStore.balance} />
+              </div>
             </div>
             <div className="right-image-wrapper">
               <img className="right-image" src={rightImage} alt=""/>
@@ -272,7 +278,8 @@ export class Bridge extends React.Component {
           </div>
           <BridgeAddress
             isHome={false}
-            logo={foreignLogo} />
+            reverse={reverse}
+            logo={reverse ? homeLogo : foreignLogo} />
           <ModalContainer
             hideModal={() => {this.setState({showModal: false})}}
             showModal={showModal}
