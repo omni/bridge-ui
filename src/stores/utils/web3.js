@@ -35,7 +35,7 @@ const getWeb3 = () => {
         <a target="_blank" href="https://metamask.io">Metamask website</a> and return to this page after you installed it`
         reject({message: errorMsg})
         console.log('No web3 instance injected, using Local web3.');
-        console.error('Metamask not found'); 
+        console.error('Metamask not found');
       }
     })
   })
@@ -51,6 +51,17 @@ const networks = {
   77:'Sokol',
   99:'Main Net'
 }
+
+const explorers = {
+  1: 'https://etherscan.io/',
+  3: 'https://ropsten.etherscan.io/',
+  4: 'https://rinkeby.etherscan.io/',
+  42:'https://kovan.etherscan.io/',
+  77:'https://sokol-explorer.poa.network/',
+  99:'https://poaexplorer.com/'
+}
+
+export const getExplorerUrl = (id) => explorers[id]
 
 export const getNetworkName = (id) => networks[id] || 'Unknown'
 
