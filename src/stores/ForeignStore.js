@@ -214,6 +214,7 @@ class ForeignStore {
 
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
+    this.setBlockFilter(0)
   }
 }
 

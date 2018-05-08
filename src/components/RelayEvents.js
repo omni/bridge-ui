@@ -1,9 +1,8 @@
 import React from 'react';
 import { inject, observer } from "mobx-react";
-import DepositWithdraw from './events/DepositWithdraw';
-import SignedForDeposit from './events/SignedForDeposit';
-import CollectedSignatures from './events/CollectedSignatures';
-import { EventList } from './index'
+import { EventsListHeader } from './index'
+import { Event } from './index'
+import { getExplorerUrl } from '../stores/utils/web3'
 
 
 const WAIT_INTERVAL = 700;
@@ -15,6 +14,18 @@ export class RelayEvents extends React.Component {
   constructor(props){
     super(props)
     this.timer = null;
+    this.colors = {
+      'Deposit': 'green',
+      'Withdraw': 'red',
+      'SignedForDeposit': 'purple',
+      'SignedForWithdraw': 'purple',
+      'CollectedSignatures': 'blue'
+    }
+    this.homeValue = '0'
+    this.foreingValue = '1'
+    this.state = {
+      selectedList: '0'
+    }
   }
 
   onHomeBlockFilter = async (value) => {
@@ -85,92 +96,68 @@ export class RelayEvents extends React.Component {
     }
   }
 
-  getHomeEvents = (homeStore, foreignStore) => {
+  getHomeEvents = (homeStore) => {
     return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}, index) =>
-      <DepositWithdraw
-        home={true}
-        eventName={event}
-        transactionHash={transactionHash}
-        blockNumber={blockNumber}
-        recipient={returnValues.recipient}
-        value={returnValues.value}
-        homeTxHash={returnValues.transactionHash}
-        filter={homeStore.filter || foreignStore.filter}
-        key={index} />)
+      ({
+        color: this.colors[event],
+        eventName: event,
+        transactionHash,
+        recipient: returnValues.recipient,
+        value: returnValues.value,
+        blockNumber
+      }))
   }
 
-  getForeignEvents = (foreignStore, homeStore) => {
+  getForeignEvents = (foreignStore) => {
     return foreignStore.events.slice()
-      .map(({ event, transactionHash, signedTxHash, blockNumber, returnValues}, index) => {
-        if(event === 'Deposit' || event === 'Withdraw') {
-          return (
-            <DepositWithdraw
-              eventName={event}
-              transactionHash={transactionHash}
-              blockNumber={blockNumber}
-              recipient={returnValues.recipient}
-              value={returnValues.value}
-              homeTxHash={returnValues.transactionHash}
-              filter={homeStore.filter || foreignStore.filter}
-              currency={event === 'Deposit' ? 'POA': foreignStore.symbol}
-              key={index}/>)
-        }
-        if(event === "SignedForDeposit" || event === "SignedForWithdraw") {
-          return (
-            <SignedForDeposit
-              eventName={event}
-              blockNumber={blockNumber}
-              message={returnValues.messageHash}
-              signer={returnValues.signer}
-              key={index}
-              transactionHash={transactionHash}
-              filter={homeStore.filter || foreignStore.filter}
-              signedTxHash={signedTxHash || returnValues.transactionHash}/>
-          )
-        }
-        if(event === "CollectedSignatures") {
-          return (
-            <CollectedSignatures
-              eventName={event}
-              blockNumber={blockNumber}
-              authorityResponsibleForRelay={returnValues.authorityResponsibleForRelay}
-              messageHash={returnValues.messageHash}
-              key={index}
-              transactionHash={transactionHash}
-              filter={homeStore.filter || foreignStore.filter}
-              signedTxHash={signedTxHash || returnValues.transactionHash}/>
-          )
-        }
+      .map(({ event, transactionHash, signedTxHash, blockNumber, returnValues}) => {
+        return ({
+          color: this.colors[event],
+          eventName: event,
+          transactionHash,
+          recipient: returnValues.recipient,
+          value: returnValues.value,
+          blockNumber
+        })
       })
+  }
+
+  onChangeList = (e) => {
+    this.setState({selectedList: e.target.value})
   }
 
   render(){
     const { homeStore, foreignStore, web3Store } = this.props.RootStore
-
+    const { selectedList } = this.state
     const home = this.getHomeEvents(homeStore, foreignStore)
     const foreign = this.getForeignEvents(foreignStore, homeStore)
 
-    const homeDescription = `Home: ${web3Store.homeNet.name}(${web3Store.homeNet.id})`
-    const foreignDescription = `Foreign: ${web3Store.foreignNet.name}(${web3Store.foreignNet.id})`
-
     return(
-      <div className="events-container">
-        <h1 className="events-title">Events</h1>
-        <div className="events">
-          <div className="events-side events-side_left">
-            <EventList
-              events={home}
-              description={homeDescription}
-              handleChange={this.handleChangeHome}
-              handleKeyDown={this.handleKeyDownHome} />
-          </div>
-          <div className="events-side events-side_right">
-            <EventList
-              events={foreign}
-              description={foreignDescription}
-              handleChange={this.handleChangeForeign}
-              handleKeyDown={this.handleKeyDownForeign} />
-          </div>
+      <div className="events-page">
+        <div className="events-container">
+          <EventsListHeader
+            handleChange={selectedList === this.homeValue ? this.handleChangeHome : this.handleChangeForeign}
+            handleKeyDown={selectedList === this.homeValue ? this.handleKeyDownHome : this.handleKeyDownForeign}
+            onChangeList={this.onChangeList}
+            selected={selectedList}
+            homeName={'POA ' + web3Store.homeNet.name}
+            homeValue={this.homeValue}
+            foreignName={'ETH ' + web3Store.foreignNet.name}
+            foreignValue={this.foreingValue} />
+          {selectedList === this.homeValue
+            && home.map(event =>
+            <Event
+              txUrl={getExplorerUrl(web3Store.homeNet.id) + 'tx/'}
+              accountUrl={getExplorerUrl(web3Store.homeNet.id) + 'account/'}
+              key={event.transactionHash}
+              {...event} />)}
+          {selectedList === this.foreingValue
+            && foreign.map(event =>
+            <Event
+              txUrl={getExplorerUrl(web3Store.foreignNet.id) + 'tx/'}
+              accountUrl={getExplorerUrl(web3Store.foreignNet.id) + 'address/'}
+              key={event.transactionHash+event.eventName}
+              {...event} />)}
         </div>
       </div>
     );

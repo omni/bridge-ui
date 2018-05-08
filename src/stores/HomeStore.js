@@ -160,6 +160,7 @@ class HomeStore {
 
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
+    this.setBlockFilter(0)
   }
 }
 
