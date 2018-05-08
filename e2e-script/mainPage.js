@@ -1,4 +1,4 @@
-const Page=require('./Page.js').Page;
+const Page = require('./Page.js').Page;
 const By = require('selenium-webdriver/lib/by').By;
 const fieldAmount = By.id("amount");
 const buttonTransfer = By.className("bridge-form-button ");
@@ -7,9 +7,11 @@ const fieldsBalance = By.className("network-balance");
 const classWeb3Loaded = By.className("web3-loaded");
 const classPendingTransaction = By.className("pending-transaction");
 const loadingContainer = By.className("loading-container");
+const buttonTransferConfirm = By.className("transfer-confirm");
+const buttonDisclaimerConfirm = By.className("disclaimer-confirm");
 
 class MainPage extends Page {
-  constructor(driver){
+  constructor(driver) {
     super(driver);
     this.url;
     this.fieldHomePOABalance;
@@ -24,10 +26,11 @@ class MainPage extends Page {
       this.fieldHomePOABalance = array[0];
       this.fieldForeignPOABalance = array[1];
       return array;
-    } catch(err) {
+    }
+    catch (err) {
       return null;
     }
- }
+  }
 
   async getHomePOABalance() {
     await this.initFieldsBalance();
@@ -42,33 +45,32 @@ class MainPage extends Page {
   async fillFieldAmount(amount) {
     try {
       await this.clickWithWait(fieldAmount);
-      await this.fillWithWait(fieldAmount,amount);
+      await this.fillWithWait(fieldAmount, amount);
       return true;
-    } catch (err) {
+    }
+    catch (err) {
       return false;
     }
   }
 
   async clickButtonTransfer() {
-    let counter = 10;
-    do {
-      await this.clickWithWait(buttonTransfer);
-      if (counter--<0) return false;
-      await this.driver.sleep(1000);
-    } while (! await this.isDisplayedLoadingContainer())
-    return true;
+    return await this.clickWithWait(buttonTransfer);
   }
 
   async clickButtonOk() {
     return await super.clickWithWait(buttonOk);
   }
 
+  async clickButtonTransferConfirm() {
+    return await super.clickWithWait(buttonTransferConfirm);
+  }
+
   async isPresentButtonOk() {
-    return await super.isElementDisplayed(buttonOk,180);
+    return await super.isElementDisplayed(buttonOk, 180);
   }
 
   async waitUntilWeb3Loaded() {
-    return await this.waitUntilLocated(classWeb3Loaded,180);
+    return await this.waitUntilLocated(classWeb3Loaded, 180);
   }
 
   async isPendingTransaction() {
@@ -76,11 +78,15 @@ class MainPage extends Page {
   }
 
   async waitUntilTransactionDone() {
-    return await this.waitUntilDisappear(classPendingTransaction,360);
+    return await this.waitUntilDisappear(classPendingTransaction, 360);
   }
 
   async waitUntilShowUpButtonOk() {
     return await super.waitUntilDisplayed(buttonOk, 360);
+  }
+
+  async waitUntilShowUpButtonTransferConfirm() {
+    return await super.waitUntilDisplayed(buttonTransferConfirm, 360);
   }
 
   async waitUntilShowUpLoadingContainer() {
@@ -91,7 +97,18 @@ class MainPage extends Page {
     return await super.isElementDisplayed(loadingContainer);
   }
 
+  async confirmDisclaimer() {
+    return await super.waitUntilDisplayed(buttonDisclaimerConfirm, 180) &&
+           await this.clickButtonDisclaimerConfirm();
+  }
+
+  async clickButtonDisclaimerConfirm() {
+    return await super.clickWithWait(buttonDisclaimerConfirm);
+  }
+
+
 }
-module.exports={
-  MainPage:MainPage
+
+module.exports = {
+  MainPage: MainPage
 };

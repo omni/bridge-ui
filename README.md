@@ -133,6 +133,9 @@ FOREIGN_UPGRADEABLE_ADMIN_BRIDGE=0x08660156928d768D26D3eeF642c11527FDca0891
 ```rust
 DEPLOYMENT_ACCOUNT_ADDRESS=0xb8988b690910913c97a090c3a6f80fad8b3a4683
 DEPLOYMENT_ACCOUNT_PRIVATE_KEY=67..14
+DEPLOYMENT_GAS_LIMIT=4000000
+DEPLOYMENT_GAS_PRICE=10
+GET_RECEIPT_INTERVAL_IN_MILLISECONDS=3000
 
 HOME_RPC_URL=https://sokol.poa.network
 HOME_OWNER_MULTISIG=0xdd2BcC1e053aBB1DfA6c1F3D6C7842f57d61440F
@@ -141,6 +144,8 @@ HOME_UPGRADEABLE_ADMIN_BRIDGE=0xdd2BcC1e053aBB1DfA6c1F3D6C7842f57d61440F
 HOME_DAILY_LIMIT=1000000000000000000
 HOME_MAX_AMOUNT_PER_TX=100000000000000000
 HOME_MIN_AMOUNT_PER_TX=10000000000000000
+HOME_REQUIRED_BLOCK_CONFIRMATIONS=1
+HOME_GAS_PRICE=1
 
 FOREIGN_RPC_URL=https://kovan.infura.io/mew
 FOREIGN_OWNER_MULTISIG=0xb8988b690910913c97a090c3a6f80fad8b3a4683
@@ -149,12 +154,11 @@ FOREIGN_UPGRADEABLE_ADMIN_BRIDGE=0xb8988b690910913c97a090c3a6f80fad8b3a4683
 FOREIGN_DAILY_LIMIT=1000000000000000000
 FOREIGN_MAX_AMOUNT_PER_TX=100000000000000000
 FOREIGN_MIN_AMOUNT_PER_TX=10000000000000000
+FOREIGN_REQUIRED_BLOCK_CONFIRMATIONS=8
+FOREIGN_GAS_PRICE=10
 
 REQUIRED_NUMBER_OF_VALIDATORS=1
 VALIDATORS="0xb506698581484572b6ccfbd6c976f0948775eace"
-GET_RECEIPT_INTERVAL_IN_MILLISECONDS=3000
-
-GAS_PRICE=1
 ```
 
 #### Explanation of parameters:
@@ -163,6 +167,9 @@ Name | Description
 --------- | -------
 DEPLOYMENT_ACCOUNT_ADDRESS | Temporary  account from which all contracts will be deployed
 DEPLOYMENT_ACCOUNT_PRIVATE_KEY | private key from temp account
+DEPLOYMENT_GAS_LIMIT | Gas Limit to use for transactions during bridge contract provisioning 
+DEPLOYMENT_GAS_PRICE | Gas Price to use for transactions during bridge contract provisioning on both networks in gwei  
+GET_RECEIPT_INTERVAL_IN_MILLISECONDS | Interval that is used to wait for tx to be mined( 3 sec in example)
 HOME_RPC_URL | Public RPC Node URL for Home Network  
 HOME_OWNER_MULTISIG | Address of Administrator role on Home network to change parameters of the bridge and validator's contract
 HOME_UPGRADEABLE_ADMIN_VALIDATORS | Address from which Validator's contract could be upgraded
@@ -170,6 +177,8 @@ HOME_UPGRADEABLE_ADMIN_BRIDGE | Address from which HomeBridge's contract could b
 HOME_DAILY_LIMIT | Daily Limit in Wei. Example above is `1 eth`  
 HOME_MAX_AMOUNT_PER_TX | Max limit per 1 tx in Wei. Example above is `0.1 eth`  
 HOME_MIN_AMOUNT_PER_TX | Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
+HOME_REQUIRED_BLOCK_CONFIRMATIONS | Number of blocks issued after the block with the corresponding deposit transaction to make sure that the transaction will not be rolled back
+HOME_GAS_PRICE | Gas Price to use for transactions to relay withdraws to Home Network
 FOREIGN_RPC_URL | Public RPC Node URL for Foreign Network  
 FOREIGN_OWNER_MULTISIG | Address of Administrator role on FOREIGN network to change parameters of the bridge and validator's contract
 FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS | Address from which Validator's contract could be upgraded
@@ -177,10 +186,10 @@ FOREIGN_UPGRADEABLE_ADMIN_BRIDGE | Address from which HomeBridge's contract coul
 FOREIGN_DAILY_LIMIT | Daily Limit in Wei. Example above is `1 eth`  
 FOREIGN_MAX_AMOUNT_PER_TX | Max limit per 1 tx in Wei. Example above is `0.1 eth`  
 FOREIGN_MIN_AMOUNT_PER_TX | Minimum amount per 1 tx in Wei. Example above is `0.01 eth`  
+FOREIGN_REQUIRED_BLOCK_CONFIRMATIONS | Number of blocks issued after the block with the corresponding withdraw transaction to make sure that the transaction will not be rolled back
+FOREIGN_GAS_PRICE | Gas Price to use for transactions to deposit and confirm withdraws to Foreign Network
 VALIDATORS | array of validators on Home and Foreign network. Space separated.  
 REQUIRED_NUMBER_OF_VALIDATORS | Minimum Number of validators in order to Withdraw Funds on POA network Sokol  
-GET_RECEIPT_INTERVAL_IN_MILLISECONDS | Interval that is used to wait for tx to be mined( 3 sec in example)
-GAS_PRICE |  Gas Price to use for every tx on both networks in gwei  
 
 3. run `node deploy.js`  
 
