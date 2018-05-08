@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Bridge, RelayEvents, Footer, SweetAlert, Loading } from './components';
+import { Header, Bridge, RelayEvents, Footer, SweetAlert, Loading, StatusPage } from './components';
 import { Route } from 'react-router-dom'
 import './assets/stylesheets/application.css';
 import { Disclaimer } from './components'
@@ -44,6 +44,7 @@ export class App extends React.Component {
           {showMobileMenu && <Route render={() => <div className="mobile-menu-open"/>}/>}
           <Route exact path="/" component={Bridge}/>
           <Route exact path="/events" component={RelayEvents}/>
+          <Route exact path="/status" component={StatusPage}/>
         </div>
         <Route component={Footer}/>
         <ModalContainer
