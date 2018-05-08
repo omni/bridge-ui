@@ -2,6 +2,8 @@ import React from 'react'
 import { inject, observer } from "mobx-react"
 import { Configuration } from './Configuration'
 import { Authority } from './Authority'
+import pattern from '../assets/images/pattern.svg'
+
 
 @inject("RootStore")
 @observer
@@ -31,7 +33,9 @@ export class StatusPage extends React.Component {
             </div>
           </div>
         </div>
-        <div className='status-right-container' />
+        <div className='status-right-container'>
+          <img className='status-right-image' src={pattern} alt=""/>
+        </div>
       </div>
     )
   }
