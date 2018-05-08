@@ -9,7 +9,7 @@ export class SweetAlert extends React.Component {
     const { alertStore } = this.props.RootStore
     if(alertStore.alerts.length > 0){
       const alert = alertStore.alerts.slice()[0]
-      swal(alert.label, alert.message, alert.type).then(() => {
+      swal(alert).then(() => {
         alertStore.remove(alert)
       })
     }

@@ -35,7 +35,7 @@ const getWeb3 = () => {
         <a target="_blank" href="https://metamask.io">Metamask website</a> and return to this page after you installed it`
         reject({message: errorMsg})
         console.log('No web3 instance injected, using Local web3.');
-        console.error('Metamask not found'); 
+        console.error('Metamask not found');
       }
     })
   })
