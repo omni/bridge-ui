@@ -18,19 +18,19 @@ export const BridgeStatistics = ({ gasValue, users, totalBridged, homeBalance, f
     <div className="separator" />
     <DataBlock
       description="Total POA Bridged"
-      value={numeral(totalBridged).format('0.00', Math.floor)}
+      value={numeral(totalBridged).format('0,0.00 a', Math.floor)}
       type='POA'
     />
     <div className="separator" />
     <DataBlock
-      description="Home Balance"
+      description="Locked POA in Bridge Contract"
       value={numeral(homeBalance).format('0.00 a', Math.floor)}
       type='POA'
     />
     <div className="separator" />
     <DataBlock
-      description="Foreign Total Supply"
-      value={numeral(foreignSupply).format('0.000 a', Math.floor)}
+      description="POA20 Tokens Amount"
+      value={numeral(foreignSupply).format('0.00 a', Math.floor)}
       type='POA20'
     />
   </div>

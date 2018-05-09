@@ -32,7 +32,8 @@ class HomeStore {
     withdraws: 0,
     withdrawsValue: BN(0),
     totalBridged: BN(0),
-    users: new Set()
+    users: new Set(),
+    finished: false
   }
   filteredBlockNumber = 0
   homeBridge = {};
@@ -205,30 +206,52 @@ class HomeStore {
     }
   }
 
-  @action
+
   async getStatistics() {
     try {
       const events = await getPastEvents(this.homeBridge, 0, 'latest')
-      const homeEvents = events.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
-
-      homeEvents.forEach(event => {
-        this.statistics.users.add(event.returnValues.recipient)
-        if(event.event === "Deposit") {
-          this.statistics.deposits++
-          this.statistics.depositsValue = this.statistics.depositsValue + BN(Web3Utils.fromWei(event.returnValues.value))
-        } else {
-          this.statistics.withdraws++
-          this.statistics.withdrawsValue += BN(Web3Utils.fromWei(event.returnValues.value))
-        }
-      })
-
-      this.statistics.totalBridged = this.statistics.depositsValue + this.statistics.withdrawsValue
-
-      console.log(this.statistics.users.size, this.statistics.totalBridged.toString(), this.statistics.deposits, this.statistics.depositsValue.toString(), this.statistics.withdraws, this.statistics.withdrawsValue.toString())
+      this.processLargeArrayAsync(events, this.processEvent)
     } catch(e){
       console.error(e)
     }
   }
+
+  processEvent = (event) => {
+    this.statistics.users.add(event.returnValues.recipient)
+    if(event.event === "Deposit") {
+      this.statistics.deposits++
+      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+    } else if (event.event === "Withdraw") {
+      this.statistics.withdraws++
+      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+    }
+  }
+
+  processLargeArrayAsync(array, fn, maxTimePerChunk) {
+    maxTimePerChunk = maxTimePerChunk || 16;
+    let index = 0;
+
+    function now() {
+      return new Date().getTime();
+    }
+
+    const doChunk = () => {
+      const startTime = now();
+      while (index < array.length && (now() - startTime) <= maxTimePerChunk) {
+        // callback called with args (value, index, array)
+        fn.call(null, array[index], index, array);
+        ++index;
+      }
+      if (index < array.length) {
+        setTimeout(doChunk, 0);
+      } else {
+        this.statistics.finished = true
+        this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
+      }
+    }
+    doChunk();
+  }
+
 }
 
 export default HomeStore;
