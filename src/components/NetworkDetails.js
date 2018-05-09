@@ -19,10 +19,10 @@ export const NetworkDetails = ({
   totalBalance,
   balance
  }) => {
-  const networkTitle = isHome ? 'Home' : 'Foreign'
+  const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const action = isHome ? 'Deposit' : 'Withdraw'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
-  const totalTitle = isHome ? 'Total Contract Balance' : 'Total Supply'
+  const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
   const totalAmount = isHome ? totalBalance : totalSupply
   const explorerPath = getExplorerUrl(networkData.id) + (isHome ? 'account/' : 'address/')
 
@@ -33,7 +33,7 @@ export const NetworkDetails = ({
       </div>
       <div className="details-body">
         <p className="details-data-container">
-          <span className="details-label">RPC Url</span>
+          <span className="details-label">Network</span>
           <span className="details-description">{url}</span>
         </p>
         <p className="details-data-container">
@@ -48,16 +48,16 @@ export const NetworkDetails = ({
             </span>
         </p>
         <p className="details-data-container">
-          <span className="details-label">Current {action} Limit</span>
-          <span className="details-description-bold">{maxCurrentLimit} {currency}</span>
+          <span className="details-label">Daily {action} Limit</span>
+          <span className="details-description-black">{numeral(maxCurrentLimit).format('0,0.0', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">
-          <span className="details-label">Maximum Amount Per Transaction Limit</span>
-          <span className="details-description-bold">{maxPerTx} {currency}</span>
+          <span className="details-label">Maximum Amount Per Transaction</span>
+          <span className="details-description-black">{numeral(maxPerTx).format('0,0.0', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Minimum Amount Per Transaction</span>
-          <span className="details-description-bold">{minPerTx} {currency}</span>
+          <span className="details-description-black">{numeral(minPerTx).format('0,0.0', Math.floor)} {currency}</span>
         </p>
         {!isHome && (
           <p className="details-data-container">
@@ -74,11 +74,13 @@ export const NetworkDetails = ({
         )}
         <p className="details-data-container">
           <span className="details-label">{totalTitle}</span>
-          <span className="details-description-bold">{numeral(totalAmount).format('0.00', Math.floor)} {currency}</span>
+          <span className="details-description-black">{numeral(totalAmount).format('0,0.00', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>
-          <span className="details-description-bold">{numeral(balance).format('0.00', Math.floor)} {currency}</span>
+          <span className="details-description-black">
+            <strong>{numeral(balance).format('0,0.00', Math.floor)} {currency}</strong>
+          </span>
         </p>
       </div>
     </div>

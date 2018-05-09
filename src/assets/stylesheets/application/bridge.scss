@@ -557,10 +557,9 @@
           color: #5c34a2;
         }
 
-        .details-description-bold {
+        .details-description-black {
           font-size: 14px;
           color: #333333;
-          font-weight: bold;
         }
 
         .info-icon-right {
@@ -714,6 +713,7 @@
   height: 518px;
   border-radius: 8px;
   background-color: #ffffff;
+  padding: 30px 0;
 
   @media screen and (max-width: $tablet-width) {
     flex-direction: column;
@@ -814,6 +814,7 @@
         border-radius: 3px;
         background-color: #808080;
         text-decoration: none;
+        opacity: 0;
       }
     }
   }
