@@ -72,7 +72,7 @@ class Web3Store {
       this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
       balanceLoaded()
     } catch(e){
-      this.alertStore.pushError(e)
+      console.error(e)
     }
   }
 

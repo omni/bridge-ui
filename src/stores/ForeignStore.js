@@ -136,25 +136,14 @@ class ForeignStore {
       if(this.waitingForConfirmation.size) {
         const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
-          const blockConfirmations = this.latestBlockNumber - event.blockNumber
-          if(blockConfirmations > 8) {
-            this.alertStore.setBlockConfirmations(8)
-            this.alertStore.setLoadingStepIndex(3)
-            const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
-            setTimeout(() => {
-              this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} on Tx
-              <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
-              ${event.transactionHash}</a>`)}
-            , 2000)
-            this.waitingForConfirmation.delete(event.returnValues.transactionHash)
-          } else if (blockConfirmations === 8) {
-            this.alertStore.setBlockConfirmations(blockConfirmations)
-            this.alertStore.setLoadingStepIndex(2)
-          } else {
-            if(blockConfirmations > 0) {
-              this.alertStore.setBlockConfirmations(blockConfirmations)
-            }
-          }
+          this.alertStore.setLoadingStepIndex(3)
+          const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
+          setTimeout(() => {
+            this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} on Tx
+            <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
+            ${event.transactionHash}</a>`)}
+          , 2000)
+          this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
 
         if(confirmationEvents.length) {
