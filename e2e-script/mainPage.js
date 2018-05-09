@@ -105,7 +105,7 @@ class MainPage extends Page {
 
 	async confirmDisclaimer() {
 		return await super.waitUntilDisplayed(disclaimer, 180) &&
-			await this.clickCheckboxDisclaimer() &&
+			//await this.clickCheckboxDisclaimer() &&
 			await this.clickButtonDisclaimerConfirm();
 	}
 

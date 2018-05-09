@@ -71,6 +71,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 		async function () {
 			let newHomeBalance = await mainPage.getHomePOABalance();
 			let shouldBe = homeBalanceBefore - maxAmountPerTransactionLimit;
+			console.log("newHomeBalance" + newHomeBalance);
+			console.log("shouldBe" + shouldBe);
 			let result = (Math.abs(shouldBe - newHomeBalance)) < (maxAmountPerTransactionLimit / 100);
 			homeBalanceBefore = newHomeBalance;
 			return await assert.equal(result, true, "Test FAILED.Home POA balance is not correct after transaction");
@@ -79,7 +81,11 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 	test.it('Foreign account has received correct amount of tokens after transaction ',
 		async function () {
 			let newForeignBalance = await mainPage.getForeignPOABalance();
+
 			let shouldBe = foreignBalanceBefore + maxAmountPerTransactionLimit;
+			console.log("newForeignBalance" + newForeignBalance);
+			console.log("shouldBe" + shouldBe);
+
 			let result = (Math.abs(shouldBe - newForeignBalance)) < (maxAmountPerTransactionLimit / 100);
 			return await assert.equal(result, true, "Test FAILED. Foreign POA balance is not correct after transaction");
 		});
@@ -96,6 +102,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 		async function () {
 			let newForeignBalance = await mainPage.getHomePOABalance();
 			let shouldBe = foreignBalanceBefore - maxAmountPerTransactionLimit;
+			console.log("newForeignBalance" + newForeignBalance);
+			console.log("shouldBe" + shouldBe);
 			let result = (Math.abs(shouldBe - newForeignBalance)) < (maxAmountPerTransactionLimit / 100);
 			return await assert.equal(result, true, "Test FAILED.Foreign POA balance is not correct after transaction");
 		});
@@ -104,6 +112,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 		async function () {
 			let newHomeBalance = await mainPage.getForeignPOABalance();
 			let shouldBe = homeBalanceBefore + maxAmountPerTransactionLimit;
+			console.log("newHomeBalance" + newHomeBalance);
+			console.log("shouldBe" + shouldBe);
 			let result = (Math.abs(shouldBe - newHomeBalance)) < (maxAmountPerTransactionLimit / 100);
 			return await assert.equal(result, true, "Test FAILED.Home POA balance is not correct after transaction");
 		});
