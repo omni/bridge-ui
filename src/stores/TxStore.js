@@ -91,7 +91,18 @@ class TxStore {
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
           if(this.web3Store.metamaskNet.name === this.web3Store.homeNet.name) {
-            this.foreignStore.addWaitingForConfirmation(hash)
+            const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
+            if(blockConfirmations >= 8) {
+              this.alertStore.setBlockConfirmations(blockConfirmations)
+              this.alertStore.setLoadingStepIndex(2)
+              this.foreignStore.addWaitingForConfirmation(hash)
+            } else {
+              if(blockConfirmations > 0) {
+                this.alertStore.setBlockConfirmations(blockConfirmations)
+              }
+              this.getTxStatus(hash)
+            }
+
           } else {
             const blockConfirmations = this.foreignStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
