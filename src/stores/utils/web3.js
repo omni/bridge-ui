@@ -44,12 +44,12 @@ const getWeb3 = () => {
 export default getWeb3
 
 const networks = {
-  1: 'Main Net',
+  1: 'Network',
   3: 'Ropsten',
   4: 'Rinkeby',
   42:'Kovan',
   77:'Sokol',
-  99:'Main Net'
+  99:'Network'
 }
 
 const explorers = {
