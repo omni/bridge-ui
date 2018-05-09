@@ -22,7 +22,7 @@ export const NetworkDetails = ({
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const action = isHome ? 'Deposit' : 'Withdraw'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
-  const totalTitle = isHome ? 'Total Contract Balance' : 'Total Supply'
+  const totalTitle = isHome ? 'Locked POA Native Tokens Amount' : 'POA20 Tokens Amount'
   const totalAmount = isHome ? totalBalance : totalSupply
   const explorerPath = getExplorerUrl(networkData.id) + (isHome ? 'account/' : 'address/')
 
