@@ -772,7 +772,7 @@
 
     .disclaimer-description {
       font-size: 14px;
-      color: #5c34a2;
+      color: #666666;
       padding-top: 10px;
       padding-bottom: 10px;
       line-height: 1.71;
@@ -781,6 +781,15 @@
         padding-left: 1%;
         padding-right: 1%;
       }
+    }
+
+    .disclaimer-tos {
+      padding-left: 5px;
+      color: #333333;
+    }
+
+    .disclaimer-link {
+      color: #5c34a2;
     }
 
     .disclaimer-buttons {
@@ -793,6 +802,17 @@
         font-weight: bold;
         border-radius: 3px;
         background-color: #60db97;
+        text-decoration: none;
+      }
+
+      .disclaimer-confirm-disabled {
+        width: 91px;
+        height: 40px;
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: bold;
+        border-radius: 3px;
+        background-color: #808080;
         text-decoration: none;
       }
     }

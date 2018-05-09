@@ -83,6 +83,10 @@ strong {
   width: 1px;
   height: 51px;
   background-color: #e4e4e4;
+
+  @media screen and (max-width: $tablet-width) {
+    display: none;
+  }
 }
 
 .datablock-container {
