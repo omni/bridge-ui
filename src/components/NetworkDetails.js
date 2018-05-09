@@ -20,7 +20,7 @@ export const NetworkDetails = ({
   balance
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
-  const action = isHome ? 'Deposit' : 'Withdraw'
+  const action = isHome ? 'POA' : 'POA20'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
   const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
   const totalAmount = isHome ? totalBalance : totalSupply
@@ -48,7 +48,7 @@ export const NetworkDetails = ({
             </span>
         </p>
         <p className="details-data-container">
-          <span className="details-label">Daily {action} Limit</span>
+          <span className="details-label">Remaining Daily {action} Quota</span>
           <span className="details-description-black">{numeral(maxCurrentLimit).format('0,0.0', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">

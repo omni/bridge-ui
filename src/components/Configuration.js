@@ -29,7 +29,7 @@ export const Configuration = ({ requiredSignatures, authorities, estGasCost, max
     />
     <div className="separator" />
     <DataBlock
-      description="Max Total Balance"
+      description="Remaining Daily POA Quota"
       value={numeral(maxTotalBalance).format('0.00 a', Math.floor)}
       type='POA'
     />
