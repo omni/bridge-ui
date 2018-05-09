@@ -724,6 +724,7 @@
   height: 518px;
   border-radius: 8px;
   background-color: #ffffff;
+  padding: 30px 0;
 
   @media screen and (max-width: $tablet-width) {
     flex-direction: column;
@@ -824,6 +825,7 @@
         border-radius: 3px;
         background-color: #808080;
         text-decoration: none;
+        opacity: 0;
       }
     }
   }
