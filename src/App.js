@@ -1,5 +1,5 @@
 import React from 'react';
-import { Header, Bridge, RelayEvents, Footer, SweetAlert, Loading, StatusPage } from './components';
+import { Header, Bridge, RelayEvents, Footer, SweetAlert, Loading, StatusPage, StatisticsPage } from './components';
 import { Route } from 'react-router-dom'
 import './assets/stylesheets/application.css';
 import { Disclaimer } from './components'
@@ -45,6 +45,7 @@ export class App extends React.Component {
           <Route exact path="/" component={Bridge}/>
           <Route exact path="/events" component={RelayEvents}/>
           <Route exact path="/status" component={StatusPage}/>
+          <Route exact path="/statistics" component={StatisticsPage}/>
         </div>
         <Route component={Footer}/>
         <ModalContainer

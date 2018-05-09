@@ -96,6 +96,10 @@ strong {
   flex-direction: column;
   align-items: center;
 
+  @media screen and (max-width: $tablet-width) {
+    align-items: normal;
+  }
+
   .datablock-value {
     font-size: 30px;
     font-weight: bold;

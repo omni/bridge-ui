@@ -4,6 +4,8 @@ import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
 import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'
+import Web3Utils from 'web3-utils'
+import BN from 'bignumber.js'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -24,6 +26,15 @@ class HomeStore {
   @observable validators = []
   @observable homeBridgeValidators = ''
   @observable requiredSignatures = 0
+  @observable statistics = {
+    deposits: 0,
+    depositsValue: BN(0),
+    withdraws: 0,
+    withdrawsValue: BN(0),
+    totalBridged: BN(0),
+    users: new Set(),
+    finished: false
+  }
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
@@ -46,6 +57,7 @@ class HomeStore {
     this.getBalance()
     this.getCurrentLimit()
     this.getValidators()
+    this.getStatistics()
     setInterval(() => {
       this.getEvents()
       this.getBalance()
@@ -193,6 +205,53 @@ class HomeStore {
       console.error(e)
     }
   }
+
+
+  async getStatistics() {
+    try {
+      const events = await getPastEvents(this.homeBridge, 0, 'latest')
+      this.processLargeArrayAsync(events, this.processEvent)
+    } catch(e){
+      console.error(e)
+    }
+  }
+
+  processEvent = (event) => {
+    this.statistics.users.add(event.returnValues.recipient)
+    if(event.event === "Deposit") {
+      this.statistics.deposits++
+      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+    } else if (event.event === "Withdraw") {
+      this.statistics.withdraws++
+      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+    }
+  }
+
+  processLargeArrayAsync(array, fn, maxTimePerChunk) {
+    maxTimePerChunk = maxTimePerChunk || 16;
+    let index = 0;
+
+    function now() {
+      return new Date().getTime();
+    }
+
+    const doChunk = () => {
+      const startTime = now();
+      while (index < array.length && (now() - startTime) <= maxTimePerChunk) {
+        // callback called with args (value, index, array)
+        fn.call(null, array[index], index, array);
+        ++index;
+      }
+      if (index < array.length) {
+        setTimeout(doChunk, 0);
+      } else {
+        this.statistics.finished = true
+        this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
+      }
+    }
+    doChunk();
+  }
+
 }
 
 export default HomeStore;
