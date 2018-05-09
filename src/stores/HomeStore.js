@@ -4,6 +4,8 @@ import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
 import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'
+import Web3Utils from 'web3-utils'
+import BN from 'bignumber.js'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -26,11 +28,11 @@ class HomeStore {
   @observable requiredSignatures = 0
   @observable statistics = {
     deposits: 0,
-    depositsValue: 0,
+    depositsValue: BN(0),
     withdraws: 0,
-    withdrawsValue: 0,
-    totalBridged: 0,
-    users: 0
+    withdrawsValue: BN(0),
+    totalBridged: BN(0),
+    users: new Set()
   }
   filteredBlockNumber = 0
   homeBridge = {};
@@ -209,12 +211,20 @@ class HomeStore {
       const events = await getPastEvents(this.homeBridge, 0, 'latest')
       const homeEvents = events.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
 
-      const { deposits, depositsValue, withdraws, withdrawsValue, totalBridged, users } = this.statistics
-
       homeEvents.forEach(event => {
-
+        this.statistics.users.add(event.returnValues.recipient)
+        if(event.event === "Deposit") {
+          this.statistics.deposits++
+          this.statistics.depositsValue = this.statistics.depositsValue + BN(Web3Utils.fromWei(event.returnValues.value))
+        } else {
+          this.statistics.withdraws++
+          this.statistics.withdrawsValue += BN(Web3Utils.fromWei(event.returnValues.value))
+        }
       })
 
+      this.statistics.totalBridged = this.statistics.depositsValue + this.statistics.withdrawsValue
+
+      console.log(this.statistics.users.size, this.statistics.totalBridged.toString(), this.statistics.deposits, this.statistics.depositsValue.toString(), this.statistics.withdraws, this.statistics.withdrawsValue.toString())
     } catch(e){
       console.error(e)
     }
