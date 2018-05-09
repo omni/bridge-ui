@@ -6,7 +6,7 @@ export const TransactionsStatistics = ({ txNumber, value }) => (
   <div className="statistics-bridge-data">
     <DataBlock
       description="Transactions"
-      value={numeral(txNumber).format('0,0.00 a')}
+      value={numeral(txNumber).format('0,0 a')}
       type=''
     />
     <div className="separator" />
