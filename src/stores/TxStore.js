@@ -39,8 +39,10 @@ class TxStore {
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          this.alertStore.setLoading(false)
-          this.alertStore.pushError('Transaction rejected on Metamask');
+          if(!e.message.includes('not mined within 50 blocks')){
+            this.alertStore.setLoading(false)
+            this.alertStore.pushError('Transaction rejected on Metamask');
+          }
         })
       } catch(e) {
         this.alertStore.pushError(e.message);
@@ -88,8 +90,19 @@ class TxStore {
         if(res.status === '0x1'){
           const index = this.txHashToIndex[hash]
           this.txs[index].status = `mined`
-          if(this.web3Store.metamaskNet.name === this.web3Store.homeNet.name) {
-            this.foreignStore.addWaitingForConfirmation(hash)
+          if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id.toString()) {
+            const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
+            if(blockConfirmations >= 8) {
+              this.alertStore.setBlockConfirmations(blockConfirmations)
+              this.alertStore.setLoadingStepIndex(2)
+              this.foreignStore.addWaitingForConfirmation(hash)
+            } else {
+              if(blockConfirmations > 0) {
+                this.alertStore.setBlockConfirmations(blockConfirmations)
+              }
+              this.getTxStatus(hash)
+            }
+
           } else {
             const blockConfirmations = this.foreignStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
