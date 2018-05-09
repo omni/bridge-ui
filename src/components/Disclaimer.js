@@ -21,32 +21,23 @@ export class Disclaimer extends React.Component {
           <img className="disclaimer-icon" src={disclaimerIcon} alt="disclaimer icon"/>
         </div>
         <div className="alert-container">
-          <span className="disclaimer-title">Welcome to <br /> POA Bridge UI App</span>
+          <span className="disclaimer-title">Welcome to <br /> POA Bridge UI App Beta+</span>
           <p className="disclaimer-description">
-            The software is in Beta stage. POA Bridge is constantly under
-            active development. The “Beta” labelling implies that while the
-            core features of the software have been implemented, bugs
-            and issues may still remain undiscovered until this phase of
-            testing is complete. As such, POA Bridge may experience the
-            following issues, but not limited to, during usage: lost of
-            tokens/funds from incorrect configuration; unexpected delays;
-            unexpected visual artifacts.
+            We’re launching our POA Bridge and our UI App on a beta-testing basis.  While we’ve
+            worked long and hard to develop the core features of the software, we expect that our
+            users may detect bugs and other issues.  Help us improve by submitting tickets to our
+            <a href="https://poanet.zendesk.com/hc/en-us/categories/360000349273-POA-Bridge">support page</a>.
+            <br />
+            Use of this app and the POA Bridge is at your own risk.  Users may experience
+            unexpected delays, unexpected visual artifacts, unexpected loss of tokens or funds from
+            improper app configuration, or other negative outcomes.
+            <br />
+            By hitting the “continue” button, you are representing that you’ve read our <a href="https://poanet.zendesk.com/hc/en-us/articles/360004054794-Terms-and-Conditions-of-The-POA-Bridge">Terms of
+            Service</a> in full, and that you agree to be legally bound by them.
           </p>
-          <div>
-            <input
-              className="disclaimer-checkbox"
-              name="readTerms"
-              type="checkbox"
-              checked={readTerms}
-              onChange={this.handleCheckboxChange} />
-            <label onClick={this.handleCheckboxChange} className="disclaimer-tos">
-              I accept the <a href='#' className="disclaimer-link">Terms of Service</a>
-            </label>
-          </div>
           <div className="disclaimer-buttons">
             <button
-              disabled={!this.state.readTerms}
-              className={this.state.readTerms ? "disclaimer-confirm" : "disclaimer-confirm-disabled"}
+              className="disclaimer-confirm"
               onClick={onConfirmation}>
               Continue
             </button>
