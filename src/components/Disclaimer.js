@@ -26,13 +26,15 @@ export class Disclaimer extends React.Component {
             We’re launching our POA Bridge and our UI App on a beta-testing basis.  While we’ve
             worked long and hard to develop the core features of the software, we expect that our
             users may detect bugs and other issues.  Help us improve by submitting tickets to our
-            <a href="https://poanet.zendesk.com/hc/en-us/categories/360000349273-POA-Bridge">support page</a>.
+            <a href="https://poanet.zendesk.com/hc/en-us/categories/360000349273-POA-Bridge" target="_blank"> support page</a>.
+            <br />
             <br />
             Use of this app and the POA Bridge is at your own risk.  Users may experience
             unexpected delays, unexpected visual artifacts, unexpected loss of tokens or funds from
             improper app configuration, or other negative outcomes.
             <br />
-            By hitting the “continue” button, you are representing that you’ve read our <a href="https://poanet.zendesk.com/hc/en-us/articles/360004054794-Terms-and-Conditions-of-The-POA-Bridge">Terms of
+            <br />
+            By hitting the “continue” button, you are representing that you’ve read our <a href="https://poanet.zendesk.com/hc/en-us/articles/360004054794-Terms-and-Conditions-of-The-POA-Bridge" target="_blank">Terms of
             Service</a> in full, and that you agree to be legally bound by them.
           </p>
           <div className="disclaimer-buttons">
