@@ -24,6 +24,14 @@ class HomeStore {
   @observable validators = []
   @observable homeBridgeValidators = ''
   @observable requiredSignatures = 0
+  @observable statistics = {
+    deposits: 0,
+    depositsValue: 0,
+    withdraws: 0,
+    withdrawsValue: 0,
+    totalBridged: 0,
+    users: 0
+  }
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
@@ -46,6 +54,7 @@ class HomeStore {
     this.getBalance()
     this.getCurrentLimit()
     this.getValidators()
+    this.getStatistics()
     setInterval(() => {
       this.getEvents()
       this.getBalance()
@@ -189,6 +198,23 @@ class HomeStore {
       })
       this.validators =  homeAddedValidators.filter(val => !homeRemovedValidators.includes(val));
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
+    } catch(e){
+      console.error(e)
+    }
+  }
+
+  @action
+  async getStatistics() {
+    try {
+      const events = await getPastEvents(this.homeBridge, 0, 'latest')
+      const homeEvents = events.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
+
+      const { deposits, depositsValue, withdraws, withdrawsValue, totalBridged, users } = this.statistics
+
+      homeEvents.forEach(event => {
+
+      })
+
     } catch(e){
       console.error(e)
     }
