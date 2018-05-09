@@ -3,6 +3,7 @@ import arrowsIcon from '../assets/images/icon-arrows@2x.png'
 import arrowIconRight from '../assets/images/icons/icon-arrow-right.svg'
 import logoHomeSmall from '../assets/images/logos/logo-poa-main-net_small.svg'
 import logoForeignSmall from '../assets/images/logos/logo-poa-20_small.svg'
+import numeral from 'numeral'
 
 
 
@@ -29,14 +30,14 @@ export const TransferAlert = ({
           <div className="alert-logo-box">
             <img className={reverse ? 'alert-foreign-logo' : 'alert-home-logo'} src={reverse ? logoForeignSmall : logoHomeSmall} alt="arrow right"/>
           </div>
-          <div><strong>{amount}</strong> {fromCurrency}</div>
+          <div><strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {fromCurrency}</div>
           <img className="icon_arrow_right" src={arrowIconRight} alt="arrow right"/>
-          <div><strong>{amount}</strong> {toCurrency}</div>
+          <div><strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {toCurrency}</div>
           <div className="alert-logo-box">
             <img className={reverse ? 'alert-home-logo' : 'alert-foreign-logo'} src={reverse ? logoHomeSmall : logoForeignSmall} alt="arrow right"/>
           </div>
         </div>
-        <p className="transfer-description">Please confirm that you would like to send <strong>{amount}</strong> {fromCurrency} from {from} to receive <strong>{amount}</strong> {toCurrency} on {to}.</p>
+        <p className="transfer-description">Please confirm that you would like to send <strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {fromCurrency} from {from} to receive <strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {toCurrency} on {to}.</p>
         <div className="transfer-buttons">
           <button className="transfer-confirm" onClick={onConfirmation}>Continue</button>
           <button className="transfer-cancel" onClick={onCancel}>Cancel</button>
