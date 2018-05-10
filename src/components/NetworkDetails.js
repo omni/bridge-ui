@@ -24,7 +24,7 @@ export const NetworkDetails = ({
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
   const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
   const totalAmount = isHome ? totalBalance : totalSupply
-  const explorerPath = getExplorerUrl(networkData.id) + (isHome ? 'account/' : 'address/')
+  const explorerPath = getExplorerUrl(networkData.id) + (networkData.id === 77 ? 'account/' : 'address/')
 
   return (
     <div className="network-details">
