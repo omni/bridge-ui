@@ -56,5 +56,15 @@
     line-height: 3;
     letter-spacing: normal;
     color: #ffffff;
+
+    @media screen and (max-width: $mobile-width) {
+      font-size: 18px;
+    }
+  }
+}
+
+.mobile-container {
+  @media screen and (max-width: $mobile-width) {
+    flex-direction: column;
   }
 }
