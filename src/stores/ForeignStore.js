@@ -135,15 +135,18 @@ class ForeignStore {
 
       if(this.waitingForConfirmation.size) {
         const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
-        confirmationEvents.forEach(event => {
-          this.alertStore.setLoadingStepIndex(3)
-          const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
-          setTimeout(() => {
-            this.alertStore.pushSuccess(`Tokens received on ${this.web3Store.foreignNet.name} on Tx
+        confirmationEvents.forEach(async event => {
+          const TxReceipt = await this.getTxReceipt(event.transactionHash)
+          if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length === 4 && this.waitingForConfirmation.size) {
+            this.alertStore.setLoadingStepIndex(3)
+            const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
+            setTimeout(() => {
+                this.alertStore.pushSuccess(`Tokens received on Ethereum ${this.web3Store.foreignNet.name} on Tx
             <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
             ${event.transactionHash}</a>`)}
-          , 2000)
-          this.waitingForConfirmation.delete(event.returnValues.transactionHash)
+              , 2000)
+            this.waitingForConfirmation.delete(event.returnValues.transactionHash)
+          }
         })
 
         if(confirmationEvents.length) {
@@ -210,6 +213,11 @@ class ForeignStore {
     this.waitingForConfirmation.add(hash)
     this.setBlockFilter(0)
   }
+
+  getTxReceipt(hash) {
+    return this.foreignWeb3.eth.getTransactionReceipt(hash)
+  }
+
 }
 
 export default ForeignStore;
