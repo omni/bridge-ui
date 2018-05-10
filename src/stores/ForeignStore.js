@@ -137,7 +137,7 @@ class ForeignStore {
         const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(async event => {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
-          if(TxReceipt.logs.length === 4 && this.waitingForConfirmation.size) {
+          if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length === 4 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
             const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
             setTimeout(() => {
