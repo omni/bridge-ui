@@ -123,7 +123,7 @@ class HomeStore {
           setTimeout(() => {
             this.alertStore.pushSuccess(`Tokens received on POA ${this.web3Store.homeNet.name} on Tx 
               <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;">
-              ${event.transactionHash}</a>`)}
+              ${event.transactionHash}</a>`, this.alertStore.HOME_TRANSFER_SUCCESS)}
             , 2000)
           this.waitingForConfirmation.delete(event.returnValues.transactionHash)
         })
@@ -136,7 +136,7 @@ class HomeStore {
       return homeEvents
     } catch(e) {
       this.alertStore.pushError(`Cannot establish connection to Home Network.\n
-                 Please make sure you have set it up in env variables`)
+                 Please make sure you have set it up in env variables`, this.alertStore.HOME_CONNECTION_ERROR)
     }
   }
   @action
