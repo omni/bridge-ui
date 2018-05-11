@@ -715,6 +715,10 @@
   background-color: #ffffff;
   padding: 30px 0;
 
+  @media screen and (max-width: $small-mobile-width) {
+    padding-top: 60px;
+  }
+
   @media screen and (max-width: $tablet-width) {
     flex-direction: column;
     width: 92%;
