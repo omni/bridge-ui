@@ -143,7 +143,7 @@ class ForeignStore {
             setTimeout(() => {
                 this.alertStore.pushSuccess(`Tokens received on Ethereum ${this.web3Store.foreignNet.name} on Tx
             <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
-            ${event.transactionHash}</a>`)}
+            ${event.transactionHash}</a>`, this.alertStore.FOREIGN_TRANSFER_SUCCESS)}
               , 2000)
             this.waitingForConfirmation.delete(event.returnValues.transactionHash)
           }
@@ -157,7 +157,7 @@ class ForeignStore {
       return events
     } catch(e) {
       this.alertStore.pushError(`Cannot establish connection to Foreign Network.\n
-                 Please make sure you have set it up in env variables`)
+                 Please make sure you have set it up in env variables`, this.alertStore.FOREIGN_CONNECTION_ERROR)
     }
   }
   async getSignedTx(messageHash){
