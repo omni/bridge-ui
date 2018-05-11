@@ -129,6 +129,7 @@ class ForeignStore {
         }
         events.push(event)
       }))
+
       if(!this.filter){
         this.events = events;
       }
@@ -137,7 +138,7 @@ class ForeignStore {
         const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(async event => {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
-          if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length === 4 && this.waitingForConfirmation.size) {
+          if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
             const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
             setTimeout(() => {
@@ -179,12 +180,15 @@ class ForeignStore {
 
   @action
   async filterByTxHashInReturnValues(transactionHash) {
+    console.log('Filter foreign by returnValues', transactionHash)
     const events = await this.getEvents(1,"latest");
-    this.events = events.filter((event) => event.returnValues.transactionHash === transactionHash)
+    console.log('events.length', events.length)
+    this.events = events.filter((event) => event.transactionHash === transactionHash || event.signedTxHash === transactionHash)
   }
 
   @action
   async filterByTxHash(transactionHash) {
+    console.log('Filter foreign by TxHash', transactionHash)
     this.homeStore.filterByTxHashInReturnValues(transactionHash)
     const events = await this.getEvents(1,"latest");
     const match = events.filter((event) => {
@@ -200,13 +204,13 @@ class ForeignStore {
   @action
   async setBlockFilter(blockNumber){
     this.filteredBlockNumber = blockNumber
-    await this.getEvents()
+    this.events = await this.getEvents()
   }
 
   
   @action
-  toggleFilter(){
-    this.filter = !this.filter
+  setFilter(value){
+    this.filter = value
   }
 
   addWaitingForConfirmation(hash) {

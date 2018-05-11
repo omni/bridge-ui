@@ -32,17 +32,19 @@ export class RelayEvents extends React.Component {
     const { alertStore, homeStore, foreignStore } = this.props.RootStore
     alertStore.setLoading(true)
     if(value.substr(0,2) === "0x"){
-      homeStore.toggleFilter()
-      foreignStore.toggleFilter()
+      homeStore.setFilter(true)
+      foreignStore.setFilter(true)
       await homeStore.filterByTxHash(value)
     } else {
       if(Number(value) > 0){
+        homeStore.setFilter(true)
+        foreignStore.setFilter(true)
         await homeStore.setBlockFilter(value)
       } else {
         foreignStore.setBlockFilter(0)
         homeStore.setBlockFilter(0)
-        homeStore.toggleFilter()
-        foreignStore.toggleFilter()
+        homeStore.setFilter(false)
+        foreignStore.setFilter(false)
       }
     }
     alertStore.setLoading(false)
@@ -52,17 +54,19 @@ export class RelayEvents extends React.Component {
     const { alertStore, homeStore, foreignStore } = this.props.RootStore
     alertStore.setLoading(true)
     if(value.substr(0,2) === "0x"){
-      homeStore.toggleFilter()
-      foreignStore.toggleFilter()
+      homeStore.setFilter(true)
+      foreignStore.setFilter(true)
       await foreignStore.filterByTxHash(value)
     } else {
       if(Number(value) > 0){
+        homeStore.setFilter(true)
+        foreignStore.setFilter(true)
         await foreignStore.setBlockFilter(value)
       } else {
         foreignStore.setBlockFilter(0)
         homeStore.setBlockFilter(0)
-        homeStore.toggleFilter()
-        foreignStore.toggleFilter()
+        homeStore.setFilter(false)
+        foreignStore.setFilter(false)
       }
     }
     alertStore.setLoading(false)

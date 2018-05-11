@@ -141,34 +141,30 @@ class HomeStore {
   }
   @action
   async filterByTxHashInReturnValues(transactionHash) {
-    console.log('filter home', transactionHash)
+    console.log('Filter home by returnValues', transactionHash)
     const events = await this.getEvents(1,"latest");
     this.events = events.filter((event) => event.returnValues.transactionHash === transactionHash)
   }
   @action
   async filterByTxHash(transactionHash) {
+    console.log('Filter home by TxHash', transactionHash)
     const events = await this.getEvents(1,"latest");
-    const match = [];
-    await asyncForEach(events, async (event) => {
-      if(event.transactionHash === transactionHash){
-        if(event.event === 'Withdraw'){
-          await this.rootStore.foreignStore.filterByTxHash(event.returnValues.transactionHash)
-        }
-        match.push(event)
-      }
-    })
-    this.events = match
+    this.events = events.filter((event) => event.transactionHash === transactionHash)
+    console.log(this.events)
+    if(this.events.length > 0 && this.events[0].returnValues && this.events[0].returnValues.transactionHash) {
+      await this.rootStore.foreignStore.filterByTxHashInReturnValues(this.events[0].returnValues.transactionHash)
+    }
   }
 
   @action
-  toggleFilter(){
-    this.filter = !this.filter
+  setFilter(value){
+    this.filter = value
   }
   
   @action
   async setBlockFilter(blockNumber){
     this.filteredBlockNumber = blockNumber
-    await this.getEvents()
+    this.events = await this.getEvents()
   }
 
   @action
