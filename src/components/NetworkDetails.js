@@ -25,6 +25,9 @@ export const NetworkDetails = ({
   const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
   const totalAmount = isHome ? totalBalance : totalSupply
   const explorerPath = getExplorerUrl(networkData.id) + (networkData.id === 77 ? 'account/' : 'address/')
+  const formattedBalance = isNaN(numeral(balance).format('0,0.00', Math.floor))
+    ? numeral(0).format('0,0.00', Math.floor)
+    : numeral(balance).format('0,0.00', Math.floor)
 
   return (
     <div className="network-details">
@@ -79,7 +82,7 @@ export const NetworkDetails = ({
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>
           <span className="details-description-black">
-            <strong>{numeral(balance).format('0,0.00', Math.floor)} {currency}</strong>
+            <strong>{formattedBalance} {currency}</strong>
           </span>
         </p>
       </div>
