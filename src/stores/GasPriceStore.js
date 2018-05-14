@@ -2,6 +2,8 @@ import { observable, computed } from "mobx";
 import Web3Utils from 'web3-utils';
 import { getGasPrices } from './utils/web3'
 
+const GAS_PRICE_SPEED_TYPE = process.env.REACT_APP_GAS_PRICE_SPEED_TYPE || 'fast'
+
 class GasPriceStore {
   @observable gasPrices = {};
   gasPricePromise = null;
@@ -19,8 +21,8 @@ class GasPriceStore {
     })
   }
 
-  @computed get standardInHex() {
-    const toWei = Web3Utils.toWei(this.gasPrices.fast.toString(), 'gwei')
+  @computed get gasPriceInHex() {
+    const toWei = Web3Utils.toWei(this.gasPrices[GAS_PRICE_SPEED_TYPE].toString(), 'gwei')
     return Web3Utils.toHex(toWei)
   }
 }

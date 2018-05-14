@@ -331,6 +331,7 @@ REACT_APP_HOME_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
 REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
 REACT_APP_FOREIGN_HTTP_PARITY_URL=https://kovan.infura.io/mew
 REACT_APP_HOME_HTTP_PARITY_URL=https://sokol.poa.network
+REACT_APP_GAS_PRICE_SPEED_TYPE=fast
 ```
 Explanation:
 
@@ -340,6 +341,7 @@ REACT_APP_HOME_BRIDGE_ADDRESS | address that you have deployed at step#3. Should
 REACT_APP_FOREIGN_BRIDGE_ADDRESS | address that you have deployed at step#3.
 REACT_APP_FOREIGN_HTTP_PARITY_URL | http public rpc node for Foreign Network
 REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
+REACT_APP_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
 
 5. Run `npm run start`
 6. Make sure you have https://metamask.io installed
