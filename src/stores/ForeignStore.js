@@ -180,25 +180,22 @@ class ForeignStore {
 
   @action
   async filterByTxHashInReturnValues(transactionHash) {
-    console.log('Filter foreign by returnValues', transactionHash)
-    const events = await this.getEvents(1,"latest");
-    console.log('events.length', events.length)
-    this.events = events.filter((event) => event.transactionHash === transactionHash || event.signedTxHash === transactionHash)
+    this.getTxAndRelatedEvents(transactionHash)
   }
 
   @action
   async filterByTxHash(transactionHash) {
-    console.log('Filter foreign by TxHash', transactionHash)
     this.homeStore.filterByTxHashInReturnValues(transactionHash)
-    const events = await this.getEvents(1,"latest");
-    const match = events.filter((event) => {
-      if(event.signedTxHash){
-        return event.signedTxHash === transactionHash  
-      }
-      return event.transactionHash === transactionHash
-    })
-    console.log('events', match, transactionHash)
-    this.events = match
+    await this.getTxAndRelatedEvents(transactionHash)
+  }
+
+  @action
+  async getTxAndRelatedEvents(transactionHash) {
+    const txReceipt = await this.getTxReceipt(transactionHash)
+    const from = txReceipt.blockNumber - 20
+    const to = txReceipt.blockNumber + 20
+    const events = await this.getEvents(from, to);
+    this.events = events.filter((event) => event.transactionHash === transactionHash || event.signedTxHash === transactionHash)
   }
 
   @action
@@ -216,6 +213,7 @@ class ForeignStore {
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
     this.setBlockFilter(0)
+    this.homeStore.setBlockFilter(0)
   }
 
   getTxReceipt(hash) {
