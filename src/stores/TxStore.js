@@ -93,7 +93,7 @@ class TxStore {
           if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id.toString()) {
             const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
-              this.alertStore.setBlockConfirmations(blockConfirmations)
+              this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
               this.foreignStore.addWaitingForConfirmation(hash)
             } else {
@@ -106,7 +106,7 @@ class TxStore {
           } else {
             const blockConfirmations = this.foreignStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
-              this.alertStore.setBlockConfirmations(blockConfirmations)
+              this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
               this.homeStore.addWaitingForConfirmation(hash)
             } else {
