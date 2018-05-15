@@ -67,7 +67,7 @@ export class Bridge extends React.Component {
     const { homeCurrency } = this.state
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.homeNet.id.toString()){
-      swal("Error", `Please switch metamask network to ${web3Store.homeNet.name}`, "error")
+      swal("Error", `Please switch metamask to ${web3Store.homeNet.name} network`, "error")
       return
     }
     if(isLessThan(amount, homeStore.minPerTx)){
@@ -102,7 +102,7 @@ export class Bridge extends React.Component {
     const { web3Store, foreignStore, alertStore, txStore } = this.props.RootStore
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
-      swal("Error", `Please switch metamask network to ${web3Store.foreignNet.name}`, "error")
+      swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
       return
     }
     if(isLessThan(amount, foreignStore.minPerTx)){
