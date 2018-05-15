@@ -11,7 +11,7 @@ export const BridgeNetwork = ({
   showModal
 }) => {
   const containerName = isHome ? 'home' : 'foreign'
-  const formattedBalance = isNaN(numeral(balance).format('0,0.00', Math.floor))
+  const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
     ? numeral(0).format('0,0.00', Math.floor)
     : numeral(balance).format('0,0.00', Math.floor)
 
