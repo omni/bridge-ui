@@ -6,6 +6,7 @@ export const EventsListHeader = ({selected, homeName, homeValue, foreignName, fo
       <span className="events-header-title">Events</span>
       <div className="events-filter-container">
         <input onChange={handleChange} onKeyDown={handleKeyDown} type="text" className="events-filter" placeholder="Tx Hash or Block Number..." />
+        <span className="events-filter-icon" />
         <select value={selected} onChange={onChangeList} className="events-select">
           <option value={homeValue}>{homeName}</option>
           <option value={foreignValue}>{foreignName}</option>

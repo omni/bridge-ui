@@ -129,6 +129,7 @@ class ForeignStore {
         }
         events.push(event)
       }))
+
       if(!this.filter){
         this.events = events;
       }
@@ -137,7 +138,7 @@ class ForeignStore {
         const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(async event => {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
-          if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length === 4 && this.waitingForConfirmation.size) {
+          if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
             const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
             setTimeout(() => {
@@ -179,39 +180,44 @@ class ForeignStore {
 
   @action
   async filterByTxHashInReturnValues(transactionHash) {
-    const events = await this.getEvents(1,"latest");
-    this.events = events.filter((event) => event.returnValues.transactionHash === transactionHash)
+    this.getTxAndRelatedEvents(transactionHash)
   }
 
   @action
   async filterByTxHash(transactionHash) {
     this.homeStore.filterByTxHashInReturnValues(transactionHash)
-    const events = await this.getEvents(1,"latest");
-    const match = events.filter((event) => {
-      if(event.signedTxHash){
-        return event.signedTxHash === transactionHash  
-      }
-      return event.transactionHash === transactionHash
-    })
-    console.log('events', match, transactionHash)
-    this.events = match
+    await this.getTxAndRelatedEvents(transactionHash)
+  }
+
+  @action
+  async getTxAndRelatedEvents(transactionHash) {
+    try {
+      const txReceipt = await this.getTxReceipt(transactionHash)
+      const from = txReceipt.blockNumber - 20
+      const to = txReceipt.blockNumber + 20
+      const events = await this.getEvents(from, to);
+      this.events = events.filter((event) => event.transactionHash === transactionHash || event.signedTxHash === transactionHash)
+    } catch (e) {
+      this.events = []
+    }
   }
 
   @action
   async setBlockFilter(blockNumber){
     this.filteredBlockNumber = blockNumber
-    await this.getEvents()
+    this.events = await this.getEvents()
   }
 
   
   @action
-  toggleFilter(){
-    this.filter = !this.filter
+  setFilter(value){
+    this.filter = value
   }
 
   addWaitingForConfirmation(hash) {
     this.waitingForConfirmation.add(hash)
     this.setBlockFilter(0)
+    this.homeStore.setBlockFilter(0)
   }
 
   getTxReceipt(hash) {

@@ -1,13 +1,20 @@
 import React from 'react'
 import Web3Utils from 'web3-utils'
 import numeral from 'numeral'
+import copyIcon from '../../assets/images/icons/copy.svg'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 export const Event = ({ color, eventName, transactionHash, recipient, value, blockNumber, txUrl, accountUrl }) => (
   <div>
     <div className="event">
       <div className="event-tx-container txhash-column">
         <span className={`event-name background-${color}`}>{eventName}</span>
-        <a href={txUrl+transactionHash} target="_blank" className="event-txhash">{transactionHash.slice(0,24).concat('...')}</a>
+        <span>
+          <a href={txUrl+transactionHash} target="_blank" className="event-txhash">{transactionHash.slice(0,24).concat('...')}</a>
+          <CopyToClipboard text={transactionHash}>
+            <img className="event-copy-tx" src={copyIcon} alt=""/>
+          </CopyToClipboard>
+        </span>
       </div>
       <a href={accountUrl+recipient} target="_blank" className="event-recipient recipient-column">
         {recipient ? <strong className="only-mobile event-recipient-label ">Recipient</strong> : ''}
