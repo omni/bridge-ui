@@ -5,7 +5,7 @@ const MetaMask = require('./MetaMask.js').MetaMask;
 const MainPage = require('./mainPage.js').MainPage;
 const User = require("./User.js").User;
 
-test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
+test.describe('e2e-test for bridge.poa, version 1.5.0', async function () {
 	this.timeout(4 * 60000);
 	this.slow(1 * 60000);
 
@@ -50,14 +50,14 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 	test.it('Main page: foreign POA balance is displayed ',
 		async function () {
 			foreignBalanceBefore = await mainPage.getForeignPOABalance();
-			let result = foreignBalanceBefore >= 0;
+			let result = foreignBalanceBefore !== 0;
 			return await assert.equal(result, true, "Test FAILED.Foreign POA balance is not displayed ");
 		});
 
 	test.it('Main page: home POA balance is displayed ',
 		async function () {
 			homeBalanceBefore = await mainPage.getHomePOABalance();
-			let result = foreignBalanceBefore >= 0;
+			let result = foreignBalanceBefore !== 0;
 			return await assert.equal(result, true, "Test FAILED.Home POA balance is not displayed ");
 		});
 
@@ -71,8 +71,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 		async function () {
 			let newHomeBalance = await mainPage.getHomePOABalance();
 			let shouldBe = homeBalanceBefore - maxAmountPerTransactionLimit;
-			console.log("newHomeBalance" + newHomeBalance);
-			console.log("shouldBe" + shouldBe);
+			console.log("newHomeBalance = " + newHomeBalance);
+			console.log("shouldBe = " + shouldBe);
 			let result = (Math.abs(shouldBe - newHomeBalance)) < (maxAmountPerTransactionLimit / 100);
 			homeBalanceBefore = newHomeBalance;
 			return await assert.equal(result, true, "Test FAILED.Home POA balance is not correct after transaction");
@@ -83,8 +83,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 			let newForeignBalance = await mainPage.getForeignPOABalance();
 
 			let shouldBe = foreignBalanceBefore + maxAmountPerTransactionLimit;
-			console.log("newForeignBalance" + newForeignBalance);
-			console.log("shouldBe" + shouldBe);
+			console.log("newForeignBalance = " + newForeignBalance);
+			console.log("shouldBe = " + shouldBe);
 
 			let result = (Math.abs(shouldBe - newForeignBalance)) < (maxAmountPerTransactionLimit / 100);
 			return await assert.equal(result, true, "Test FAILED. Foreign POA balance is not correct after transaction");
@@ -102,8 +102,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 		async function () {
 			let newForeignBalance = await mainPage.getHomePOABalance();
 			let shouldBe = foreignBalanceBefore - maxAmountPerTransactionLimit;
-			console.log("newForeignBalance" + newForeignBalance);
-			console.log("shouldBe" + shouldBe);
+			console.log("newForeignBalance = " + newForeignBalance);
+			console.log("shouldBe = " + shouldBe);
 			let result = (Math.abs(shouldBe - newForeignBalance)) < (maxAmountPerTransactionLimit / 100);
 			return await assert.equal(result, true, "Test FAILED.Foreign POA balance is not correct after transaction");
 		});
@@ -112,8 +112,8 @@ test.describe('e2e-test for bridge.poa, version 1.4.1', async function () {
 		async function () {
 			let newHomeBalance = await mainPage.getForeignPOABalance();
 			let shouldBe = homeBalanceBefore + maxAmountPerTransactionLimit;
-			console.log("newHomeBalance" + newHomeBalance);
-			console.log("shouldBe" + shouldBe);
+			console.log("newHomeBalance = " + newHomeBalance);
+			console.log("shouldBe = " + shouldBe);
 			let result = (Math.abs(shouldBe - newHomeBalance)) < (maxAmountPerTransactionLimit / 100);
 			return await assert.equal(result, true, "Test FAILED.Home POA balance is not correct after transaction");
 		});
