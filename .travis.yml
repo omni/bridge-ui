@@ -28,7 +28,6 @@ before_script:
   - sudo chmod +x /usr/local/share/chromedriver
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 
-
 script:
   - npm run startBridge
   - npm run e2e
