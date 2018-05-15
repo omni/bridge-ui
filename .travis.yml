@@ -30,6 +30,7 @@ before_script:
 
 
 script:
+  - npm run startBridge
   - npm run e2e
   - npm run coverage
 after_script:
