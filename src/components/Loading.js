@@ -2,6 +2,7 @@ import React from 'react';
 import { inject, observer } from "mobx-react";
 import loadingLogo from '../assets/images/logos/logo-loader.svg'
 import { ProgressRing } from './ProgressRing'
+import { PreventExit } from './PreventExit'
 
 @inject("RootStore")
 @observer
@@ -22,6 +23,7 @@ export class Loading extends React.Component {
         {loadingStepIndex === 0 && (<img className="loading" src={loadingLogo} alt="loading"/>)}
         {loadingStepIndex === 0 && <div className="loading-i" />}
         {loadingStepIndex > 0 && (<div className="loading-text">{loadingSteps[loadingStepIndex]}</div>)}
+        {alertStore.showLoading && <PreventExit />}
       </div>
     )
   }
