@@ -12,7 +12,7 @@ export const BridgeForm = ({ reverse, currency, onTransfer, onInputChange, displ
           type="text"
           className="bridge-form-input"
           id="amount"
-          placeholder="0.345" />
+          placeholder="0" />
           <label htmlFor="amount" className="bridge-form-label">{currency}</label>
         </div>
         <div>
