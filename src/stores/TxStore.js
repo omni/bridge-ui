@@ -22,7 +22,7 @@ class TxStore {
         return
       }
       try {
-        const gasPrice = this.gasPriceStore.standardInHex
+        const gasPrice = this.gasPriceStore.gasPriceInHex
         const gas = await estimateGas(this.web3Store.injectedWeb3, to, gasPrice, from, value, data)
         return this.web3Store.injectedWeb3.eth.sendTransaction({
           to,
