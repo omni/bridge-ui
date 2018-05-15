@@ -191,11 +191,15 @@ class ForeignStore {
 
   @action
   async getTxAndRelatedEvents(transactionHash) {
-    const txReceipt = await this.getTxReceipt(transactionHash)
-    const from = txReceipt.blockNumber - 20
-    const to = txReceipt.blockNumber + 20
-    const events = await this.getEvents(from, to);
-    this.events = events.filter((event) => event.transactionHash === transactionHash || event.signedTxHash === transactionHash)
+    try {
+      const txReceipt = await this.getTxReceipt(transactionHash)
+      const from = txReceipt.blockNumber - 20
+      const to = txReceipt.blockNumber + 20
+      const events = await this.getEvents(from, to);
+      this.events = events.filter((event) => event.transactionHash === transactionHash || event.signedTxHash === transactionHash)
+    } catch (e) {
+      this.events = []
+    }
   }
 
   @action
