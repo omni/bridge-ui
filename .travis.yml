@@ -28,9 +28,8 @@ before_script:
   - sudo chmod +x /usr/local/share/chromedriver
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 
-
 script:
-  - npm run e2e
+  - npm run startBridge & npm run startE2e
   - npm run coverage
 after_script:
   - npm run coveralls
