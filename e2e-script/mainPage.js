@@ -117,6 +117,15 @@ class MainPage extends Page {
 		return await super.clickWithWait(checkboxDisclaimer);
 	}
 
+	async open(url) {
+		let counter = 60;
+		do {
+			await this.driver.sleep(1000);
+			await super.open(url);
+		} while (counter-- >= 0 && !await this.isElementDisplayed(disclaimer))
+		return (counter >= 0);
+	}
+
 }
 
 module.exports = {

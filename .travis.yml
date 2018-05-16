@@ -29,7 +29,7 @@ before_script:
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 
 script:
-  - npm run startBridge && npm run startE2e
+  - npm run startBridge & npm run startE2e
   - npm run coverage
 after_script:
   - npm run coveralls

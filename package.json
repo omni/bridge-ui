@@ -34,13 +34,12 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "startBridge": "cd ./e2e-script && cp .env.example ./../.env && cd ./../ && npm install && npm start && npm run delay &",
+    "startBridge": "cd ./e2e-script && cp .env.example ./../.env && cd ./../ && npm install && npm start",
     "startE2e": "mocha -b ./e2e-script/test.js",
     "coverage": "react-app-rewired test --env=jsdom --coverage",
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-app-rewired eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build -o origin",
-    "delay": "node ./node_modules/npm-delay 30000"
+    "deploy": "gh-pages -d build -o origin"
   }
 }

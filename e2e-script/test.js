@@ -6,7 +6,7 @@ const MainPage = require('./mainPage.js').MainPage;
 const User = require("./User.js").User;
 
 test.describe('e2e-test for bridge.poa, version 1.5.0', async function () {
-	this.timeout(4 * 60000);
+	this.timeout(5 * 60000);
 	this.slow(1 * 60000);
 
 	const maxAmountPerTransactionLimit = 1;
@@ -38,7 +38,7 @@ test.describe('e2e-test for bridge.poa, version 1.5.0', async function () {
 			startURL = await Utils.getStartURL();
 			console.log("Test URL:  " + startURL);
 			let result = await  mainPage.open(startURL);
-			return await assert.equal(result, startURL, "Test FAILED. User is not able to open bridge-ui main page");
+			return await assert.equal(result, true, "Test FAILED. Build failed.");
 		});
 
 	test.it('Home page: disclaimer is displayed  ',
@@ -50,15 +50,17 @@ test.describe('e2e-test for bridge.poa, version 1.5.0', async function () {
 	test.it('Main page: foreign POA balance is displayed ',
 		async function () {
 			foreignBalanceBefore = await mainPage.getForeignPOABalance();
+			console.log("foreignBalanceBefore = "+foreignBalanceBefore);
 			let result = foreignBalanceBefore !== 0;
-			return await assert.equal(result, true, "Test FAILED.Foreign POA balance is not displayed ");
+			return await assert.equal(result, true, "Test FAILED.Foreign POA balance is zero or not displayed ");
 		});
 
 	test.it('Main page: home POA balance is displayed ',
 		async function () {
 			homeBalanceBefore = await mainPage.getHomePOABalance();
-			let result = foreignBalanceBefore !== 0;
-			return await assert.equal(result, true, "Test FAILED.Home POA balance is not displayed ");
+			console.log("homeBalanceBefore = "+homeBalanceBefore);
+			let result = homeBalanceBefore !== 0;
+			return await assert.equal(result, true, "Test FAILED.Home POA balance is zero or not displayed ");
 		});
 
 	test.it('User is able to send tokens from Home account to Foreign account ',
