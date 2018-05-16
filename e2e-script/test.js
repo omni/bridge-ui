@@ -30,14 +30,16 @@ test.describe('e2e-test for bridge.poa, version 1.5.0', async function () {
 	});
 
 	test.after(async function () {
-		//await driver.quit();
+		await driver.quit();
 	});
 
 	test.it('User is able to open main page of bridge-ui  ',
 		async function () {
 			startURL = await Utils.getStartURL();
-			console.log("Test URL:  " + startURL);
 			let result = await  mainPage.open(startURL);
+			console.log("Test URL:  " + startURL);
+			console.log("REACT_APP_HOME_HTTP_PARITY_URL=https://sokol.poa.network")
+			console.log("REACT_APP_FOREIGN_HTTP_PARITY_URL=https://kovan.infura.io/mew");
 			return await assert.equal(result, true, "Test FAILED. Build failed.");
 		});
 
