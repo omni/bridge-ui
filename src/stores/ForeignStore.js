@@ -33,6 +33,8 @@ class ForeignStore {
   @observable maxPerTx = '';
   @observable minPerTx = '';
   @observable latestBlockNumber = 0;
+  @observable dailyLimit = 0
+  @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
   filteredBlockNumber = 0;
   foreignBridge = {};
@@ -172,7 +174,10 @@ class ForeignStore {
   @action
   async getCurrentLimit(){
     try {
-      this.maxCurrentDeposit = await getCurrentLimit(this.foreignBridge, false)
+      const result = await getCurrentLimit(this.foreignBridge, false)
+      this.maxCurrentDeposit = result.maxCurrentDeposit
+      this.dailyLimit = result.dailyLimit
+      this.totalSpentPerDay = result.totalSpentPerDay
     } catch(e){
       console.error(e)
     }
@@ -222,6 +227,10 @@ class ForeignStore {
 
   getTxReceipt(hash) {
     return this.foreignWeb3.eth.getTransactionReceipt(hash)
+  }
+
+  getDailyQuotaCompleted() {
+    return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
 }

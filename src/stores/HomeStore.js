@@ -20,6 +20,8 @@ class HomeStore {
   @observable validators = []
   @observable homeBridgeValidators = ''
   @observable requiredSignatures = 0
+  @observable dailyLimit = 0
+  @observable totalSpentPerDay = 0
   @observable statistics = {
     deposits: 0,
     depositsValue: BN(0),
@@ -161,7 +163,10 @@ class HomeStore {
   @action
   async getCurrentLimit(){
     try {
-      this.maxCurrentDeposit = await getCurrentLimit(this.homeBridge, true)
+      const result = await getCurrentLimit(this.homeBridge, true)
+      this.maxCurrentDeposit = result.maxCurrentDeposit
+      this.dailyLimit = result.dailyLimit
+      this.totalSpentPerDay = result.totalSpentPerDay
     } catch(e){
       console.error(e)
     }
@@ -238,6 +243,10 @@ class HomeStore {
       }
     }
     doChunk();
+  }
+
+  getDailyQuotaCompleted() {
+    return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
 }

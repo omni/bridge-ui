@@ -3,6 +3,7 @@ import { Link } from  'react-router-dom'
 import logo from '../assets/images/logos/logo-top@2x.png'
 import menuIcon from '../assets/images/icons/icon-menu.svg'
 import menuOpenIcon from '../assets/images/icons/icon-close.svg'
+import { Wallet } from './Wallet'
 
 const getMobileMenuLinks = (onMenuToggle) =>
   (<div className="links_container_mobile">
@@ -33,6 +34,7 @@ export const Header = ({ showMobileMenu, onMenuToggle }) => (
         <Link to='/statistics' className="link">
           <i className="icon_statistics" /><span className='link_text'>Statistics</span>
         </Link>
+        <Wallet />
       </div>
       <div className="mobile-menu">
         <img onClick={onMenuToggle} className={showMobileMenu ? 'mobile-menu-open-icon' : 'mobile-menu-icon'} src={showMobileMenu ? menuOpenIcon : menuIcon} alt=""/>

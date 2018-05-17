@@ -16,7 +16,11 @@ export const getCurrentLimit = async (contract, isHome) => {
   const dailyLimit = isHome ? (await contract.methods.homeDailyLimit().call()) : (await contract.methods.foreignDailyLimit().call())
   const totalSpentPerDay = await contract.methods.totalSpentPerDay(currentDay).call()
   const maxCurrentDeposit = new BN(dailyLimit).minus(new BN(totalSpentPerDay)).toString(10)
-  return Web3Utils.fromWei(maxCurrentDeposit)
+  return {
+    maxCurrentDeposit: Web3Utils.fromWei(maxCurrentDeposit),
+    dailyLimit: Web3Utils.fromWei(dailyLimit),
+    totalSpentPerDay: Web3Utils.fromWei(totalSpentPerDay)
+  }
 }
 
 export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents({ fromBlock, toBlock })

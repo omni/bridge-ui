@@ -7,13 +7,13 @@
   z-index: 9999;
 
   .container {
-    padding: 22px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     @media screen and (max-width: $mobile-width) {
       width: 93%;
+      padding: 22px 0;
     }
   }
 
@@ -26,8 +26,9 @@
 
   .links_container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+    width: 600px;
 
     @media screen and (max-width: $mobile-width) {
       display: none;
@@ -104,6 +105,59 @@
     @media screen and (max-width: $mobile-width) {
       height: 172px;
       background-color: #45277a;
+    }
+  }
+
+  .header-wallet {
+    width: 220px;
+    height: 70px;
+    background-color: #502d8d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    @media screen and (max-width: $mobile-width) {
+      display: none;
+    }
+
+    .wallet-container {
+      padding-left: 20px;
+      display: flex;
+
+      .wallet-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+      }
+
+      .wallet-text {
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 18px;
+        color: #ffffff;
+      }
+
+      .wallet-link {
+        cursor: pointer;
+      }
+
+      .wallet-text-metamask {
+        color: #60db97;
+      }
+    }
+
+    .daily-quota-container {
+      margin-left: 20px;
+      width: 180px;
+      height: 6px;
+      border-radius: 3px;
+      background-color: #45277a;
+
+      .daily-quota-progress {
+        height: 6px;
+        border-radius: 3px;
+        background-color: #60db97;
+      }
     }
   }
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import copyIcon from '../assets/images/icons/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
-import { getExplorerUrl } from '../stores/utils/web3'
+import { getAddressUrl } from '../stores/utils/web3'
 
 export const NetworkDetails = ({
   isHome,
@@ -24,8 +24,8 @@ export const NetworkDetails = ({
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
   const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
   const totalAmount = isHome ? totalBalance : totalSupply
-  const explorerPath = getExplorerUrl(networkData.id) + (networkData.id === 77 ? 'account/' : 'address/')
-  const formattedBalance = isNaN(numeral(balance).format('0,0.00', Math.floor))
+  const explorerPath = getAddressUrl(networkData.id)
+  const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
     ? numeral(0).format('0,0.00', Math.floor)
     : numeral(balance).format('0,0.00', Math.floor)
 

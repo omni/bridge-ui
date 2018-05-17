@@ -63,6 +63,8 @@ const explorers = {
 
 export const getExplorerUrl = (id) => explorers[id]
 
+export const getAddressUrl = (id) => getExplorerUrl(id) + (id.toString() === '77' ? 'account/' : 'address/')
+
 export const getNetworkName = (id) => networks[id] || 'Unknown'
 
 export const getBalance = async (web3, address) => {
