@@ -8,7 +8,7 @@ import { getAddressUrl } from '../stores/utils/web3'
 @observer
 export class Wallet extends React.Component {
   render() {
-    const { web3Store, homeStore, foreignStore } = this.props.RootStore
+    const { web3Store, homeStore, foreignStore, alertStore } = this.props.RootStore
     const isHome = web3Store.metamaskNet.id.toString() === web3Store.homeNet.id.toString()
     const explorerPath = getAddressUrl(web3Store.metamaskNet.id)
     const completed = isHome ? homeStore.getDailyQuotaCompleted() : foreignStore.getDailyQuotaCompleted()
@@ -24,7 +24,10 @@ export class Wallet extends React.Component {
       :  (<span className="wallet-text">Login with <span className="wallet-text-metamask">Metamask</span></span>)
 
     return (
-      <div className="header-wallet">
+      <div className="header-wallet"
+        onMouseEnter={() => alertStore.setShowDailyQuotaInfo(true)}
+        onMouseLeave={() => alertStore.setShowDailyQuotaInfo(false)}
+      >
         <div className="wallet-container">
           <img className="wallet-icon" src={walletIcon} alt=""/>
           {wallet}

@@ -5,6 +5,7 @@ class AlertStore {
   @observable showLoading = false;
   @observable loadingStepIndex = -1;
   @observable blockConfirmations = 0
+  @observable showDailyQuotaInfo = false
   homeConnectionErrorSended = false
   foreignConnectionErrorSended = false
 
@@ -98,6 +99,11 @@ class AlertStore {
 
   shouldDisplayLoadingSteps() {
     return this.loadingStepIndex !== -1
+  }
+
+  @action
+  setShowDailyQuotaInfo(value) {
+    this.showDailyQuotaInfo = value
   }
 
 }
