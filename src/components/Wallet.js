@@ -14,7 +14,7 @@ export class Wallet extends React.Component {
     const completed = isHome ? homeStore.getDailyQuotaCompleted() : foreignStore.getDailyQuotaCompleted()
     const width = `${completed}%`
 
-    const wallet = web3Store.defaultAccount.address !== ''
+    const wallet = web3Store.defaultAccount.address !== '' && web3Store.defaultAccount.address !== undefined
       ? (<a
           href={explorerPath+web3Store.defaultAccount.address}
           target="_blank"
