@@ -72,7 +72,7 @@ class Web3Store {
       const Loading = this.alertStore.showLoading
       let accountUpdated = false
       if(accounts[0] !== this.defaultAccount.address) {
-        if(displayLoading && !Loading) {
+        if(displayLoading && !Loading && accounts[0] !== undefined) {
           this.alertStore.setLoading(true)
           accountUpdated = true
         }

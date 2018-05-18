@@ -237,6 +237,15 @@ export class Bridge extends React.Component {
     const { web3Store, foreignStore } = this.props.RootStore
     const { reverse, homeCurrency, showModal, modalData, showConfirmation, confirmationData } = this.state
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
+
+    if(showModal && Object.keys(modalData).length !== 0) {
+      if(modalData.isHome && modalData.balance !== web3Store.defaultAccount.homeBalance) {
+        modalData.balance = web3Store.defaultAccount.homeBalance
+      } else if(!modalData.isHome && modalData.balance !== foreignStore.balance) {
+        modalData.balance = foreignStore.balance
+      }
+    }
+
     return(
       <div className="bridge-container">
         <div className="bridge">
