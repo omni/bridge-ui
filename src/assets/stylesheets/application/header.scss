@@ -7,13 +7,17 @@
   z-index: 9999;
 
   .container {
-    padding: 22px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     @media screen and (max-width: $mobile-width) {
       width: 93%;
+      padding: 22px 0;
+    }
+
+    @media screen and (max-width: $tablet-width) {
+      padding: 22px 0;
     }
   }
 
@@ -26,11 +30,17 @@
 
   .links_container {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
+    width: 600px;
 
     @media screen and (max-width: $mobile-width) {
       display: none;
+    }
+
+    @media screen and (max-width: $tablet-width) {
+      justify-content: flex-end;
+      width: auto;
     }
   }
 
@@ -106,4 +116,121 @@
       background-color: #45277a;
     }
   }
+
+  .header-wallet {
+    width: 220px;
+    height: 70px;
+    background-color: #502d8d;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    @media screen and (max-width: $tablet-width) {
+      display: none;
+    }
+
+    .wallet-container {
+      padding-left: 20px;
+      display: flex;
+
+      .wallet-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 10px;
+      }
+
+      .wallet-text {
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 18px;
+        color: #ffffff;
+      }
+
+      .wallet-link {
+        cursor: pointer;
+      }
+
+      .wallet-text-metamask {
+        color: #60db97;
+      }
+    }
+
+    .daily-quota-container {
+      margin-left: 20px;
+      width: 180px;
+      height: 6px;
+      border-radius: 3px;
+      background-color: #45277a;
+
+      .daily-quota-progress {
+        height: 6px;
+        border-radius: 3px;
+        background-color: #60db97;
+      }
+    }
+  }
+
+  .daily-quota-modal-container {
+
+    @media screen and (max-width: $tablet-width) {
+      display: none
+    }
+
+    .daily-quota-modal-arrow {
+      content: " ";
+      position: absolute;
+      top: -10px;
+      border-top: none;
+      border-right: 10px solid transparent;
+      border-left: 10px solid transparent;
+      border-bottom: 10px solid black;
+      z-index: 9999;
+    }
+
+    .daily-quota-modal {
+      width: 219px;
+      height: 102px;
+      border-radius: 3px;
+      box-shadow: 0 16px 20px 0 rgba(0, 0, 0, 0.05);
+      background-color: #ffffff;
+      border: solid 1px #e4e4e9;
+      position: fixed;
+      z-index: 999;
+
+      .modal-container {
+        display: flex;
+        flex-direction: column;
+        padding: 15px;
+        justify-content: space-between;
+        height: 72px;
+
+        .daily-quota-title {
+          font-size: 14px;
+          font-weight: bold;
+          text-align: left;
+          color: #5c34a2;
+        }
+
+        .daily-quota-description {
+          width: 172px;
+          height: 45px;
+          font-size: 12px;
+          text-align: left;
+          color: #333333;
+        }
+      }
+    }
+
+    .daily-quota-modal:after {
+      content: " ";
+      position: absolute;
+      right: 105px;
+      top: -6px;
+      border-top: none;
+      border-right: 6px solid transparent;
+      border-left: 6px solid transparent;
+      border-bottom: 6px solid #e4e4e9;
+    }
+  }
+
 }
