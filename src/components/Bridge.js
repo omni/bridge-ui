@@ -145,8 +145,15 @@ export class Bridge extends React.Component {
       return
     }
 
-    const { reverse, homeCurrency } = this.state
     const { foreignStore, web3Store } = this.props.RootStore
+
+    if((web3Store.metamaskNotSetted && web3Store.metamaskNet.name === '')
+      || web3Store.defaultAccount.address === undefined) {
+      web3Store.showInstallMetamaskAlert()
+      return
+    }
+
+    const { reverse, homeCurrency } = this.state
     const homeDisplayName = 'POA ' + web3Store.homeNet.name
     const foreignDisplayName = 'ETH ' + web3Store.foreignNet.name
 
@@ -163,18 +170,13 @@ export class Bridge extends React.Component {
   }
 
   onTransferConfirmation = async () => {
-    const { alertStore, web3Store } = this.props.RootStore
+    const { alertStore } = this.props.RootStore
     const { reverse } = this.state
 
     this.setState({showConfirmation: false, confirmationData: {}})
     const amount = this.state.amount.trim();
     if(!amount){
       swal("Error", "Please specify amount", "error")
-      return
-    }
-
-    if(web3Store.metamaskNotSetted && web3Store.metamaskNet.name === '') {
-      web3Store.showInstallMetamaskAlert()
       return
     }
 
@@ -237,6 +239,15 @@ export class Bridge extends React.Component {
     const { web3Store, foreignStore } = this.props.RootStore
     const { reverse, homeCurrency, showModal, modalData, showConfirmation, confirmationData } = this.state
     const formCurrency = reverse ? foreignStore.symbol : homeCurrency
+
+    if(showModal && Object.keys(modalData).length !== 0) {
+      if(modalData.isHome && modalData.balance !== web3Store.defaultAccount.homeBalance) {
+        modalData.balance = web3Store.defaultAccount.homeBalance
+      } else if(!modalData.isHome && modalData.balance !== foreignStore.balance) {
+        modalData.balance= foreignStore.balance
+      }
+    }
+
     return(
       <div className="bridge-container">
         <div className="bridge">

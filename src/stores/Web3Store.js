@@ -25,10 +25,14 @@ class Web3Store {
 
   constructor(rootStore) {
     this.alertStore = rootStore.alertStore;
+    this.rootStore = rootStore
 
     this.getWeb3Promise = getWeb3().then((web3Config) => {
       this.setWeb3State(web3Config)
-      this.getBalances();
+      this.getBalances(false)
+      setInterval(() => {
+        this.getBalances(true)
+      }, 1000)
     }).catch((e) => {
       console.error(e,'web3 not loaded')
       this.errors.push(e.message)
@@ -62,14 +66,24 @@ class Web3Store {
   }
 
   @action
-  async getBalances(){
+  async getBalances(displayLoading){
     try {
       const accounts = await this.injectedWeb3.eth.getAccounts()
+      const Loading = this.alertStore.showLoading
+      let accountUpdated = false
       if(accounts[0] !== this.defaultAccount.address) {
+        if(displayLoading && !Loading && accounts[0] !== undefined) {
+          this.alertStore.setLoading(true)
+          accountUpdated = true
+        }
         this.defaultAccount.address = accounts[0]
       }
       this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
       this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
+      if(accountUpdated) {
+        await this.rootStore.foreignStore.getTokenBalance()
+        this.alertStore.setLoading(false)
+      }
       balanceLoaded()
     } catch(e){
       console.error(e)
