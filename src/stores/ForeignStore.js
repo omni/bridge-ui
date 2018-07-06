@@ -64,7 +64,7 @@ class ForeignStore {
       this.getEvents()
       this.getTokenBalance()
       this.getCurrentLimit()
-    }, 5000)
+    }, 15000)
   }
 
   @action
