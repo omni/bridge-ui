@@ -57,9 +57,11 @@ class HomeStore {
     setInterval(() => {
       this.getEvents()
       this.getBalance()
-      this.getCurrentLimit()
       this.getBlockNumber()
     }, 5000)
+    setInterval(() => {
+      this.getCurrentLimit()
+    }, 10000)
   }
 
   @action

@@ -5,7 +5,7 @@ import swal from 'sweetalert'
 
 class Web3Store {
   @observable injectedWeb3 = {};
-  @observable defaultAccount = {address: '', homeBalance: '', foreignBalance: ''};
+  @observable defaultAccount = {address: '', homeBalance: ''};
 
   @observable homeWeb3 = {};
   @observable foreignWeb3 = {};
@@ -32,7 +32,7 @@ class Web3Store {
       this.getBalances(false)
       setInterval(() => {
         this.getBalances(true)
-      }, 1000)
+      }, 3000)
     }).catch((e) => {
       console.error(e,'web3 not loaded')
       this.errors.push(e.message)
@@ -79,7 +79,6 @@ class Web3Store {
         this.defaultAccount.address = accounts[0]
       }
       this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
-      this.defaultAccount.foreignBalance = await getBalance(this.foreignWeb3, this.defaultAccount.address)
       if(accountUpdated) {
         await this.rootStore.foreignStore.getTokenBalance()
         this.alertStore.setLoading(false)
