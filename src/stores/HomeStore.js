@@ -164,7 +164,7 @@ class HomeStore {
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.homeBridge, true)
+      const result = await getCurrentLimit(this.homeBridge)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay

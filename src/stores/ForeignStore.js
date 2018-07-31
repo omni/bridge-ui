@@ -97,7 +97,9 @@ class ForeignStore {
   @action
   async getTokenInfo(){
     try {
+      console.log('getting token info')
       this.tokenAddress = await getErc677TokenAddress(this.foreignBridge)
+      console.log('token address', this.tokenAddress)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
     } catch(e) {
@@ -174,7 +176,7 @@ class ForeignStore {
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.foreignBridge, false)
+      const result = await getCurrentLimit(this.foreignBridge)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay
