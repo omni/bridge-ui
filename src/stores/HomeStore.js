@@ -2,10 +2,16 @@ import { action, observable } from 'mobx';
 import HOME_ABI from '../abis/HomeBridge.json';
 import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
-import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
+import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents, getMessage } from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
 
 class HomeStore {
   @observable state = null;
@@ -106,14 +112,22 @@ class HomeStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
-      let homeEvents = await getPastEvents(this.homeBridge, fromBlock, toBlock)
-      homeEvents = homeEvents.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
+      let events = await getPastEvents(this.homeBridge, fromBlock, toBlock)
+
+      let homeEvents = []
+      await asyncForEach(events, (async (event) => {
+        if(event.event === "SignedForUserRequest" || event.event === "CollectedSignatures") {
+          event.signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
+        }
+        homeEvents.push(event)
+      }))
+
       if(!this.filter){
         this.events = homeEvents;
       }
 
       if(this.waitingForConfirmation.size) {
-        const confirmationEvents = homeEvents.filter((event) => event.event === "Withdraw" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
+        const confirmationEvents = homeEvents.filter((event) => event.event === "AffirmationCompleted" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
           const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
@@ -136,6 +150,16 @@ class HomeStore {
                  Please make sure you have set it up in env variables`, this.alertStore.HOME_CONNECTION_ERROR)
     }
   }
+
+  async getSignedTx(messageHash){
+    try {
+      const message = await getMessage(this.homeBridge, messageHash)
+      return "0x" + message.substring(106, 170);
+    } catch(e){
+      console.error(e)
+    }
+  }
+
   @action
   async filterByTxHashInReturnValues(transactionHash) {
     const events = await this.getEvents(1,"latest");
@@ -212,10 +236,10 @@ class HomeStore {
 
   processEvent = (event) => {
     this.statistics.users.add(event.returnValues.recipient)
-    if(event.event === "Deposit") {
+    if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
       this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
-    } else if (event.event === "Withdraw") {
+    } else if (event.event === "AffirmationCompleted") {
       this.statistics.withdraws++
       this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
     }
