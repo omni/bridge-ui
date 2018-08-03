@@ -165,7 +165,7 @@ VALIDATORS="0xb506698581484572b6ccfbd6c976f0948775eace"
 
 Name | Description
 --------- | -------
-DEPLOYMENT_ACCOUNT_ADDRESS | Temporary  account from which all contracts will be deployed
+DEPLOYMENT_ACCOUNT_ADDRESS | Temporary  account from which all contracts will be deployed.Make sure that the deployment account owns some ether on both kovan & sokol network.
 DEPLOYMENT_ACCOUNT_PRIVATE_KEY | private key from temp account
 DEPLOYMENT_GAS_LIMIT | Gas Limit to use for transactions during bridge contract provisioning 
 DEPLOYMENT_GAS_PRICE | Gas Price to use for transactions during bridge contract provisioning on both networks in gwei  
