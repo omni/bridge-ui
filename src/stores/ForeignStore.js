@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
-import FOREIGN_ABI from '../abis/ForeignBridge.json';
-import ERC677_ABI from '../abis/ERC677.json';
+import { abi as FOREIGN_ABI } from '../submodules/poa-bridge-contracts/build/contracts/ForeignBridgeNativeToErc';
+import { abi as ERC677_ABI } from '../submodules/poa-bridge-contracts/build/contracts/ERC677BridgeToken.json';
 import { getBlockNumber, getExplorerUrl } from './utils/web3'
 import {
   getMaxPerTxLimit,

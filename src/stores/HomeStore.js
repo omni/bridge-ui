@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
-import HOME_ABI from '../abis/HomeBridge.json';
-import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
+import { abi as HOME_ABI } from '../submodules/poa-bridge-contracts/build/contracts/HomeBridgeNativeToErc';
+import { abi as BRIDGE_VALIDATORS_ABI } from '../submodules/poa-bridge-contracts/build/contracts/BridgeValidators.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
 import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents, getMessage } from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'

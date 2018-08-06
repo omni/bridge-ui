@@ -40,6 +40,7 @@
     "coveralls": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "eject": "react-app-rewired eject",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build -o origin"
+    "deploy": "gh-pages -d build -o origin",
+    "compile:contracts": "cd src/submodules/poa-bridge-contracts && npm install && npm run compile"
   }
 }
