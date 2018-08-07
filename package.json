@@ -41,6 +41,7 @@
     "eject": "react-app-rewired eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build -o origin",
-    "compile:contracts": "cd src/submodules/poa-bridge-contracts && npm install && npm run compile"
+    "compile:contracts": "cd submodules/poa-bridge-contracts && npm install && npm run compile && cd ../../ && cp -r submodules/poa-bridge-contracts/build/contracts src/contracts",
+    "postinstall": "npm run compile:contracts"
   }
 }

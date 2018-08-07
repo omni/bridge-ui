@@ -322,10 +322,9 @@ Open separate terminal window and go to your `sokol-kovan-bridge` folder
 1. `git clone --recursive https://github.com/poanetwork/bridge-ui.git`  
 2. `cd bridge-ui`
 3. `npm install`
-4. `npm run compile:contracts`  
-5. Please create .env file [.env.example](.env.example)  
+4. Please create .env file [.env.example](.env.example)  
 `cp .env.example .env`  
-6. Insert addresses from  
+5. Insert addresses from  
 `cat ../poa-bridge-contracts/deploy/bridgeDeploymentResults.json`  
 ```bash
 REACT_APP_HOME_BRIDGE_ADDRESS=0x902a15b45a3cD1A8aC5ab97c69C8215FC26763eA
