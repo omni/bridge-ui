@@ -319,9 +319,9 @@ Open separate terminal window and go to your `sokol-kovan-bridge` folder
 
 ## Installation of the UI app
 
-1. `git clone https://github.com/poanetwork/bridge-ui.git`  
-2. `cd bridge-ui`  
-3. `npm install`  
+1. `git clone --recursive https://github.com/poanetwork/bridge-ui.git`  
+2. `cd bridge-ui`
+3. `npm install`
 4. Please create .env file [.env.example](.env.example)  
 `cp .env.example .env`  
 5. Insert addresses from  
