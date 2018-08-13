@@ -2,19 +2,31 @@ version: '3'
 services:
   parity1:
     build: parity
+    networks:
+      testnet:
+        ipv4_address: 10.1.0.102
     ports:
-      - "8541:8545"
+    - "8541:8545"
   parity2:
     build: parity
+    networks:
+      testnet:
+        ipv4_address: 10.1.0.103
     ports:
-      - "8542:8545"
+    - "8542:8545"
   contracts:
     build: contracts
+    networks:
+    - testnet
     command: "true"
   redis:
     image: "redis"
+    networks:
+    - testnet
   rabbit:
     image: "rabbitmq:3-management"
+    networks:
+    - testnet
     ports:
     - "15672:15672"
   bridge:
@@ -36,4 +48,45 @@ services:
     - HOME_POLLING_INTERVAL=500
     - FOREIGN_POLLING_INTERVAL=500
     - ALLOW_HTTP=yes
+    networks:
+    - testnet
     command: "true"
+  selenium-hub:
+    image: selenium/hub
+    networks:
+    - testnet
+    ports:
+    - "4444:4444"
+  chromenode:
+    image: selenium/node-chrome
+    environment:
+    - HUB_PORT_4444_TCP_ADDR=selenium-hub
+    - HUB_PORT_4444_TCP_PORT=4444
+    networks:
+    - testnet
+  ui:
+    build: ..
+    environment:
+    - REACT_APP_HOME_BRIDGE_ADDRESS=0x32198D570fffC7033641F8A9094FFDCaAEF42624
+    - REACT_APP_FOREIGN_BRIDGE_ADDRESS=0x2B6871b9B02F73fa24F4864322CdC78604207769
+    - REACT_APP_FOREIGN_HTTP_PARITY_URL=http://10.1.0.103:8545
+    - REACT_APP_HOME_HTTP_PARITY_URL=http://10.1.0.102:8545
+    - REACT_APP_GAS_PRICE_SPEED_TYPE=fast
+    ports:
+    - "3000:3000"
+    networks:
+      testnet:
+        ipv4_address: 10.1.0.101
+    command: "true"
+  e2e:
+    build: ..
+    networks:
+    - testnet
+    command: "true"
+networks:
+  testnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 10.1.0.0/24
