@@ -16,4 +16,5 @@ RUN cd submodules/poa-bridge-contracts && \
   cd deploy && \
   npm install
 COPY deploy.sh .
-COPY .env submodules/poa-bridge-contracts/deploy/
+COPY contracts.env submodules/poa-bridge-contracts/deploy/
+RUN cd submodules/poa-bridge-contracts/deploy && cp contracts.env .env
