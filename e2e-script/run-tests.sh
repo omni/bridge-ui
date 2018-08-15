@@ -10,6 +10,8 @@ docker-compose run -d bridge npm run watcher:affirmation-request
 docker-compose run -d bridge npm run sender:home
 docker-compose run -d bridge npm run sender:foreign
 docker-compose run -d ui nginx -g 'daemon off;'
+echo "Waiting for blocks being generated"
+sleep 5m
 cd ..
 npm run startE2e
 rc=$?

@@ -17,15 +17,12 @@ function generateNewBlock(web3, address) {
   })
 }
 
-
 function main() {
   setTimeout(async () => {
-    await generateNewBlock(homeWeb3, account)
-    await generateNewBlock(foreignWeb3, account)
+    generateNewBlock(homeWeb3, account)
+    generateNewBlock(foreignWeb3, account)
     main()
   }, 5000)
 }
-
-
 
 main()
