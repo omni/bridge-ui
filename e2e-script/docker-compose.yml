@@ -8,7 +8,9 @@ services:
     ports:
     - "8541:8545"
   parity2:
-    build: parity
+    build:
+      context: parity
+      dockerfile: Dockerfile-foreign
     networks:
       testnet:
         ipv4_address: 10.1.0.103
@@ -43,27 +45,20 @@ services:
     - VALIDATOR_ADDRESS=0xaaB52d66283F7A1D5978bcFcB55721ACB467384b
     - VALIDATOR_ADDRESS_PRIVATE_KEY=8e829f695aed89a154550f30262f1529582cc49dc30eff74a6b491359e0230f9
     - REDIS_LOCK_TTL=1000
-    - GAS_PRICE_SPEED_TYPE=standard
-    - GAS_PRICE_FALLBACK=1
+    - HOME_GAS_PRICE_ORACLE_URL=https://gasprice.poa.network/
+    - HOME_GAS_PRICE_SPEED_TYPE=standard
+    - HOME_GAS_PRICE_FALLBACK=1
+    - HOME_GAS_PRICE_UPDATE_INTERVAL=600000
+    - FOREIGN_GAS_PRICE_ORACLE_URL=https://gasprice.poa.network/
+    - FOREIGN_GAS_PRICE_SPEED_TYPE=standard
+    - FOREIGN_GAS_PRICE_FALLBACK=1
+    - FOREIGN_GAS_PRICE_UPDATE_INTERVAL=600000
     - HOME_POLLING_INTERVAL=500
     - FOREIGN_POLLING_INTERVAL=500
     - ALLOW_HTTP=yes
     networks:
     - testnet
     command: "true"
-  selenium-hub:
-    image: selenium/hub
-    networks:
-    - testnet
-    ports:
-    - "4444:4444"
-  chromenode:
-    image: selenium/node-chrome
-    environment:
-    - HUB_PORT_4444_TCP_ADDR=selenium-hub
-    - HUB_PORT_4444_TCP_PORT=4444
-    networks:
-    - testnet
   ui:
     build: ..
     environment:
@@ -73,15 +68,10 @@ services:
     - REACT_APP_HOME_HTTP_PARITY_URL=http://10.1.0.102:8545
     - REACT_APP_GAS_PRICE_SPEED_TYPE=fast
     ports:
-    - "3000:3000"
+    - "8080:80"
     networks:
       testnet:
         ipv4_address: 10.1.0.101
-    command: "true"
-  e2e:
-    build: ..
-    networks:
-    - testnet
     command: "true"
 networks:
   testnet:

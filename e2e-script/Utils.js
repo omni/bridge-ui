@@ -37,7 +37,7 @@ class Utils {
     let options = new chrome.Options();
     await options.addExtensions(source);
     await options.addArguments('disable-popup-blocking');
-    let driver = await new webdriver.Builder().withCapabilities(options.toCapabilities()).usingServer('http://selenium-hub:4444/wd/hub').build();
+    let driver = await new webdriver.Builder().withCapabilities(options.toCapabilities()).build();
     await driver.sleep(5000);
     return driver;
   }
