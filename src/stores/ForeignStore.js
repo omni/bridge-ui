@@ -1,5 +1,6 @@
 import { action, observable } from 'mobx';
-import { abi as FOREIGN_ABI } from '../contracts/ForeignBridgeNativeToErc.json';
+import { abi as FOREIGN_NATIVE_ABI } from '../contracts/ForeignBridgeNativeToErc.json';
+import { abi as FOREIGN_ERC_ABI } from '../contracts/ForeignBridgeErcToErc';
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json';
 import { getBlockNumber, getExplorerUrl } from './utils/web3'
 import {
@@ -10,7 +11,8 @@ import {
   getTotalSupply,
   getBalanceOf,
   getErc677TokenAddress,
-  getSymbol
+  getSymbol,
+  getErc20TokenAddress
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 
@@ -39,11 +41,13 @@ class ForeignStore {
     this.foreignWeb3 = rootStore.web3Store.foreignWeb3
     this.alertStore = rootStore.alertStore
     this.homeStore = rootStore.homeStore;
+    this.rootStore = rootStore
     this.waitingForConfirmation = new Set()
     this.setForeign()
   }
 
   async setForeign(){
+    const FOREIGN_ABI = this.rootStore.isErcToErcMode ? FOREIGN_ERC_ABI : FOREIGN_NATIVE_ABI
     this.foreignBridge = new this.foreignWeb3.eth.Contract(FOREIGN_ABI, this.FOREIGN_BRIDGE_ADDRESS);
     await this.getBlockNumber()
     await this.getTokenInfo()
@@ -90,7 +94,7 @@ class ForeignStore {
   @action
   async getTokenInfo(){
     try {
-      this.tokenAddress = await getErc677TokenAddress(this.foreignBridge)
+      this.tokenAddress = this.rootStore.isErcToErcMode ? await getErc20TokenAddress(this.foreignBridge) : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
     } catch(e) {

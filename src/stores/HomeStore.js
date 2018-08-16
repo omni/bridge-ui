@@ -1,8 +1,20 @@
 import { action, observable } from 'mobx';
-import { abi as HOME_ABI } from '../contracts/HomeBridgeNativeToErc.json';
+import { abi as HOME_NATIVE_ABI } from '../contracts/HomeBridgeNativeToErc.json';
+import { abi as HOME_ERC_ABI } from '../contracts/HomeBridgeErcToErc';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
+import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
-import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents, getMessage } from './utils/contract'
+import {
+  getMaxPerTxLimit,
+  getMinPerTxLimit,
+  getCurrentLimit,
+  getPastEvents,
+  getMessage,
+  getErc677TokenAddress,
+  getSymbol,
+  getTotalSupply,
+  getBalanceOf
+} from './utils/contract'
 import { removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
@@ -28,6 +40,9 @@ class HomeStore {
   @observable requiredSignatures = 0
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
+  @observable tokenAddress = '';
+  @observable symbol = 'POA';
+  @observable userBalance = 0
   @observable statistics = {
     deposits: 0,
     depositsValue: BN(0),
@@ -40,6 +55,7 @@ class HomeStore {
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
+  tokenContract = {}
 
   constructor (rootStore) {
     this.homeWeb3 = rootStore.web3Store.homeWeb3
@@ -51,7 +67,12 @@ class HomeStore {
   }
 
   async setHome(){
+    console.log('this.rootStore.isErcToErcMode', this.rootStore.isErcToErcMode)
+    const HOME_ABI = this.rootStore.isErcToErcMode ? HOME_ERC_ABI : HOME_NATIVE_ABI
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
+    if (this.rootStore.isErcToErcMode) {
+        this.getTokenInfo()
+    }
     await this.getBlockNumber()
     this.getMinPerTxLimit()
     this.getMaxPerTxLimit()
@@ -68,6 +89,17 @@ class HomeStore {
     setInterval(() => {
       this.getCurrentLimit()
     }, 10000)
+  }
+
+  @action
+  async getTokenInfo() {
+    try {
+      this.tokenAddress = await getErc677TokenAddress(this.homeBridge)
+      this.tokenContract = new this.homeWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
+      this.symbol = await getSymbol(this.tokenContract)
+    } catch(e) {
+      console.error(e)
+    }
   }
 
   @action
@@ -100,7 +132,12 @@ class HomeStore {
   @action
   async getBalance() {
     try {
-      this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
+      if (this.rootStore.isErcToErcMode) {
+        this.balance = await getTotalSupply(this.tokenContract)
+        this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
+      } else {
+        this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
+      }
     } catch(e) {
       console.error(e)
       this.errors.push(e)
@@ -274,6 +311,9 @@ class HomeStore {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
+  getDisplayedBalance() {
+    return this.rootStore.isErcToErcMode ? this.userBalance : this.web3Store.defaultAccount.homeBalance
+  }
 }
 
 export default HomeStore;

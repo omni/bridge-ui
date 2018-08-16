@@ -21,7 +21,6 @@ import rightImage from '../assets/images/pattern-2.png'
 export class Bridge extends React.Component {
   state = {
     reverse: false,
-    homeCurrency: 'POA',
     amount:'',
     modalData: {},
     confirmationData: {},
@@ -63,43 +62,53 @@ export class Bridge extends React.Component {
   }
 
   async _sendToHome(amount){
-    const { web3Store, homeStore, alertStore, txStore } = this.props.RootStore
-    const { homeCurrency } = this.state
+    const { web3Store, homeStore, alertStore, txStore, isErcToErcMode } = this.props.RootStore
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.homeNet.id.toString()){
       swal("Error", `Please switch metamask to ${web3Store.homeNet.name} network`, "error")
       return
     }
     if(isLessThan(amount, homeStore.minPerTx)){
-      alertStore.pushError(`The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${homeStore.minPerTx} ${homeCurrency}`)
+      alertStore.pushError(`The amount is less than current minimum per transaction amount.\nThe minimum per transaction amount is: ${homeStore.minPerTx} ${homeStore.symbol}`)
       return
     }
     if(isGreaterThan(amount, homeStore.maxPerTx)){
-      alertStore.pushError(`The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${homeStore.maxPerTx} ${homeCurrency}`)
+      alertStore.pushError(`The amount is above current maximum per transaction limit.\nThe maximum per transaction limit is: ${homeStore.maxPerTx} ${homeStore.symbol}`)
       return
     }
     if(isGreaterThan(amount, homeStore.maxCurrentDeposit)){
-      alertStore.pushError(`The amount is above current daily limit.\nThe max deposit today: ${homeStore.maxCurrentDeposit} ${homeCurrency}`)
+      alertStore.pushError(`The amount is above current daily limit.\nThe max deposit today: ${homeStore.maxCurrentDeposit} ${homeStore.symbol}`)
       return
     }
-    if(isGreaterThan(amount, web3Store.defaultAccount.homeBalance)){
+    if(isGreaterThan(amount, homeStore.getDisplayedBalance())){
       alertStore.pushError("Insufficient balance")
     } else {
       try {
         alertStore.setLoading(true)
-        return txStore.doSend({
-        to: homeStore.HOME_BRIDGE_ADDRESS,
-        from: web3Store.defaultAccount.address,
-        value: Web3Utils.toHex(Web3Utils.toWei(amount)),
-        data: '0x'
-      })} catch (e) {
+        if (isErcToErcMode) {
+          return txStore.erc677transferAndCall({
+            to: homeStore.HOME_BRIDGE_ADDRESS,
+            from: web3Store.defaultAccount.address,
+            value: Web3Utils.toWei(amount),
+            contract: homeStore.tokenContract,
+            tokenAddress: homeStore.tokenAddress
+          })
+        } else {
+          return txStore.doSend({
+            to: homeStore.HOME_BRIDGE_ADDRESS,
+            from: web3Store.defaultAccount.address,
+            value: Web3Utils.toHex(Web3Utils.toWei(amount)),
+            data: '0x'
+          })
+        }
+      } catch (e) {
         console.error(e)
       }
     }
   }
 
   async _sendToForeign(amount){
-    const { web3Store, foreignStore, alertStore, txStore } = this.props.RootStore
+    const { web3Store, foreignStore, alertStore, txStore, isErcToErcMode } = this.props.RootStore
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
@@ -122,11 +131,22 @@ export class Bridge extends React.Component {
     } else {
       try {
         alertStore.setLoading(true)
-        return await txStore.erc677transferAndCall({
-        to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
-        from: web3Store.defaultAccount.address,
-        value: Web3Utils.toHex(Web3Utils.toWei(amount))
-      })} catch(e) {
+        if (isErcToErcMode) {
+          return await txStore.erc20transfer({
+            to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
+            from: web3Store.defaultAccount.address,
+            value: Web3Utils.toWei(amount)
+          })
+        } else {
+          return await txStore.erc677transferAndCall({
+            to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
+            from: web3Store.defaultAccount.address,
+            value: Web3Utils.toHex(Web3Utils.toWei(amount)),
+            contract: foreignStore.tokenContract,
+            tokenAddress: foreignStore.tokenAddress
+          })
+        }
+      } catch(e) {
         console.error(e)
       }
     }
@@ -145,7 +165,7 @@ export class Bridge extends React.Component {
       return
     }
 
-    const { foreignStore, web3Store } = this.props.RootStore
+    const { foreignStore, web3Store, homeStore } = this.props.RootStore
 
     if((web3Store.metamaskNotSetted && web3Store.metamaskNet.name === '')
       || web3Store.defaultAccount.address === undefined) {
@@ -153,15 +173,15 @@ export class Bridge extends React.Component {
       return
     }
 
-    const { reverse, homeCurrency } = this.state
+    const { reverse } = this.state
     const homeDisplayName = 'POA ' + web3Store.homeNet.name
     const foreignDisplayName = 'ETH ' + web3Store.foreignNet.name
 
     const confirmationData = {
       from: reverse ? foreignDisplayName : homeDisplayName,
       to: reverse ? homeDisplayName : foreignDisplayName,
-      fromCurrency: reverse ? foreignStore.symbol : homeCurrency,
-      toCurrency: reverse ? homeCurrency : foreignStore.symbol,
+      fromCurrency: reverse ? foreignStore.symbol : homeStore.symbol,
+      toCurrency: reverse ? homeStore.symbol : foreignStore.symbol,
       amount,
       reverse
     }
@@ -193,7 +213,6 @@ export class Bridge extends React.Component {
 
   loadHomeDetails = () => {
     const { web3Store, homeStore } = this.props.RootStore
-    const { homeCurrency } = this.state
 
     const modalData = {
       isHome: true,
@@ -201,12 +220,12 @@ export class Bridge extends React.Component {
       url: web3Store.HOME_HTTP_PARITY_URL,
       logo: homeLogoPurple,
       address: homeStore.HOME_BRIDGE_ADDRESS,
-      currency: homeCurrency,
+      currency: homeStore.symbol,
       maxCurrentLimit: homeStore.maxCurrentDeposit,
       maxPerTx: homeStore.maxPerTx,
       minPerTx: homeStore.minPerTx,
       totalBalance: homeStore.balance,
-      balance: web3Store.defaultAccount.homeBalance
+      balance: homeStore.getDisplayedBalance()
     }
 
     this.setState({ modalData, showModal: true })
@@ -236,13 +255,13 @@ export class Bridge extends React.Component {
   }
 
   render() {
-    const { web3Store, foreignStore } = this.props.RootStore
-    const { reverse, homeCurrency, showModal, modalData, showConfirmation, confirmationData } = this.state
-    const formCurrency = reverse ? foreignStore.symbol : homeCurrency
+    const { web3Store, foreignStore, homeStore } = this.props.RootStore
+    const { reverse, showModal, modalData, showConfirmation, confirmationData } = this.state
+    const formCurrency = reverse ? foreignStore.symbol : homeStore.symbol
 
     if(showModal && Object.keys(modalData).length !== 0) {
-      if(modalData.isHome && modalData.balance !== web3Store.defaultAccount.homeBalance) {
-        modalData.balance = web3Store.defaultAccount.homeBalance
+      if(modalData.isHome && modalData.balance !== homeStore.getDisplayedBalance()) {
+        modalData.balance = homeStore.getDisplayedBalance()
       } else if(!modalData.isHome && modalData.balance !== foreignStore.balance) {
         modalData.balance= foreignStore.balance
       }
@@ -266,8 +285,8 @@ export class Bridge extends React.Component {
                   networkTitle={reverse ? 'ETH' : 'POA'}
                   showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
                   networkData={reverse ? web3Store.foreignNet : web3Store.homeNet}
-                  currency={reverse ? foreignStore.symbol : homeCurrency}
-                  balance={reverse ? foreignStore.balance : web3Store.defaultAccount.homeBalance} />
+                  currency={reverse ? foreignStore.symbol : homeStore.symbol}
+                  balance={reverse ? foreignStore.balance : homeStore.getDisplayedBalance()} />
                 <BridgeForm
                   displayArrow={!web3Store.metamaskNotSetted}
                   reverse={reverse}
@@ -279,8 +298,8 @@ export class Bridge extends React.Component {
                   networkTitle={reverse ? 'POA' : 'ETH'}
                   showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
                   networkData={reverse ? web3Store.homeNet : web3Store.foreignNet}
-                  currency={reverse ? homeCurrency : foreignStore.symbol}
-                  balance={reverse ? web3Store.defaultAccount.homeBalance : foreignStore.balance} />
+                  currency={reverse ? homeStore.symbol : foreignStore.symbol}
+                  balance={reverse ? homeStore.getDisplayedBalance() : foreignStore.balance} />
               </div>
             </div>
             <div className="right-image-wrapper">

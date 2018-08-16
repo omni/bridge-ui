@@ -7,6 +7,7 @@ import TxStore from './TxStore'
 
 class RootStore {
   constructor() {
+    this.isErcToErcMode = process.env.REACT_APP_BRIDGE_MODE === 'ERC_TO_ERC'
     this.alertStore = new AlertStore()
     this.web3Store = new Web3Store(this)
     this.homeStore = new HomeStore(this)
