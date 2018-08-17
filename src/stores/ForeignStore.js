@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
-import FOREIGN_ABI from '../abis/ForeignBridge.json';
-import ERC677_ABI from '../abis/ERC677.json';
+import { abi as FOREIGN_ABI } from '../contracts/ForeignBridgeNativeToErc.json';
+import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json';
 import { getBlockNumber, getExplorerUrl } from './utils/web3'
 import {
   getMaxPerTxLimit,
@@ -10,16 +10,9 @@ import {
   getTotalSupply,
   getBalanceOf,
   getErc677TokenAddress,
-  getSymbol,
-  getMessage
+  getSymbol
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
-
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array)
-  }
-}
 
 class ForeignStore {
   @observable state = null;
@@ -124,20 +117,13 @@ class ForeignStore {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
       let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock)
-      let events = []
-      await asyncForEach(foreignEvents, (async (event) => {
-        if(event.event === "SignedForWithdraw" || event.event === "CollectedSignatures") {
-          event.signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
-        }
-        events.push(event)
-      }))
 
       if(!this.filter){
-        this.events = events;
+        this.events = foreignEvents;
       }
 
       if(this.waitingForConfirmation.size) {
-        const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
+        const confirmationEvents = foreignEvents.filter((event) => event.event === "RelayedMessage" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(async event => {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
           if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
@@ -157,24 +143,17 @@ class ForeignStore {
         }
       }
 
-      return events
+      return foreignEvents
     } catch(e) {
       this.alertStore.pushError(`Cannot establish connection to Foreign Network.\n
                  Please make sure you have set it up in env variables`, this.alertStore.FOREIGN_CONNECTION_ERROR)
     }
   }
-  async getSignedTx(messageHash){
-    try {
-        const message = await getMessage(this.foreignBridge, messageHash)
-        return "0x" + message.substring(106, 170);
-    } catch(e){
-      console.error(e)
-    }
-  }
+
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.foreignBridge, false)
+      const result = await getCurrentLimit(this.foreignBridge)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay

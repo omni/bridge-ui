@@ -1,7 +1,5 @@
 {
-  "startUrl" : "http://localhost:3000/",
+  "startUrl" : "http://10.1.0.101/",
   "homeAccount": "./e2e-script/accounts/user77_7FC1.json",
   "foreignAccount": "./e2e-script/accounts/user42_7FC1.json"
-
-
 }
