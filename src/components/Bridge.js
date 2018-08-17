@@ -114,15 +114,15 @@ export class Bridge extends React.Component {
       swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
       return
     }
-    if(isLessThan(amount, foreignStore.minPerTx)){
+    if(!isErcToErcMode && isLessThan(amount, foreignStore.minPerTx)){
       alertStore.pushError(`The amount is less than minimum amount per transaction.\nThe min per transaction is: ${foreignStore.minPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(isGreaterThan(amount, foreignStore.maxPerTx)){
+    if(!isErcToErcMode && isGreaterThan(amount, foreignStore.maxPerTx)){
       alertStore.pushError(`The amount is above maximum amount per transaction.\nThe max per transaction is: ${foreignStore.maxPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
+    if(!isErcToErcMode && isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
       alertStore.pushError(`The amount is above current daily limit.\nThe max withdrawal today: ${foreignStore.maxCurrentDeposit} ${foreignStore.symbol}`)
       return
     }
@@ -212,7 +212,7 @@ export class Bridge extends React.Component {
   }
 
   loadHomeDetails = () => {
-    const { web3Store, homeStore } = this.props.RootStore
+    const { web3Store, homeStore, isErcToErcMode } = this.props.RootStore
 
     const modalData = {
       isHome: true,
@@ -225,7 +225,9 @@ export class Bridge extends React.Component {
       maxPerTx: homeStore.maxPerTx,
       minPerTx: homeStore.minPerTx,
       totalBalance: homeStore.balance,
-      balance: homeStore.getDisplayedBalance()
+      balance: homeStore.getDisplayedBalance(),
+      displayTokenAddress: isErcToErcMode,
+      tokenAddress: homeStore.tokenAddress
     }
 
     this.setState({ modalData, showModal: true })
@@ -248,7 +250,8 @@ export class Bridge extends React.Component {
       minPerTx: foreignStore.minPerTx,
       tokenAddress: foreignStore.tokenAddress,
       totalSupply: foreignStore.totalSupply,
-      balance: foreignStore.balance
+      balance: foreignStore.balance,
+      displayTokenAddress: true
     }
 
     this.setState({ modalData, showModal: true })
