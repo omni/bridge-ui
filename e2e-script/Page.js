@@ -105,7 +105,10 @@ class Page {
     }
   }
 
-  async switchToNextPage() {
+  async switchToNextPage(avoidSwitch) {
+    if (avoidSwitch) {
+      return true
+    }
     let allHandles = [];
     let curHandle;
     try {
