@@ -17,4 +17,6 @@ RUN cd submodules/poa-bridge-contracts && \
   npm install
 COPY deploy.sh .
 COPY contracts.env submodules/poa-bridge-contracts/deploy/
+COPY erc-contracts.env submodules/poa-bridge-contracts/deploy/
+COPY deployERC20.js submodules/poa-bridge-contracts/deploy/
 RUN cd submodules/poa-bridge-contracts/deploy && cp contracts.env .env
