@@ -20,6 +20,6 @@ cd ..
 npm run startE2e
 rc=$?
 cd e2e-script
-docker-compose down
 ps | grep node | grep -v grep | awk '{print "kill " $1}' | sh
+docker-compose down
 exit $rc
