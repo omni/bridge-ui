@@ -128,12 +128,12 @@ class MetaMask extends Page {
     switch (provider) {
       case 77: {
         url = "http://10.1.0.102:8545";
-        networks.push(77);
+        networks.push(177);
         break;
       }
       case 42: {
         url = "http://10.1.0.103:8545";
-        networks.push(42);
+        networks.push(142);
         break;
       }
     }

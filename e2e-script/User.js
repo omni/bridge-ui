@@ -32,9 +32,9 @@ class User {
 			await mainPage.clickButtonOk()
 	}
 
-	async setMetaMaskNetwork(avoidSwitch) {
+	async setMetaMaskNetwork() {
 		let metaMask = new MetaMask(this.driver);
-		return await  metaMask.switchToNextPage(avoidSwitch) &&
+		return await  metaMask.switchToNextPage() &&
 			await metaMask.setNetwork(this.networkID) &&
 			await  metaMask.switchToNextPage();
 	}
