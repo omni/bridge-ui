@@ -15,7 +15,7 @@ import {
   getTotalSupply,
   getBalanceOf
 } from './utils/contract'
-import { removePendingTransaction } from './utils/testUtils'
+import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
 
@@ -134,7 +134,10 @@ class HomeStore {
     try {
       if (this.rootStore.isErcToErcMode) {
         this.balance = await getTotalSupply(this.tokenContract)
-        this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
+        this.web3Store.getWeb3Promise.then(async () => {
+          this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
+          balanceLoaded()
+        })
       } else {
         this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
       }

@@ -84,7 +84,9 @@ class Web3Store {
         await this.rootStore.homeStore.getBalance()
         this.alertStore.setLoading(false)
       }
-      balanceLoaded()
+      if (!this.rootStore.isErcToErcMode) {
+        balanceLoaded()
+      }
     } catch(e){
       console.error(e)
     }
