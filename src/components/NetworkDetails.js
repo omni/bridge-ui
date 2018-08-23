@@ -18,7 +18,8 @@ export const NetworkDetails = ({
   totalSupply,
   totalBalance,
   balance,
-  displayTokenAddress
+  displayTokenAddress,
+  displayBridgeLimits
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
@@ -50,18 +51,18 @@ export const NetworkDetails = ({
               </CopyToClipboard>
             </span>
         </p>
-        <p className="details-data-container">
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Remaining Daily {currency} Quota</span>
           <span className="details-description-black">{numeral(maxCurrentLimit).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        <p className="details-data-container">
+        </p>}
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Maximum Amount Per Transaction</span>
           <span className="details-description-black">{numeral(maxPerTx).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        <p className="details-data-container">
+        </p>}
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Minimum Amount Per Transaction</span>
           <span className="details-description-black">{numeral(minPerTx).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
+        </p>}
         {displayTokenAddress && (
           <p className="details-data-container">
             <span className="details-label">Token Address</span>

@@ -227,14 +227,15 @@ export class Bridge extends React.Component {
       totalBalance: homeStore.balance,
       balance: homeStore.getDisplayedBalance(),
       displayTokenAddress: isErcToErcMode,
-      tokenAddress: homeStore.tokenAddress
+      tokenAddress: homeStore.tokenAddress,
+      displayBridgeLimits: true
     }
 
     this.setState({ modalData, showModal: true })
   }
 
   loadForeignDetails = () => {
-    const { web3Store, foreignStore } = this.props.RootStore
+    const { web3Store, foreignStore, isErcToErcMode } = this.props.RootStore
     const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
 
@@ -251,7 +252,8 @@ export class Bridge extends React.Component {
       tokenAddress: foreignStore.tokenAddress,
       totalSupply: foreignStore.totalSupply,
       balance: foreignStore.balance,
-      displayTokenAddress: true
+      displayTokenAddress: true,
+      displayBridgeLimits: !isErcToErcMode
     }
 
     this.setState({ modalData, showModal: true })
