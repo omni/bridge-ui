@@ -47,6 +47,10 @@ class ForeignStore {
   }
 
   async setForeign(){
+    if (!this.rootStore.bridgeModeInitialized) {
+      setTimeout(() => this.setForeign(), 200)
+      return
+    }
     const FOREIGN_ABI = this.rootStore.isErcToErcMode ? FOREIGN_ERC_ABI : FOREIGN_NATIVE_ABI
     this.foreignBridge = new this.foreignWeb3.eth.Contract(FOREIGN_ABI, this.FOREIGN_BRIDGE_ADDRESS);
     await this.getBlockNumber()

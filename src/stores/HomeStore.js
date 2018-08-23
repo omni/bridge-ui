@@ -67,7 +67,10 @@ class HomeStore {
   }
 
   async setHome(){
-    console.log('this.rootStore.isErcToErcMode', this.rootStore.isErcToErcMode)
+    if (!this.rootStore.bridgeModeInitialized) {
+      setTimeout(() => this.setHome(), 200)
+      return
+    }
     const HOME_ABI = this.rootStore.isErcToErcMode ? HOME_ERC_ABI : HOME_NATIVE_ABI
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
     if (this.rootStore.isErcToErcMode) {
