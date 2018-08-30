@@ -26,3 +26,8 @@ function main() {
 }
 
 main()
+
+process.on('SIGTERM', function () {
+  console.log('Finishing sending blocks...')
+  process.exit(0);
+});

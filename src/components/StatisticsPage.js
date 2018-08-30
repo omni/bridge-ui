@@ -21,25 +21,26 @@ export class StatisticsPage extends React.Component {
                 users={homeStore.statistics.finished ? homeStore.statistics.users.size : ''}
                 totalBridged={homeStore.statistics.finished ? homeStore.statistics.totalBridged.toString() : ''}
                 homeBalance={homeStore.balance}
+                homeSymbol={homeStore.symbol}
+                foreignSymbol={foreignStore.symbol}
                 foreignSupply={foreignStore.totalSupply} />
           </div>
           <div className='statistics-transaction-container'>
             <div className='statistics-deposit-container'>
-              <span className='statistics-deposit-title statistics-title'>Home Deposits</span>
+              <span className='statistics-deposit-title statistics-title'>Network Deposits</span>
               <TransactionsStatistics
                 txNumber={homeStore.statistics.finished ? homeStore.statistics.deposits : ''}
+                type={homeStore.symbol}
                 value={homeStore.statistics.finished ? homeStore.statistics.depositsValue : ''} />
             </div>
             <div className='statistics-withdraw-container'>
-              <span className='statistics-withdraw-title statistics-title'>Home Withdraws</span>
+              <span className='statistics-withdraw-title statistics-title'>Network Withdraws</span>
               <TransactionsStatistics
                 txNumber={homeStore.statistics.finished ? homeStore.statistics.withdraws : ''}
+                type={homeStore.symbol}
                 value={homeStore.statistics.finished ? homeStore.statistics.withdrawsValue : ''} />
             </div>
           </div>
-          {/*<div className='statistics-chart-container'>
-            <span className='statistics-chart-title statistics-title'>Foreign Total Supply</span>
-          </div>*/}
         </div>
         <div className='statistics-right-container'>
           <img className='statistics-right-image' src={pattern} alt=""/>

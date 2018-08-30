@@ -32,7 +32,7 @@
     "build-css": "node-sass-chokidar src/assets/stylesheets/application.scss -o src/assets/stylesheets --output-style=compressed",
     "watch-css": "nodemon -e scss -x \"npm run build-css\"",
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "npm run compile:contracts && react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "startE2e": "mocha -b ./e2e-script/test.js",
     "start:blocks": "node ./e2e-script/scripts/blocks.js",
@@ -41,7 +41,7 @@
     "eject": "react-app-rewired eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build -o origin",
-    "compile:contracts": "cd submodules/poa-bridge-contracts && npm install && npm run compile && cd ../../ && cp -r submodules/poa-bridge-contracts/build/contracts src/contracts",
+    "compile:contracts": "cd submodules/poa-bridge-contracts && npm install && npm run compile && cd ../../ && rm -r -f src/contracts && cp -r submodules/poa-bridge-contracts/build/contracts src/contracts",
     "postinstall": "npm run compile:contracts"
   }
 }

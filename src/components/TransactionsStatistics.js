@@ -2,7 +2,7 @@ import React from 'react'
 import numeral from 'numeral'
 import { DataBlock } from './DataBlock'
 
-export const TransactionsStatistics = ({ txNumber, value }) => (
+export const TransactionsStatistics = ({ txNumber, value, type }) => (
   <div className="statistics-bridge-data">
     <DataBlock
       description="Transactions"
@@ -13,7 +13,7 @@ export const TransactionsStatistics = ({ txNumber, value }) => (
     <DataBlock
       description="Total Value"
       value={numeral(value).format('0,0.00 a', Math.floor)}
-      type='POA'
+      type={type}
     />
   </div>
 )

@@ -27,6 +27,8 @@ export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastE
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
 
+export const getErc20TokenAddress = (contract) => contract.methods.erc20token().call()
+
 export const getSymbol = (contract) => contract.methods.symbol().call()
 
 export const getMessage = (contract, messageHash) => contract.methods.message(messageHash).call()
