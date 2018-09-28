@@ -15,6 +15,7 @@ import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
 import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
 import leftImage from '../assets/images/pattern-1.png'
 import rightImage from '../assets/images/pattern-2.png'
+import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 
 @inject("RootStore")
 @observer
@@ -62,7 +63,8 @@ export class Bridge extends React.Component {
   }
 
   async _sendToHome(amount){
-    const { web3Store, homeStore, alertStore, txStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, homeStore, alertStore, txStore, bridgeMode } = this.props.RootStore
+    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.homeNet.id.toString()){
       swal("Error", `Please switch metamask to ${web3Store.homeNet.name} network`, "error")
@@ -108,7 +110,8 @@ export class Bridge extends React.Component {
   }
 
   async _sendToForeign(amount){
-    const { web3Store, foreignStore, alertStore, txStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, foreignStore, alertStore, txStore, bridgeMode } = this.props.RootStore
+    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
@@ -212,7 +215,8 @@ export class Bridge extends React.Component {
   }
 
   loadHomeDetails = () => {
-    const { web3Store, homeStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, homeStore, bridgeMode } = this.props.RootStore
+    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
 
     const modalData = {
       isHome: true,
@@ -235,7 +239,8 @@ export class Bridge extends React.Component {
   }
 
   loadForeignDetails = () => {
-    const { web3Store, foreignStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, foreignStore, bridgeMode } = this.props.RootStore
+    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
     const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
 

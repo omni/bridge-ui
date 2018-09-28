@@ -2,6 +2,7 @@ import { action, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 import { balanceLoaded } from './utils/testUtils'
 import swal from 'sweetalert'
+import { BRIDGE_MODES } from './utils/bridgeMode'
 
 class Web3Store {
   @observable injectedWeb3 = {};
@@ -84,7 +85,7 @@ class Web3Store {
         await this.rootStore.homeStore.getBalance()
         this.alertStore.setLoading(false)
       }
-      if (this.rootStore.bridgeModeInitialized && !this.rootStore.isErcToErcMode) {
+      if (this.rootStore.bridgeModeInitialized && !this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
         balanceLoaded()
       }
     } catch(e){

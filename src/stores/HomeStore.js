@@ -1,6 +1,4 @@
 import { action, observable } from 'mobx';
-import { abi as HOME_NATIVE_ABI } from '../contracts/HomeBridgeNativeToErc.json';
-import { abi as HOME_ERC_ABI } from '../contracts/HomeBridgeErcToErc';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
@@ -18,6 +16,7 @@ import {
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
+import { getBridgeABIs, BRIDGE_MODES } from './utils/bridgeMode'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -71,9 +70,9 @@ class HomeStore {
       setTimeout(() => this.setHome(), 200)
       return
     }
-    const HOME_ABI = this.rootStore.isErcToErcMode ? HOME_ERC_ABI : HOME_NATIVE_ABI
+    const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
-    if (this.rootStore.isErcToErcMode) {
+    if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
         this.getTokenInfo()
     }
     await this.getBlockNumber()
@@ -135,7 +134,7 @@ class HomeStore {
   @action
   async getBalance() {
     try {
-      if (this.rootStore.isErcToErcMode) {
+      if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
         this.balance = await getTotalSupply(this.tokenContract)
         this.web3Store.getWeb3Promise.then(async () => {
           this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
@@ -318,7 +317,7 @@ class HomeStore {
   }
 
   getDisplayedBalance() {
-    return this.rootStore.isErcToErcMode ? this.userBalance : this.web3Store.defaultAccount.homeBalance
+    return this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC ? this.userBalance : this.web3Store.defaultAccount.homeBalance
   }
 }
 
