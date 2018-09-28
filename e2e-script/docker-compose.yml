@@ -22,7 +22,7 @@ services:
     - testnet
     command: "true"
   redis:
-    image: "redis"
+    image: "redis:4"
     networks:
     - testnet
   rabbit:
