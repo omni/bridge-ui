@@ -97,7 +97,9 @@ class ForeignStore {
   @action
   async getTokenInfo(){
     try {
-      this.tokenAddress = this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC ? await getErc20TokenAddress(this.foreignBridge) : await getErc677TokenAddress(this.foreignBridge)
+      this.tokenAddress = this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC || this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
+        ? await getErc20TokenAddress(this.foreignBridge)
+        : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
     } catch(e) {

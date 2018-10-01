@@ -1,6 +1,7 @@
 import { action, observable } from 'mobx';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
+import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
 import {
   getMaxPerTxLimit,
@@ -11,7 +12,9 @@ import {
   getErc677TokenAddress,
   getSymbol,
   getTotalSupply,
-  getBalanceOf
+  getBalanceOf,
+  mintedTotally,
+  totalBurntCoins
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
@@ -55,6 +58,7 @@ class HomeStore {
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
   tokenContract = {}
+  blockRewardContract = {}
 
   constructor (rootStore) {
     this.homeWeb3 = rootStore.web3Store.homeWeb3
@@ -73,7 +77,9 @@ class HomeStore {
     const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
     if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
-        this.getTokenInfo()
+      this.getTokenInfo()
+    } else if(this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
+      await this.getBlockRewardContract()
     }
     await this.getBlockNumber()
     this.getMinPerTxLimit()
@@ -140,6 +146,10 @@ class HomeStore {
           this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
           balanceLoaded()
         })
+      } else if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
+        const mintedCoins = await mintedTotally(this.blockRewardContract)
+        const burntCoins = await totalBurntCoins(this.homeBridge)
+        this.balance = Web3Utils.fromWei(mintedCoins.minus(burntCoins).toString(10))
       } else {
         this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
       }
@@ -318,6 +328,11 @@ class HomeStore {
 
   getDisplayedBalance() {
     return this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC ? this.userBalance : this.web3Store.defaultAccount.homeBalance
+  }
+
+  async getBlockRewardContract () {
+    const blockRewardAddress = await this.homeBridge.methods.blockRewardContract().call()
+    this.blockRewardContract = new this.homeWeb3.eth.Contract(BLOCK_REWARD_ABI, blockRewardAddress)
   }
 }
 

@@ -19,11 +19,14 @@ export const NetworkDetails = ({
   totalBalance,
   balance,
   displayTokenAddress,
-  displayBridgeLimits
+  displayBridgeLimits,
+  nativeSupplyTitle
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
-  const totalTitle = isHome ? `Locked ${currency} in Bridge Contract` : `${currency} Tokens Amount`
+  const totalTitle = isHome
+    ? nativeSupplyTitle ? `Native Coins Amount` : `Locked ${currency} in Bridge Contract`
+    : `${currency} Tokens Amount`
   const totalAmount = isHome ? totalBalance : totalSupply
   const explorerPath = getAddressUrl(networkData.id)
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))

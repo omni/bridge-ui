@@ -111,21 +111,21 @@ export class Bridge extends React.Component {
 
   async _sendToForeign(amount){
     const { web3Store, foreignStore, alertStore, txStore, bridgeMode } = this.props.RootStore
-    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
+    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
       return
     }
-    if(!isErcToErcMode && isLessThan(amount, foreignStore.minPerTx)){
+    if(!isExternalErc20 && isLessThan(amount, foreignStore.minPerTx)){
       alertStore.pushError(`The amount is less than minimum amount per transaction.\nThe min per transaction is: ${foreignStore.minPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(!isErcToErcMode && isGreaterThan(amount, foreignStore.maxPerTx)){
+    if(!isExternalErc20 && isGreaterThan(amount, foreignStore.maxPerTx)){
       alertStore.pushError(`The amount is above maximum amount per transaction.\nThe max per transaction is: ${foreignStore.maxPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(!isErcToErcMode && isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
+    if(!isExternalErc20 && isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
       alertStore.pushError(`The amount is above current daily limit.\nThe max withdrawal today: ${foreignStore.maxCurrentDeposit} ${foreignStore.symbol}`)
       return
     }
@@ -134,7 +134,7 @@ export class Bridge extends React.Component {
     } else {
       try {
         alertStore.setLoading(true)
-        if (isErcToErcMode) {
+        if (isExternalErc20) {
           return await txStore.erc20transfer({
             to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
@@ -232,7 +232,8 @@ export class Bridge extends React.Component {
       balance: homeStore.getDisplayedBalance(),
       displayTokenAddress: isErcToErcMode,
       tokenAddress: homeStore.tokenAddress,
-      displayBridgeLimits: true
+      displayBridgeLimits: true,
+      nativeSupplyTitle: true
     }
 
     this.setState({ modalData, showModal: true })
@@ -240,7 +241,7 @@ export class Bridge extends React.Component {
 
   loadForeignDetails = () => {
     const { web3Store, foreignStore, bridgeMode } = this.props.RootStore
-    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
+    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
     const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
 
@@ -258,7 +259,7 @@ export class Bridge extends React.Component {
       totalSupply: foreignStore.totalSupply,
       balance: foreignStore.balance,
       displayTokenAddress: true,
-      displayBridgeLimits: !isErcToErcMode
+      displayBridgeLimits: !isExternalErc20
     }
 
     this.setState({ modalData, showModal: true })

@@ -42,3 +42,13 @@ export const getBalanceOf = async (contract, address) => {
   const balance = await contract.methods.balanceOf(address).call()
   return Web3Utils.fromWei(balance)
 }
+
+export const mintedTotally = async (contract) => {
+  const mintedCoins = await contract.methods.mintedTotally().call()
+  return new BN(mintedCoins)
+}
+
+export const totalBurntCoins = async (contract) => {
+  const burntCoins = await contract.methods.totalBurntCoins().call()
+  return new BN(burntCoins)
+}

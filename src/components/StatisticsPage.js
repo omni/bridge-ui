@@ -17,11 +17,11 @@ export class StatisticsPage extends React.Component {
           <div className='statistics-bridge-container'>
             <span className='statistics-bridge-title statistics-title'>Bridge Statistics</span>
               <BridgeStatistics
-                gasValue={454600}
                 users={homeStore.statistics.finished ? homeStore.statistics.users.size : ''}
                 totalBridged={homeStore.statistics.finished ? homeStore.statistics.totalBridged.toString() : ''}
                 homeBalance={homeStore.balance}
                 homeSymbol={homeStore.symbol}
+                homeNativeSupplyTitle={true}
                 foreignSymbol={foreignStore.symbol}
                 foreignSupply={foreignStore.totalSupply} />
           </div>
