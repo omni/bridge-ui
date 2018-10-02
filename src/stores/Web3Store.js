@@ -85,7 +85,7 @@ class Web3Store {
         await this.rootStore.homeStore.getBalance()
         this.alertStore.setLoading(false)
       }
-      if (this.rootStore.bridgeModeInitialized && !this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
+      if (this.rootStore.bridgeModeInitialized && this.rootStore.bridgeMode !== BRIDGE_MODES.ERC_TO_ERC) {
         balanceLoaded()
       }
     } catch(e){

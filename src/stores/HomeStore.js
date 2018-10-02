@@ -77,7 +77,7 @@ class HomeStore {
     const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
     if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
-      this.getTokenInfo()
+      await this.getTokenInfo()
     } else if(this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
       await this.getBlockRewardContract()
     }
