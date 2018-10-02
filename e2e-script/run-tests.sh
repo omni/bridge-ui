@@ -14,8 +14,6 @@ docker-compose run -d bridge npm run sender:home
 docker-compose run -d bridge npm run sender:foreign
 docker-compose run -d ui npm start
 docker-compose run -d ui-erc20 npm start
-echo "Waiting for blocks being generated"
-sleep 5m
 cd ..
 npm run startE2e
 rc=$?

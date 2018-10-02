@@ -164,6 +164,11 @@ class HomeStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
+
+      if(fromBlock < 0) {
+        fromBlock = 0
+      }
+
       let events = await getPastEvents(this.homeBridge, fromBlock, toBlock)
 
       let homeEvents = []
