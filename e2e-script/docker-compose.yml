@@ -35,6 +35,7 @@ services:
     build: bridge
     environment:
     - NODE_ENV=production
+    - BRIDGE_MODE=NATIVE_TO_ERC
     - QUEUE_URL=amqp://rabbit
     - REDIS_URL=redis://redis
     - HOME_RPC_URL=http://parity1:8545
