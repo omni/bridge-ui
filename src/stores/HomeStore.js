@@ -156,7 +156,10 @@ class HomeStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
-      let events = await getPastEvents(this.homeBridge, fromBlock, toBlock)
+      let events = await getPastEvents(this.homeBridge, fromBlock, toBlock).catch(e => {
+        console.error('Couldn\'t get events', e)
+        return []
+      })
 
       let homeEvents = []
       await asyncForEach(events, (async (event) => {

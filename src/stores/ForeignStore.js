@@ -125,7 +125,10 @@ class ForeignStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
-      let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock)
+      let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock).catch(e => {
+        console.error('Couldn\'t get events', e)
+        return []
+      })
 
       if(!this.filter){
         this.events = foreignEvents;
