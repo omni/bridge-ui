@@ -4,6 +4,7 @@ import { addPendingTransaction } from './utils/testUtils'
 
 class TxStore {
   @observable txs = []
+  @observable txsValues = {}
   txHashToIndex = {}
   constructor(rootStore) {
     this.web3Store = rootStore.web3Store
@@ -14,7 +15,7 @@ class TxStore {
   }
 
   @action
-  async doSend({to, from, value, data}){
+  async doSend({to, from, value, data, sentValue}){
     const index = this.txs.length;
     return this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
@@ -34,6 +35,7 @@ class TxStore {
         }).on('transactionHash', (hash) => {
           console.log('txHash', hash)
           this.txHashToIndex[hash] = index;
+          this.txsValues[hash] = sentValue
           this.txs[index] = {status: 'pending', name: `Sending ${to} ${value}`, hash}
           this.alertStore.setLoadingStepIndex(1)
           addPendingTransaction()
@@ -58,7 +60,7 @@ class TxStore {
           const data = await contract.methods.transferAndCall(
             to, value, '0x00'
           ).encodeABI()
-          return this.doSend({to: tokenAddress, from, value: '0x00', data})
+          return this.doSend({to: tokenAddress, from, value: '0x00', data, sentValue: value})
         } else {
           this.alertStore.pushError('Please unlock metamask');
         }
@@ -76,7 +78,7 @@ class TxStore {
           const data = await this.foreignStore.tokenContract.methods.transfer(
             to, value
           ).encodeABI({ from: this.web3Store.defaultAccount.address })
-          return this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x', data})
+          return this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x', data, sentValue: value})
         } else {
           this.alertStore.pushError('Please unlock metamask');
         }
@@ -112,7 +114,9 @@ class TxStore {
             if(blockConfirmations >= 8) {
               this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
-              this.foreignStore.addWaitingForConfirmation(hash)
+              this.foreignStore.waitUntilProcessed(hash).then(() => {
+                this.alertStore.setLoadingStepIndex(3)
+              })
             } else {
               if(blockConfirmations > 0) {
                 this.alertStore.setBlockConfirmations(blockConfirmations)
@@ -125,7 +129,10 @@ class TxStore {
             if(blockConfirmations >= 8) {
               this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
-              this.homeStore.addWaitingForConfirmation(hash)
+              this.homeStore.waitUntilProcessed(hash, this.txsValues[hash])
+                .then(() => {
+                  this.alertStore.setLoadingStepIndex(3)
+                })
             } else {
               if(blockConfirmations > 0) {
                 this.alertStore.setBlockConfirmations(blockConfirmations)

@@ -15,6 +15,7 @@ import {
   getErc20TokenAddress
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
+import sleep from './utils/sleep'
 
 class ForeignStore {
   @observable state = null;
@@ -220,6 +221,17 @@ class ForeignStore {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
+  async waitUntilProcessed(txHash) {
+    const bridge = this.foreignBridge
+
+    const processed = await bridge.methods.relayedMessages(txHash).call()
+
+    if (processed) {
+      return Promise.resolve()
+    } else {
+      return sleep(5000).then(() => this.waitUntilProcessed(txHash))
+    }
+  }
 }
 
 export default ForeignStore;
