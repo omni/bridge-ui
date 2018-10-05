@@ -19,6 +19,7 @@ export class Loading extends React.Component {
           stroke={ 4 }
           progress={progress}
           confirmationNumber={blockConfirmations}
+          hideConfirmationNumber={loadingStepIndex > 1}
         />}
         {loadingStepIndex === 0 && (<img className="loading" src={loadingLogo} alt="loading"/>)}
         {loadingStepIndex === 0 && <div className="loading-i" />}
