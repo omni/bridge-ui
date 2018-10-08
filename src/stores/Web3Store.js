@@ -1,4 +1,4 @@
-import { action, observable } from "mobx";
+import { action, computed, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 import { balanceLoaded } from './utils/testUtils'
 import swal from 'sweetalert'
@@ -15,6 +15,7 @@ class Web3Store {
   @observable errors = [];
 
   @observable getWeb3Promise = null;
+  @observable setHomeWeb3Promise = null;
   @observable metamaskNotSetted = false;
 
   @observable homeNet = {id: '', name: ''};
@@ -57,7 +58,9 @@ class Web3Store {
   @action
   async setWeb3Home() {
     this.homeWeb3 = getWeb3Instance(this.HOME_HTTP_PARITY_URL)
-    this.homeNet = await getNetwork(this.homeWeb3)
+    this.setHomeWeb3Promise = getNetwork(this.homeWeb3).then(homeNet => {
+      this.homeNet = homeNet
+    })
   }
 
   @action
@@ -118,6 +121,11 @@ class Web3Store {
     });
   }
 
+  async onHomeSide() {
+    await this.getWeb3Promise
+    await this.setHomeWeb3Promise
+    return this.metamaskNet.id === this.homeNet.id.toString()
+  }
 }
 
 export default Web3Store;
