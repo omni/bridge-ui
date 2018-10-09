@@ -1,3 +1,5 @@
+const { toWei } = require('web3').utils
+
 export async function fetchGasPrice({ bridgeContract, oracleFn }) {
   let gasPrice = null
   try {
@@ -21,5 +23,5 @@ export async function fetchGasPriceFromOracle(oracleUrl, speedType) {
   if (!gasPrice) {
     throw new Error(`Response from Oracle didn't include gas price for ${speedType} type.`)
   }
-  return gasPrice
+  return toWei(gasPrice.toString(), 'gwei')
 }
