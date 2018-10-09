@@ -43,7 +43,7 @@ class HomeStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
-  @observable symbol = 'POA';
+  @observable symbol = process.env.REACT_APP_HOME_NATIVE_NAME || 'NONAME';
   @observable userBalance = 0
   @observable statistics = {
     deposits: 0,

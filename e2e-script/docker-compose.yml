@@ -128,6 +128,7 @@ services:
     - REACT_APP_FOREIGN_HTTP_PARITY_URL=http://10.1.0.103:8545
     - REACT_APP_HOME_HTTP_PARITY_URL=http://10.1.0.102:8545
     - REACT_APP_GAS_PRICE_SPEED_TYPE=fast
+    - REACT_APP_HOME_NATIVE_NAME=POA
     ports:
     - "3000:3000"
     networks:
@@ -142,6 +143,7 @@ services:
     - REACT_APP_FOREIGN_HTTP_PARITY_URL=http://10.1.0.103:8545
     - REACT_APP_HOME_HTTP_PARITY_URL=http://10.1.0.102:8545
     - REACT_APP_GAS_PRICE_SPEED_TYPE=fast
+    - REACT_APP_HOME_NATIVE_NAME=POA
     ports:
     - "3001:3000"
     networks:
@@ -156,6 +158,7 @@ services:
     - REACT_APP_FOREIGN_HTTP_PARITY_URL=http://10.1.0.103:8545
     - REACT_APP_HOME_HTTP_PARITY_URL=http://10.1.0.102:8545
     - REACT_APP_GAS_PRICE_SPEED_TYPE=fast
+    - REACT_APP_HOME_NATIVE_NAME=POA
     ports:
     - "3002:3000"
     networks:
