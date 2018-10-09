@@ -28,7 +28,7 @@ class GasPriceStore {
   }
 
   async updateGasPrice() {
-    await this.web3Store.getWeb3Promise
+    await this.web3Store.setHomeWeb3Promise
 
     if (await this.web3Store.onHomeSide()) {
       this.gasPrice = HOME_GAS_PRICE_FALLBACK
