@@ -11,7 +11,8 @@ import {
   getErc677TokenAddress,
   getSymbol,
   getErc20TokenAddress,
-  getBridgeValidators
+  getBridgeValidators,
+  getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import { getBridgeABIs, BRIDGE_MODES } from './utils/bridgeMode'
@@ -23,6 +24,7 @@ class ForeignStore {
   @observable events = [];
   @observable totalSupply = '';
   @observable symbol = 'NOSYM';
+  @observable tokenName = '';
   @observable balance = '';
   @observable filter = false;
   @observable maxCurrentDeposit = '';
@@ -109,6 +111,7 @@ class ForeignStore {
         : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
+      this.tokenName = await getName(this.tokenContract)
     } catch(e) {
       console.error(e)
     }

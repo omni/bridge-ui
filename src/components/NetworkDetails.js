@@ -20,7 +20,8 @@ export const NetworkDetails = ({
   balance,
   displayTokenAddress,
   displayBridgeLimits,
-  nativeSupplyTitle
+  nativeSupplyTitle,
+  tokenName
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
@@ -81,6 +82,12 @@ export const NetworkDetails = ({
                 <img className="info-icon-right" src={copyIcon} alt=""/>
               </CopyToClipboard>
             </span>
+          </p>
+        )}
+        {displayTokenAddress && (
+          <p className="details-data-container">
+            <span className="details-label">Token Name</span>
+            <span className="details-description-black">{tokenName || 'No token name'}</span>
           </p>
         )}
         <p className="details-data-container">

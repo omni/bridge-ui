@@ -230,6 +230,7 @@ export class Bridge extends React.Component {
       balance: homeStore.getDisplayedBalance(),
       displayTokenAddress: isErcToErcMode,
       tokenAddress: homeStore.tokenAddress,
+      tokenName: homeStore.tokenName,
       displayBridgeLimits: true,
       nativeSupplyTitle: true
     }
@@ -254,6 +255,7 @@ export class Bridge extends React.Component {
       maxPerTx: foreignStore.maxPerTx,
       minPerTx: foreignStore.minPerTx,
       tokenAddress: foreignStore.tokenAddress,
+      tokenName: foreignStore.tokenName,
       totalSupply: foreignStore.totalSupply,
       balance: foreignStore.balance,
       displayTokenAddress: true,

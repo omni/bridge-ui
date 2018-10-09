@@ -64,3 +64,5 @@ export const getBridgeValidators = async (bridgeValidatorContract) => {
   })
   return addedValidators.filter(val => !removedValidators.includes(val));
 }
+
+export const getName = (contract) => contract.methods.name().call()

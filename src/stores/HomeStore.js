@@ -15,7 +15,8 @@ import {
   getBalanceOf,
   mintedTotally,
   totalBurntCoins,
-  getBridgeValidators
+  getBridgeValidators,
+  getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
@@ -45,6 +46,7 @@ class HomeStore {
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
   @observable symbol = process.env.REACT_APP_HOME_NATIVE_NAME || 'NONAME';
+  @observable tokenName = '';
   @observable userBalance = 0
   @observable statistics = {
     deposits: 0,
@@ -107,6 +109,7 @@ class HomeStore {
       this.tokenAddress = await getErc677TokenAddress(this.homeBridge)
       this.tokenContract = new this.homeWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
+      this.tokenName = await getName(this.tokenContract)
     } catch(e) {
       console.error(e)
     }
