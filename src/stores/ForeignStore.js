@@ -10,10 +10,12 @@ import {
   getBalanceOf,
   getErc677TokenAddress,
   getSymbol,
-  getErc20TokenAddress
+  getErc20TokenAddress,
+  getBridgeValidators
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import { getBridgeABIs, BRIDGE_MODES } from './utils/bridgeMode'
+import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 
 class ForeignStore {
   @observable state = null;
@@ -27,6 +29,9 @@ class ForeignStore {
   @observable maxPerTx = '';
   @observable minPerTx = '';
   @observable latestBlockNumber = 0;
+  @observable validators = []
+  @observable foreignBridgeValidators = ''
+  @observable requiredSignatures = 0
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
@@ -60,6 +65,7 @@ class ForeignStore {
     this.getEvents()
     this.getTokenBalance()
     this.getCurrentLimit()
+    this.getValidators()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -225,6 +231,18 @@ class ForeignStore {
 
   getDailyQuotaCompleted() {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
+  }
+
+  @action
+  async getValidators(){
+    try {
+      const foreignValidatorsAddress = await this.foreignBridge.methods.validatorContract().call()
+      this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
+      this.validators =  await getBridgeValidators(this.foreignBridgeValidators)
+      this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
+    } catch(e){
+      console.error(e)
+    }
   }
 
 }

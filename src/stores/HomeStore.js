@@ -14,7 +14,8 @@ import {
   getTotalSupply,
   getBalanceOf,
   mintedTotally,
-  totalBurntCoins
+  totalBurntCoins,
+  getBridgeValidators
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
@@ -266,16 +267,7 @@ class HomeStore {
     try {
       const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
       this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-
-      let ValidatorAdded = await this.homeBridgeValidators.getPastEvents('ValidatorAdded', {fromBlock: 0});
-      let ValidatorRemoved = await this.homeBridgeValidators.getPastEvents('ValidatorRemoved', {fromBlock: 0});
-      let homeAddedValidators = ValidatorAdded.map(val => {
-        return val.returnValues.validator
-      })
-      const homeRemovedValidators = ValidatorRemoved.map(val => {
-        return val.returnValues.validator
-      })
-      this.validators =  homeAddedValidators.filter(val => !homeRemovedValidators.includes(val));
+      this.validators =  await getBridgeValidators(this.homeBridgeValidators)
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
     } catch(e){
       console.error(e)
