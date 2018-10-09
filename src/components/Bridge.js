@@ -9,8 +9,6 @@ import { BridgeNetwork } from './index'
 import { ModalContainer } from './ModalContainer'
 import { NetworkDetails } from './NetworkDetails'
 import { TransferAlert } from './TransferAlert'
-import homeLogo from '../assets/images/logos/logo-poa-sokol@2x.png'
-import foreignLogo from '../assets/images/logos/logo-poa-20@2x.png'
 import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
 import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
 import leftImage from '../assets/images/pattern-1.png'
@@ -284,7 +282,7 @@ export class Bridge extends React.Component {
           <BridgeAddress
             isHome={true}
             reverse={reverse}
-            logo={reverse ? foreignLogo : homeLogo} />
+            labelName={reverse ? foreignStore.symbol : homeStore.symbol} />
           <div className="bridge-transfer">
             <div className="left-image-wrapper">
               <img className="left-image" src={leftImage} alt=""/>
@@ -320,7 +318,7 @@ export class Bridge extends React.Component {
           <BridgeAddress
             isHome={false}
             reverse={reverse}
-            logo={reverse ? homeLogo : foreignLogo} />
+            labelName={reverse ? homeStore.symbol : foreignStore.symbol} />
           <ModalContainer
             hideModal={() => {this.setState({showModal: false})}}
             showModal={showModal}

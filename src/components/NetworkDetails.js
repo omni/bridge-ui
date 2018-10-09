@@ -36,7 +36,11 @@ export const NetworkDetails = ({
   return (
     <div className="network-details">
         <div className="details-logo-container">
-          <img className={logoClass} src={logo} alt="home logo"/>
+          <div className={logoClass}
+               style={{color: '#5c34a2', textAlign: 'center', fontWeight: 'bold'}}
+          >
+            {currency}
+          </div>
       </div>
       <div className="details-body">
         <p className="details-data-container">
