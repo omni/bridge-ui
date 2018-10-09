@@ -276,6 +276,9 @@ export class Bridge extends React.Component {
       }
     }
 
+    const homeNetworkName = homeStore.networkName
+    const foreignNetworkName = foreignStore.networkName
+
     return(
       <div className="bridge-container">
         <div className="bridge">
@@ -291,9 +294,8 @@ export class Bridge extends React.Component {
               <div className="bridge-transfer-content-background">
                 <BridgeNetwork
                   isHome={true}
-                  networkTitle={reverse ? 'ETH' : 'POA'}
                   showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
-                  networkData={reverse ? web3Store.foreignNet : web3Store.homeNet}
+                  networkTitle={reverse ? foreignNetworkName : homeNetworkName}
                   currency={reverse ? foreignStore.symbol : homeStore.symbol}
                   balance={reverse ? foreignStore.balance : homeStore.getDisplayedBalance()} />
                 <BridgeForm
@@ -304,9 +306,8 @@ export class Bridge extends React.Component {
                   onInputChange={this.handleInputChange('amount')} />
                 <BridgeNetwork
                   isHome={false}
-                  networkTitle={reverse ? 'POA' : 'ETH'}
                   showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
-                  networkData={reverse ? web3Store.homeNet : web3Store.foreignNet}
+                  networkTitle={reverse ? homeNetworkName : foreignNetworkName}
                   currency={reverse ? homeStore.symbol : foreignStore.symbol}
                   balance={reverse ? homeStore.getDisplayedBalance() : foreignStore.balance} />
               </div>
