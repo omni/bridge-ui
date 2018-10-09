@@ -27,17 +27,17 @@ export class StatisticsPage extends React.Component {
           </div>
           <div className='statistics-transaction-container'>
             <div className='statistics-deposit-container'>
-              <span className='statistics-deposit-title statistics-title'>Network Deposits</span>
+              <span className='statistics-deposit-title statistics-title'>Tokens Deposits</span>
               <TransactionsStatistics
                 txNumber={homeStore.statistics.finished ? homeStore.statistics.deposits : ''}
-                type={homeStore.symbol}
+                type={foreignStore.symbol}
                 value={homeStore.statistics.finished ? homeStore.statistics.depositsValue : ''} />
             </div>
             <div className='statistics-withdraw-container'>
-              <span className='statistics-withdraw-title statistics-title'>Network Withdraws</span>
+              <span className='statistics-withdraw-title statistics-title'>Tokens Withdraws</span>
               <TransactionsStatistics
                 txNumber={homeStore.statistics.finished ? homeStore.statistics.withdraws : ''}
-                type={homeStore.symbol}
+                type={foreignStore.symbol}
                 value={homeStore.statistics.finished ? homeStore.statistics.withdrawsValue : ''} />
             </div>
           </div>

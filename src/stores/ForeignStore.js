@@ -20,7 +20,7 @@ class ForeignStore {
   @observable loading = true;
   @observable events = [];
   @observable totalSupply = '';
-  @observable symbol = '';
+  @observable symbol = 'NOSYM';
   @observable balance = '';
   @observable filter = false;
   @observable maxCurrentDeposit = '';

@@ -11,9 +11,9 @@ export const BridgeStatistics = ({ users, totalBridged, homeBalance, homeNativeS
     />
     <div className="separator" />
     <DataBlock
-      description={`Total ${homeSymbol} Bridged`}
+      description={`Total ${foreignSymbol} Bridged`}
       value={numeral(totalBridged).format('0,0.00 a', Math.floor)}
-      type={homeSymbol}
+      type={foreignSymbol}
     />
     <div className="separator" />
     <DataBlock
