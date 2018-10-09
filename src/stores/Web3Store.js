@@ -1,4 +1,4 @@
-import { action, computed, observable } from "mobx";
+import { action, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 import { balanceLoaded } from './utils/testUtils'
 import swal from 'sweetalert'
