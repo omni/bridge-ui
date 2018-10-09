@@ -15,7 +15,7 @@ class TxStore {
   async doSend({to, from, value, data}){
     return this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
-        this.alertStore.pushError("Please unlock metamask")
+        this.alertStore.pushError("Please unlock wallet")
         return
       }
       try {
@@ -36,7 +36,7 @@ class TxStore {
         }).on('error', (e) => {
           if(!e.message.includes('not mined within 50 blocks')){
             this.alertStore.setLoading(false)
-            this.alertStore.pushError('Transaction rejected on Metamask');
+            this.alertStore.pushError('Transaction rejected on wallet');
           }
         })
       } catch(e) {
@@ -55,7 +55,7 @@ class TxStore {
           ).encodeABI()
           return this.doSend({to: tokenAddress, from, value: '0x00', data})
         } else {
-          this.alertStore.pushError('Please unlock metamask');
+          this.alertStore.pushError('Please unlock wallet');
         }
       })
     } catch(e) {
@@ -73,7 +73,7 @@ class TxStore {
           ).encodeABI({ from: this.web3Store.defaultAccount.address })
           return this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x', data})
         } else {
-          this.alertStore.pushError('Please unlock metamask');
+          this.alertStore.pushError('Please unlock wallet');
         }
       })
     } catch(e) {

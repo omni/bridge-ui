@@ -67,7 +67,7 @@ export class Bridge extends React.Component {
     const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.homeNet.id.toString()){
-      swal("Error", `Please switch metamask to ${web3Store.homeNet.name} network`, "error")
+      swal("Error", `Please switch wallet to ${web3Store.homeNet.name} network`, "error")
       return
     }
     if(isLessThan(amount, homeStore.minPerTx)){
@@ -114,7 +114,7 @@ export class Bridge extends React.Component {
     const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
-      swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
+      swal("Error", `Please switch wallet to ${web3Store.foreignNet.name} network`, "error")
       return
     }
     if(!isExternalErc20 && isLessThan(amount, foreignStore.minPerTx)){
