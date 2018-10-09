@@ -39,16 +39,17 @@ export class DailyQuotaModal extends React.Component {
     const networkTo = isHome ? 'ETH' : 'POA'
     const networkNameFrom = isHome ? web3Store.homeNet.name : web3Store.foreignNet.name
     const networkNameTo = isHome ? web3Store.foreignNet.name : web3Store.homeNet.name
-
+    const description = value && value !== '0' ? `${numeral(value).format('0,0.0', Math.floor)} ${from} on ${networkFrom} ${networkNameFrom + ' '}
+            remaining for transfer to ${to + ' '}
+            on ${networkTo} ${networkNameTo}`
+      : `No limit configured`
     return (
       <div className="daily-quota-modal-container">
         <div className="daily-quota-modal" style={{left, top}}>
           <div className='modal-container'>
             <span className="daily-quota-title">Daily Quota</span>
             <span className="daily-quota-description">
-              {numeral(value).format('0,0.0', Math.floor)} {from} on {networkFrom} {networkNameFrom + ' '}
-              remaining for transfer to {to + ' '}
-              on {networkTo} {networkNameTo}
+              {description}
             </span>
           </div>
         </div>
