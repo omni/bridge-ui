@@ -154,7 +154,7 @@ class ForeignStore {
             this.alertStore.setLoadingStepIndex(3)
             const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
             setTimeout(() => {
-                this.alertStore.pushSuccess(`Tokens received on Ethereum ${this.web3Store.foreignNet.name} on Tx
+                this.alertStore.pushSuccess(`Tokens received on ${this.networkName} on Tx
             <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
             ${event.transactionHash}</a>`, this.alertStore.FOREIGN_TRANSFER_SUCCESS)}
               , 2000)

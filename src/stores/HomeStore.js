@@ -194,7 +194,7 @@ class HomeStore {
           this.alertStore.setLoadingStepIndex(3)
           const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
           setTimeout(() => {
-            this.alertStore.pushSuccess(`Tokens received on POA ${this.web3Store.homeNet.name} on Tx 
+            this.alertStore.pushSuccess(`Tokens received on ${this.networkName} on Tx
               <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;">
               ${event.transactionHash}</a>`, this.alertStore.HOME_TRANSFER_SUCCESS)}
             , 2000)

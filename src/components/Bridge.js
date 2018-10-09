@@ -175,8 +175,8 @@ export class Bridge extends React.Component {
     }
 
     const { reverse } = this.state
-    const homeDisplayName = 'POA ' + web3Store.homeNet.name
-    const foreignDisplayName = 'ETH ' + web3Store.foreignNet.name
+    const homeDisplayName = homeStore.networkName
+    const foreignDisplayName = foreignStore.networkName
 
     const confirmationData = {
       from: reverse ? foreignDisplayName : homeDisplayName,
