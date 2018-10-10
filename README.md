@@ -56,7 +56,7 @@ Bridge UI allows users to explore all cross chain transactions that are happenin
 To tokenize native POA coins a user must complete the following:
 - Specify the amount
 - Click the arrow -> send button
-- Confirm transaction via MetaMask
+- Confirm transaction on your Wallet
 - The address that you use to send from, the same address will be used to receive the token on a Foreign chain
 The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should see the Deposit event on the Home Network (left side - POA Network). After some time, Validators submit signatures emitting SignedForDeposit event to the Foreign Network. Once the required number of signatures is reached, a Deposit event is emitted on the Foreign Network. Hence, an equivalent amount of ERC20 tokens are minted on the Foreign Network with the corresponding depost address. 
 
@@ -64,7 +64,7 @@ The amount sent must be within the daily limits provided by the contracts. When 
 To burn and send back to Home Network (ERC20 to POA20):
 - Specify an Amount
 - Click the switch button and click the <- arrow button to send
-- Confirm transaction on MetaMask
+- Confirm transaction on your Wallet
 - The address that you use to send from, the same address will be used to receive the coin on a Home chain
 
 The amount sent must be within the daily limits provided by the contracts. When the transaction is validated, the user should expect to see a Withdrawal Event on the Foreign Network (right-side - Ethereum Foundation). After some time, Validators submit signatures emitting SignedForWithdrawal event to the Foreign Network. Once the required number of signatures is reached, CollectedSignatures event is emitted on the Foreign Network. The ERC20 tokens are burned on the Foreign Network. This process generates a signed message which Validators submit on the Home Network. The user automatically receives their Native POA Coin.
@@ -95,7 +95,7 @@ When you send POA20 on Foreign Network (Ethereum Mainnet), it is automatically b
 
 - [poa-bridge-contracts](https://github.com/poanetwork/poa-bridge-contracts/tree/0.1)
 - [node.js](https://nodejs.org/en/download/)
-- [metamask](https://metamask.io/)
+- [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid) or any other Wallet
 - happy mood and patience
 
 ## Preparation for using the UI App
@@ -341,11 +341,25 @@ REACT_APP_HOME_BRIDGE_ADDRESS | address that you have deployed at step#3. Should
 REACT_APP_FOREIGN_BRIDGE_ADDRESS | address that you have deployed at step#3.
 REACT_APP_FOREIGN_HTTP_PARITY_URL | http public rpc node for Foreign Network
 REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
-REACT_APP_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
+REACT_APP_HOME_NATIVE_NAME | name of the home native coin
+REACT_APP_HOME_NETWORK_NAME | name to be displayed for home network
+REACT_APP_FOREIGN_NETWORK_NAME | name to be displayed for foreign network
+REACT_APP_HOME_EXPLORER_TX_TEMPLATE | template link to transaction on home explorer. `%s` will be replaced by transaction hash
+REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE | template link to transaction on foreign explorer. `%s` will be replaced by transaction hash
+REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE | template link to address on home explorer. `%s` will be replaced by address
+REACT_APP_FOREIGN_EXPLORER_ADDRESS_TEMPLATE | template link to address on foreign explorer. `%s` will be replaced by address
+REACT_APP_HOME_GAS_PRICE_ORACLE_URL | The URL used to get a JSON response from the gas price prediction oracle for Home network.
+REACT_APP_HOME_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
+REACT_APP_HOME_GAS_PRICE_FALLBACK | The gas price (in Wei) that is used if both the oracle and the fall back gas price specified in the Home Bridge contract are not available.
+REACT_APP_HOME_GAS_PRICE_UPDATE_INTERVAL | An interval in milliseconds used to get the updated gas price value either from the oracle or from the Home Bridge contract.
+REACT_APP_FOREIGN_GAS_PRICE_ORACLE_URL | The URL used to get a JSON response from the gas price prediction oracle for Foreign network.
+REACT_APP_FOREIGN_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
+REACT_APP_FOREIGN_GAS_PRICE_FALLBACK | The gas price (in Wei) that is used if both the oracle and the fall back gas price specified in the Foreign Bridge contract are not available.
+REACT_APP_FOREIGN_GAS_PRICE_UPDATE_INTERVAL | An interval in milliseconds used to get the updated gas price value either from the oracle or from the Foreign Bridge contract.
 
 5. Run `npm run start`
-6. Make sure you have https://metamask.io installed
-7. Switch to account with POA tokens in your metamask or fund an account using https://faucet-sokol.herokuapp.com/
+6. Make sure you have [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid) or any other wallet installed.
+7. Switch to account with POA tokens in your wallet or fund an account using https://faucet-sokol.herokuapp.com/
 8. Specify amount and click on Arrow button to make a cross chain transaction from Sokol to Kovan
 
 ## Tests
