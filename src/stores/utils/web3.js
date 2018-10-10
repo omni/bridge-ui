@@ -16,7 +16,7 @@ const getWeb3 = () => {
           processWeb3(web3, resolve,  reject)
         } catch (error) {
           console.log(error)
-          const errorMsg = `Metamask account rejected by user`
+          const errorMsg = `Wallet account rejected by user`
           reject({message: errorMsg})
         }
       } else if (typeof web3 !== 'undefined') {
@@ -95,7 +95,7 @@ const processWeb3 = (web3, resolve,  reject) => {
     document.title = `${netIdName} - Bridge UI dApp`
     const defaultAccount = web3.eth.defaultAccount || null;
     if(defaultAccount === null){
-      reject({message: 'Please unlock your metamask and refresh the page'})
+      reject({message: 'Please unlock your wallet and refresh the page'})
     }
     const results = {
       web3Instance: new Web3(web3.currentProvider),
