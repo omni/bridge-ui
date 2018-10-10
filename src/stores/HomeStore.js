@@ -62,6 +62,7 @@ class HomeStore {
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
   explorerTxTemplate = process.env.REACT_APP_HOME_EXPLORER_TX_TEMPLATE || ''
+  explorerAddressTemplate = process.env.REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE || ''
   tokenContract = {}
   blockRewardContract = {}
 
@@ -193,7 +194,7 @@ class HomeStore {
         const confirmationEvents = homeEvents.filter((event) => event.event === "AffirmationCompleted" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
-          const urlExplorer = this.getExplorerUrl(event.transactionHash)
+          const urlExplorer = this.getExplorerTxUrl(event.transactionHash)
           const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
           setTimeout(() => {
             this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
@@ -224,8 +225,12 @@ class HomeStore {
     }
   }
 
-  getExplorerUrl(txHash) {
+  getExplorerTxUrl(txHash) {
     return this.explorerTxTemplate.replace('%s', txHash)
+  }
+
+  getExplorerAddressUrl(address) {
+    return this.explorerAddressTemplate.replace('%s', address)
   }
 
   @action

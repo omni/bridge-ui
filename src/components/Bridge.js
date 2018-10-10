@@ -232,7 +232,8 @@ export class Bridge extends React.Component {
       tokenAddress: homeStore.tokenAddress,
       tokenName: homeStore.tokenName,
       displayBridgeLimits: true,
-      nativeSupplyTitle: true
+      nativeSupplyTitle: true,
+      getExplorerAddressUrl: address => homeStore.getExplorerAddressUrl(address)
     }
 
     this.setState({ modalData, showModal: true })
@@ -259,7 +260,8 @@ export class Bridge extends React.Component {
       totalSupply: foreignStore.totalSupply,
       balance: foreignStore.balance,
       displayTokenAddress: true,
-      displayBridgeLimits: !isExternalErc20
+      displayBridgeLimits: !isExternalErc20,
+      getExplorerAddressUrl: address => foreignStore.getExplorerAddressUrl(address)
     }
 
     this.setState({ modalData, showModal: true })

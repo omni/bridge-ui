@@ -43,6 +43,7 @@ class ForeignStore {
   tokenContract = {}
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
   explorerTxTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE || ''
+  explorerAddressTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_ADDRESS_TEMPLATE || ''
 
   constructor (rootStore) {
     this.web3Store = rootStore.web3Store;
@@ -153,7 +154,7 @@ class ForeignStore {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
           if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
-            const urlExplorer = this.getExplorerUrl(event.transactionHash)
+            const urlExplorer = this.getExplorerTxUrl(event.transactionHash)
             const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
             setTimeout(() => {
                 this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
@@ -238,8 +239,12 @@ class ForeignStore {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
-  getExplorerUrl(txHash) {
+  getExplorerTxUrl(txHash) {
     return this.explorerTxTemplate.replace('%s', txHash)
+  }
+
+  getExplorerAddressUrl(address) {
+    return this.explorerAddressTemplate.replace('%s', address)
   }
 
   @action

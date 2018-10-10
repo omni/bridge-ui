@@ -21,7 +21,8 @@ export const NetworkDetails = ({
   displayTokenAddress,
   displayBridgeLimits,
   nativeSupplyTitle,
-  tokenName
+  tokenName,
+  getExplorerAddressUrl
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
@@ -29,7 +30,6 @@ export const NetworkDetails = ({
     ? nativeSupplyTitle ? `Native Coins Amount` : `Locked ${currency} in Bridge Contract`
     : `${currency} Tokens Amount`
   const totalAmount = isHome ? totalBalance : totalSupply
-  const explorerPath = getAddressUrl(networkData.id)
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
     ? numeral(0).format('0,0.00', Math.floor)
     : numeral(balance).format('0,0.00', Math.floor)
@@ -51,7 +51,7 @@ export const NetworkDetails = ({
         <p className="details-data-container">
           <span className="details-label">{networkTitle} Address</span>
             <span className="details-description details-copy">
-              <a className="details-description"  href={explorerPath+address} target="_blank" >
+              <a className="details-description"  href={getExplorerAddressUrl(address)} target="_blank" >
                 {address.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={address}>
@@ -75,7 +75,7 @@ export const NetworkDetails = ({
           <p className="details-data-container">
             <span className="details-label">Token Address</span>
             <span className="details-description details-copy">
-              <a className="details-description" href={explorerPath+tokenAddress} target="_blank" >
+              <a className="details-description" href={getExplorerAddressUrl(tokenAddress)} target="_blank" >
                 {tokenAddress.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={tokenAddress}>
