@@ -1,8 +1,6 @@
 import React from 'react';
 import { inject, observer } from "mobx-react";
 import walletIcon from '../assets/images/icons/icon-wallet.svg'
-import { getAddressUrl } from '../stores/utils/web3'
-
 
 @inject("RootStore")
 @observer

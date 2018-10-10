@@ -2,7 +2,6 @@ import React from 'react'
 import copyIcon from '../assets/images/icons/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
-import { getAddressUrl } from '../stores/utils/web3'
 
 export const NetworkDetails = ({
   isHome,
