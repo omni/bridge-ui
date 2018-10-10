@@ -10,13 +10,14 @@ export class Wallet extends React.Component {
   render() {
     const { web3Store, homeStore, foreignStore, alertStore } = this.props.RootStore
     const isHome = web3Store.metamaskNet.id.toString() === web3Store.homeNet.id.toString()
-    const explorerPath = getAddressUrl(web3Store.metamaskNet.id)
+    const address = web3Store.defaultAccount.address
+    const explorerAddressUrl = isHome ? homeStore.getExplorerAddressUrl(address) : foreignStore.getExplorerAddressUrl(address)
     const completed = isHome ? homeStore.getDailyQuotaCompleted() : foreignStore.getDailyQuotaCompleted()
     const width = `${completed}%`
 
     const wallet = web3Store.defaultAccount.address !== '' && web3Store.defaultAccount.address !== undefined
       ? (<a
-          href={explorerPath+web3Store.defaultAccount.address}
+          href={explorerAddressUrl}
           target="_blank"
           className="wallet-text wallet-link">
         {web3Store.defaultAccount.address.slice(0,17).concat('...')}
