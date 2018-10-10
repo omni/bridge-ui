@@ -1,6 +1,6 @@
 import { action, observable } from 'mobx';
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json';
-import { getBlockNumber, getExplorerUrl } from './utils/web3'
+import { getBlockNumber } from './utils/web3'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -42,6 +42,7 @@ class ForeignStore {
   foreignBridge = {};
   tokenContract = {}
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
+  explorerTxTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE || ''
 
   constructor (rootStore) {
     this.web3Store = rootStore.web3Store;
@@ -152,7 +153,7 @@ class ForeignStore {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
           if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
-            const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
+            const urlExplorer = this.getExplorerUrl(event.transactionHash)
             const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
             setTimeout(() => {
                 this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
@@ -235,6 +236,10 @@ class ForeignStore {
 
   getDailyQuotaCompleted() {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
+  }
+
+  getExplorerUrl(txHash) {
+    return this.explorerTxTemplate.replace('%s', txHash)
   }
 
   @action

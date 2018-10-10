@@ -2,7 +2,7 @@ import { action, observable } from 'mobx';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
-import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
+import { getBlockNumber, getBalance } from './utils/web3'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -61,6 +61,7 @@ class HomeStore {
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
+  explorerTxTemplate = process.env.REACT_APP_HOME_EXPLORER_TX_TEMPLATE || ''
   tokenContract = {}
   blockRewardContract = {}
 
@@ -192,7 +193,7 @@ class HomeStore {
         const confirmationEvents = homeEvents.filter((event) => event.event === "AffirmationCompleted" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
-          const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
+          const urlExplorer = this.getExplorerUrl(event.transactionHash)
           const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
           setTimeout(() => {
             this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
@@ -221,6 +222,10 @@ class HomeStore {
     } catch(e){
       console.error(e)
     }
+  }
+
+  getExplorerUrl(txHash) {
+    return this.explorerTxTemplate.replace('%s', txHash)
   }
 
   @action
