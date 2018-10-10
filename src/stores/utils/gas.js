@@ -5,7 +5,9 @@ export async function fetchGasPrice({ bridgeContract, oracleFn }) {
   try {
     gasPrice = await oracleFn()
   } catch (e) {
-    console.error(`Gas Price API is not available. ${e.message}`)
+    if (!e.message.includes('Gas Price Oracle url not defined')) {
+      console.error(`Gas Price API is not available. ${e.message}`)
+    }
 
     try {
       gasPrice = await bridgeContract.methods.gasPrice().call()
@@ -17,6 +19,9 @@ export async function fetchGasPrice({ bridgeContract, oracleFn }) {
 }
 
 export async function fetchGasPriceFromOracle(oracleUrl, speedType) {
+  if(!oracleUrl) {
+    throw new Error(`Gas Price Oracle url not defined`)
+  }
   const response = await fetch(oracleUrl)
   const json = await response.json()
   const gasPrice = json[speedType]
