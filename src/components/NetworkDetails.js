@@ -31,7 +31,7 @@ export const NetworkDetails = ({
   const totalAmount = isHome ? totalBalance : totalSupply
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
     ? numeral(0).format('0,0.00', Math.floor)
-    : numeral(balance).format('0,0.00', Math.floor)
+    : numeral(balance).format('0,0.000', Math.floor)
 
   return (
     <div className="network-details">
@@ -68,7 +68,7 @@ export const NetworkDetails = ({
         </p>}
         {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Minimum Amount Per Transaction</span>
-          <span className="details-description-black">{numeral(minPerTx).format('0,0.0', Math.floor)} {currency}</span>
+          <span className="details-description-black">{numeral(minPerTx).format('0,0.000', Math.floor)} {currency}</span>
         </p>}
         {displayTokenAddress && (
           <p className="details-data-container">
@@ -91,7 +91,7 @@ export const NetworkDetails = ({
         )}
         <p className="details-data-container">
           <span className="details-label">{totalTitle}</span>
-          <span className="details-description-black">{numeral(totalAmount).format('0,0.00', Math.floor)} {currency}</span>
+          <span className="details-description-black">{numeral(totalAmount).format('0,0.000', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>
