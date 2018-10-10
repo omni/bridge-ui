@@ -26,7 +26,7 @@ export const NetworkDetails = ({
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
   const totalTitle = isHome
-    ? nativeSupplyTitle ? `Native Coins Amount` : `Locked ${currency} in Bridge Contract`
+    ? nativeSupplyTitle ? `Native Coins Amount` : `Totally minted by the bridge`
     : `${currency} Tokens Amount`
   const totalAmount = isHome ? totalBalance : totalSupply
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))

@@ -215,6 +215,7 @@ export class Bridge extends React.Component {
   loadHomeDetails = () => {
     const { web3Store, homeStore, bridgeMode } = this.props.RootStore
     const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
+    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
 
     const modalData = {
       isHome: true,
@@ -232,7 +233,7 @@ export class Bridge extends React.Component {
       tokenAddress: homeStore.tokenAddress,
       tokenName: homeStore.tokenName,
       displayBridgeLimits: true,
-      nativeSupplyTitle: true,
+      nativeSupplyTitle: !isExternalErc20,
       getExplorerAddressUrl: address => homeStore.getExplorerAddressUrl(address)
     }
 

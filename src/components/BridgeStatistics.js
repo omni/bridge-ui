@@ -17,7 +17,7 @@ export const BridgeStatistics = ({ users, totalBridged, homeBalance, homeNativeS
     />
     <div className="separator" />
     <DataBlock
-      description={homeNativeSupplyTitle ? `Native Coins Amount` : `Locked ${homeSymbol} in Bridge Contract`}
+      description={homeNativeSupplyTitle ? `Native Coins Amount` : `Totally minted by the bridge`}
       value={numeral(homeBalance).format('0.00 a', Math.floor)}
       type={homeSymbol}
     />

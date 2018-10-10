@@ -3,13 +3,15 @@ import { inject, observer } from "mobx-react"
 import pattern from '../assets/images/pattern.svg'
 import { BridgeStatistics } from './index'
 import { TransactionsStatistics } from './TransactionsStatistics'
+import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 
 @inject("RootStore")
 @observer
 export class StatisticsPage extends React.Component {
 
   render(){
-    const { homeStore, foreignStore } = this.props.RootStore
+    const { homeStore, foreignStore, bridgeMode } = this.props.RootStore
+    const isNativeToErc = bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC
     return(
       <div className="statistics-page">
         <div className='statistics-left-container' />
@@ -21,7 +23,7 @@ export class StatisticsPage extends React.Component {
                 totalBridged={homeStore.statistics.finished ? homeStore.statistics.totalBridged.toString() : ''}
                 homeBalance={homeStore.balance}
                 homeSymbol={homeStore.symbol}
-                homeNativeSupplyTitle={true}
+                homeNativeSupplyTitle={isNativeToErc}
                 foreignSymbol={foreignStore.symbol}
                 foreignSupply={foreignStore.totalSupply} />
           </div>
