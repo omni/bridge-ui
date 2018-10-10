@@ -21,7 +21,7 @@ import {
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
-import { getBridgeABIs, BRIDGE_MODES } from './utils/bridgeMode'
+import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -193,8 +193,9 @@ class HomeStore {
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
           const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
+          const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
           setTimeout(() => {
-            this.alertStore.pushSuccess(`Tokens received on ${this.networkName} on Tx
+            this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
               <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;">
               ${event.transactionHash}</a>`, this.alertStore.HOME_TRANSFER_SUCCESS)}
             , 2000)

@@ -42,3 +42,22 @@ export const decodeBridgeMode = (bridgeModeHash)  => {
       throw new Error(`Unrecognized bridge mode hash: '${bridgeModeHash}'`)
   }
 }
+
+export const getUnit = (bridgeMode) => {
+  let unitHome = null
+  let unitForeign = null
+  if (bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC) {
+    unitHome = 'Native coins'
+    unitForeign = 'Tokens'
+  } else if (bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
+    unitHome = 'Tokens'
+    unitForeign = 'Tokens'
+  } else if (bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
+    unitHome = 'Tokens'
+    unitForeign = 'Native coins'
+  } else {
+    throw new Error(`Unrecognized bridge mode: ${bridgeMode}`)
+  }
+
+  return { unitHome, unitForeign }
+}

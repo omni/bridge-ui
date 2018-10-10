@@ -15,7 +15,7 @@ import {
   getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
-import { getBridgeABIs, BRIDGE_MODES } from './utils/bridgeMode'
+import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 
 class ForeignStore {
@@ -153,8 +153,9 @@ class ForeignStore {
           if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
             const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
+            const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
             setTimeout(() => {
-                this.alertStore.pushSuccess(`Tokens received on ${this.networkName} on Tx
+                this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
             <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
             ${event.transactionHash}</a>`, this.alertStore.FOREIGN_TRANSFER_SUCCESS)}
               , 2000)
