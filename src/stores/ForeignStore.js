@@ -17,6 +17,7 @@ import {
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
+import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 
 class ForeignStore {
   @observable state = null;
@@ -112,8 +113,17 @@ class ForeignStore {
         ? await getErc20TokenAddress(this.foreignBridge)
         : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
-      this.symbol = await getSymbol(this.tokenContract)
-      this.tokenName = await getName(this.tokenContract)
+      const alternativeContract = new this.foreignWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
+      try {
+        this.symbol =await getSymbol(this.tokenContract)
+      } catch(e) {
+        this.symbol = this.foreignWeb3.utils.hexToAscii(await getSymbol(alternativeContract)).replace(/\u0000*$/, '')
+      }
+      try {
+        this.tokenName = await getName(this.tokenContract)
+      } catch(e) {
+        this.tokenName = this.foreignWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
+      }
     } catch(e) {
       console.error(e)
     }
