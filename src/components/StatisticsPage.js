@@ -12,6 +12,8 @@ export class StatisticsPage extends React.Component {
   render(){
     const { homeStore, foreignStore, bridgeMode } = this.props.RootStore
     const isNativeToErc = bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC
+    const leftTitle = isNativeToErc ? 'Deposits' : 'Withdraws'
+    const rightTitle = isNativeToErc ? 'Withdraws' : 'Deposits'
     return(
       <div className="statistics-page">
         <div className='statistics-left-container' />
@@ -29,14 +31,14 @@ export class StatisticsPage extends React.Component {
           </div>
           <div className='statistics-transaction-container'>
             <div className='statistics-deposit-container'>
-              <span className='statistics-deposit-title statistics-title'>Tokens Deposits</span>
+              <span className='statistics-deposit-title statistics-title'>Tokens {leftTitle}</span>
               <TransactionsStatistics
                 txNumber={homeStore.statistics.finished ? homeStore.statistics.deposits : ''}
                 type={foreignStore.symbol}
                 value={homeStore.statistics.finished ? homeStore.statistics.depositsValue : ''} />
             </div>
             <div className='statistics-withdraw-container'>
-              <span className='statistics-withdraw-title statistics-title'>Tokens Withdraws</span>
+              <span className='statistics-withdraw-title statistics-title'>Tokens {rightTitle}</span>
               <TransactionsStatistics
                 txNumber={homeStore.statistics.finished ? homeStore.statistics.withdraws : ''}
                 type={foreignStore.symbol}
