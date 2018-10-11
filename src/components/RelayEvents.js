@@ -2,7 +2,6 @@ import React from 'react';
 import { inject, observer } from "mobx-react";
 import { EventsListHeader } from './index'
 import { Event } from './index'
-import { getExplorerUrl } from '../stores/utils/web3'
 
 
 const WAIT_INTERVAL = 700;
@@ -153,15 +152,15 @@ export class RelayEvents extends React.Component {
           {selectedList === this.homeValue
             && home.map(event =>
             <Event
-              txUrl={getExplorerUrl(web3Store.homeNet.id) + 'tx/'}
-              accountUrl={getExplorerUrl(web3Store.homeNet.id) + 'account/'}
+              txUrl={homeStore.getExplorerTxUrl(event.transactionHash)}
+              accountUrl={homeStore.getExplorerAddressUrl(event.recipient)}
               key={event.transactionHash+event.eventName}
               {...event} />)}
           {selectedList === this.foreingValue
             && foreign.map(event =>
             <Event
-              txUrl={getExplorerUrl(web3Store.foreignNet.id) + 'tx/'}
-              accountUrl={getExplorerUrl(web3Store.foreignNet.id) + 'address/'}
+              txUrl={foreignStore.getExplorerTxUrl(event.transactionHash)}
+              accountUrl={foreignStore.getExplorerAddressUrl(event.recipient)}
               key={event.transactionHash+event.eventName}
               {...event} />)}
         </div>
