@@ -34,13 +34,13 @@ class GasPriceStore {
       this.gasPrice = HOME_GAS_PRICE_FALLBACK
       this.oracleUrl = HOME_GAS_PRICE_ORACLE_URL
       this.speedType = HOME_GAS_PRICE_SPEED_TYPE
-      this.updateInterval = HOME_GAS_PRICE_UPDATE_INTERVAL
+      this.updateInterval = HOME_GAS_PRICE_UPDATE_INTERVAL || 900000
       this.bridgeContract = this.homeStore.homeBridge
     } else {
       this.gasPrice = FOREIGN_GAS_PRICE_FALLBACK
       this.oracleUrl = FOREIGN_GAS_PRICE_ORACLE_URL
       this.speedType = FOREIGN_GAS_PRICE_SPEED_TYPE
-      this.updateInterval = FOREIGN_GAS_PRICE_UPDATE_INTERVAL
+      this.updateInterval = FOREIGN_GAS_PRICE_UPDATE_INTERVAL || 900000
       this.bridgeContract = this.foreignStore.foreignBridge
     }
 
@@ -50,7 +50,6 @@ class GasPriceStore {
     })
 
     this.gasPrice = newGasPrice || this.gasPrice
-
     setTimeout(() => this.updateGasPrice(), this.updateInterval)
   }
 
