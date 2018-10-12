@@ -67,7 +67,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
 - [node.js](https://nodejs.org/en/download/)
 - [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/)
 
-### Setup
+### Example Setup
 
 1. Create an empty folder where you will be setting up your bridge. In this example we call it `sokol-kovan-bridge`.
 `mkdir sokol-kovan-bridge && cd sokol-kovan-bridge`  
@@ -102,7 +102,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
 
 If successful, you will see bridge processes run when you issue a command. For example run `npm run watcher:signature-request`
 
-**Example Output:**
+**Example NPM Output:**
 ```bash
 [1539195000507] INFO (watcher-signature-request): Connected to redis
 [1539195000545] INFO (watcher-signature-request): Connected to amqp Broker
@@ -110,11 +110,23 @@ If successful, you will see bridge processes run when you issue a command. For e
 [1539195011467] INFO (watcher-signature-request): Found 0 UserRequestForSignature events
 ```
 
+**Example Docker Output:**
+
+```bash
+{"level":30,"time":1539366879816,"msg":"Connected to redis","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
+{"level":30,"time":1539366879880,"msg":"Connected to amqp Broker","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
+{"level":30,"time":1539366885587,"msg":"Found 0 UserRequestForSignature events","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
+```
+
+
 6. Keep the bridge processes running. Open a separate terminal window and go to the `sokol-kovan-bridge` folder to install and unpack this repository.
 
   *  `git clone https://github.com/poanetwork/bridge-ui.git`  
-  * `cd bridge-ui`  
-  * `npm install`  
+  * `cd bridge-ui`
+  * Update submodules  
+`git submodule update --init --recursive --remote` 
+  * Install dependencies  
+`npm install`  
   * Create a .env file from the example file[.env.example](.env.example)  
 `cp .env.example .env`  
   * Insert addresses from the bridgeDeploymentResults.json file into the .env file.
