@@ -48,7 +48,7 @@ The wallet must be funded to cover gas costs related to the transfer. With the N
 - Click the `Transfer` button.
 - Confirm the transaction via the web3 wallet. 
 
-The same address is used to send a coin from the Home network and receive a token on the Foreign Network. In order to send assets in the opposite direction, change the network in the web3 wallet. 
+The same address is used to send a coin from the Home network and receive a token on the Foreign Network. In order to send assets in the opposite direction, change the network in the web3 wallet. This will change the bridge interface to show the selected network on the left side of the bridge.
 
 ![Web3 Wallet Change Network](web3wallet_network.gif)
 
@@ -80,10 +80,13 @@ The following is an example setup using the POA Sokol testnet as the Home networ
 1. Create an empty folder for setting up your bridge. In this example we call it `sokol-kovan-bridge`.
 `mkdir sokol-kovan-bridge && cd sokol-kovan-bridge`  
 
-2. Prepare temporary ETH address(es) for deployment by creating new account(s) in Nifty Wallet or MetaMask. See the [wallet resources](#resources) if you need more information on this step.  
+2. Prepare temporary ETH address(es) for deployment by creating new account(s) in Nifty Wallet or MetaMask. See the [wallet resources](#resources) if you need more information on this step. This account is used:
+    * for deploying bridge contracts to both networks
+    * as the bridge contracts management wallet
+    * as the validator's wallet address(es)
 
 3. Fund the test account(s).
-    * Fund Home accounts (`Validators`) using the [POA Sokol Faucet](https://faucet-sokol.herokuapp.com/)
+    * Fund Home accounts (`validators`) using the [POA Sokol Faucet](https://faucet-sokol.herokuapp.com/)
     * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) for Foreign Accounts. Get 5 Keth to 1 acc, and transfer from it to all other wallets.
 
 4. Deploy the Sokol <-> Kovan Bridge contracts.
@@ -92,14 +95,15 @@ The following is an example setup using the POA Sokol testnet as the Home networ
     * Set the parameters in the .env file.
       * `DEPLOYMENT_ACCOUNT_PRIVATE_KEY`: Export the private key from step 2
       * `HOME_RPC_URL`=https://sokol.poa.network
-      * Wallet address(es) for the validators. For testing, you can use the same address for all address values in the file. This includes:
+      * Wallet address(es) for bridge contracts management. For testing, you can use the same address for all address values in the file. This includes:
         * `HOME_OWNER_MULTISIG`
         * `HOME_UPGRADEABLE_ADMIN_VALIDATORS`
         * `HOME_UPGRADEABLE_ADMIN_BRIDGE`
         * `FOREIGN_OWNER_MULTISIG`
         * `FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS`
         * `FOREIGN_UPGRADEABLE_ADMIN_BRIDGE`
-      * FOREIGN_RPC_URL=https://kovan.infura.io/mew
+        * `VALIDATORS`
+      * `FOREIGN_RPC_URL`=https://kovan.infura.io/mew
     * When deployment is finished, check that the `bridgeDeploymentResults.json` file exists in the `poa-bridge-contracts/deploy` directory and includes the bridge contract addresses.  
 
 5. Install and run the POA Token Bridge.
@@ -123,7 +127,7 @@ If successful, you will see bridge processes run when you issue a command. For e
 ```bash
 {"level":30,"time":1539366879816,"msg":"Connected to redis","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
 {"level":30,"time":1539366879880,"msg":"Connected to amqp Broker","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
-{"level":30,"time":1539366885587,"msg":"Found 0 UserRequestForSignature events","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
+{"level":30,"time":1539366885587,"msg":"Found 0 UserRequestForSignature events","validator":"0x..........","name":"watcher-signature-request","v":1}
 ```
 
 6. Keep the bridge processes running. Open a separate terminal window and go to the `sokol-kovan-bridge` folder to install and unpack this repository.
