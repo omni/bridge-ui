@@ -86,8 +86,8 @@ The following is an example setup using the POA Sokol testnet as the Home networ
     * as the validator's wallet address(es)
 
 3. Fund the test account(s).
-    * Fund Home accounts (`validators`) using the [POA Sokol Faucet](https://faucet-sokol.herokuapp.com/)
-    * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) for Foreign Accounts. Get 5 Keth to 1 acc, and transfer from it to all other wallets.
+    * Fund Home account(s) using the [POA Sokol Faucet](https://faucet-sokol.herokuapp.com/)
+    * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) for Foreign account(s). Get 5 Keth to 1 acc, and transfer from there to all other wallets if more than one account is used.
 
 4. Deploy the Sokol <-> Kovan Bridge contracts.
     * Go to the the `sokol-kovan-bridge` folder created in step 1 and `git clone https://github.com/poanetwork/poa-bridge-contracts`
@@ -102,8 +102,8 @@ The following is an example setup using the POA Sokol testnet as the Home networ
         * `FOREIGN_OWNER_MULTISIG`
         * `FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS`
         * `FOREIGN_UPGRADEABLE_ADMIN_BRIDGE`
-        * `VALIDATORS`
-      * `FOREIGN_RPC_URL`=https://kovan.infura.io/mew
+        * `VALIDATORS` _Note: Wallet address(es) for validator(s) are separated by a space. For testing, you can use the same address that was used as the bridge contracts management account._
+      * `FOREIGN_RPC_URL`=https://kovan.infura.io
     * When deployment is finished, check that the `bridgeDeploymentResults.json` file exists in the `poa-bridge-contracts/deploy` directory and includes the bridge contract addresses.  
 
 5. Install and run the POA Token Bridge.
@@ -125,8 +125,8 @@ If successful, you will see bridge processes run when you issue a command. For e
 **Note:** The output will depend on your Docker configuration. You may need to access the container logs to view.
 
 ```bash
-{"level":30,"time":1539366879816,"msg":"Connected to redis","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
-{"level":30,"time":1539366879880,"msg":"Connected to amqp Broker","validator":"0xC9f74f16F3743f4370c66DdA728D1751BCBa2616","name":"watcher-signature-request","v":1}
+{"level":30,"time":1539366879816,"msg":"Connected to redis","validator":"0x..........","name":"watcher-signature-request","v":1}
+{"level":30,"time":1539366879880,"msg":"Connected to amqp Broker","validator":"0x..........","name":"watcher-signature-request","v":1}
 {"level":30,"time":1539366885587,"msg":"Found 0 UserRequestForSignature events","validator":"0x..........","name":"watcher-signature-request","v":1}
 ```
 
