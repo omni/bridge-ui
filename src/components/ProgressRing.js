@@ -7,9 +7,10 @@ export class ProgressRing extends Component {
   }
 
   render() {
-    const { radius, stroke, progress, confirmationNumber } = this.props
+    const { radius, stroke, progress, confirmationNumber, hideConfirmationNumber } = this.props
     const { circumference, normalizedRadius } = this.state
     const strokeDashoffset = circumference - progress / 100 * circumference
+    const confirmations = hideConfirmationNumber ? '' : `${confirmationNumber}/8`
     return (
       <svg
         height={radius * 2}
@@ -36,7 +37,7 @@ export class ProgressRing extends Component {
           cy={ radius }
         />
         <text x="28" y="47" fontFamily="Nunito" fontSize="18" fill="white">
-          {confirmationNumber}/8
+          {confirmations}
         </text>
       </svg>
     );

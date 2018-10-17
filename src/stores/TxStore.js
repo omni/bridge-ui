@@ -39,7 +39,7 @@ class TxStore {
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          if(!e.message.includes('not mined within 50 blocks')){
+          if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')){
             this.alertStore.setLoading(false)
             this.alertStore.pushError('Transaction rejected on Metamask');
           }
