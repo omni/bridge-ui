@@ -103,7 +103,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
         * `FOREIGN_UPGRADEABLE_ADMIN_VALIDATORS`
         * `FOREIGN_UPGRADEABLE_ADMIN_BRIDGE`
         * `VALIDATORS` _Note: Wallet address(es) for validator(s) are separated by a space. For testing, you can use the same address that was used as the bridge contracts management account._
-      * `FOREIGN_RPC_URL`=https://kovan.infura.io
+      * `FOREIGN_RPC_URL`=https://kovan.infura.io/mew
     * When deployment is finished, check that the `bridgeDeploymentResults.json` file exists in the `poa-bridge-contracts/deploy` directory and includes the bridge contract addresses.  
 
 5. Install and run the POA Token Bridge.
