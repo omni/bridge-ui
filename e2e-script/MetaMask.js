@@ -137,8 +137,9 @@ class MetaMask extends Page {
         break;
       }
     }
+    const index = networks.length > 8 ? 8 : networks.length;
     await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')[" +
-      (networks.length - 1) + "].click();");
+      (index - 1) + "].click();");
     return await super.fillWithWait(fieldNewRPCURL, url) &&
       await super.clickWithWait(buttonSave) &&
       await super.clickWithWait(arrowBackRPCURL);

@@ -17,7 +17,7 @@ const getWeb3 = () => {
           document.title = `${netIdName} - Bridge UI dApp`
           const defaultAccount = web3.eth.defaultAccount || null;
           if(defaultAccount === null){
-            reject({message: 'Please unlock your metamask and refresh the page'})
+            reject({message: 'Please unlock your wallet and refresh the page'})
           }
           const results = {
             web3Instance: new Web3(web3.currentProvider),
@@ -31,11 +31,11 @@ const getWeb3 = () => {
 
       } else {
         // Fallback to localhost if no web3 injection.
-        const errorMsg = `Metamask is not installed. Please go to
-        <a target="_blank" href="https://metamask.io">Metamask website</a> and return to this page after you installed it`
+        const errorMsg = `A wallet is not installed. Please go to
+        <a target="_blank" href="https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid">Nifty Wallet</a> and return to this page after you installed it`
         reject({message: errorMsg})
         console.log('No web3 instance injected, using Local web3.');
-        console.error('Metamask not found');
+        console.error('wallet not found');
       }
     })
   })
@@ -44,26 +44,14 @@ const getWeb3 = () => {
 export default getWeb3
 
 const networks = {
-  1: 'Network',
+  1: 'ETH Mainnet',
   3: 'Ropsten',
   4: 'Rinkeby',
-  42:'Kovan',
-  77:'Sokol',
-  99:'Network'
+  42: 'Kovan',
+  77: 'Sokol',
+  99: 'POA Network',
+  100: 'Dai Chain'
 }
-
-const explorers = {
-  1: 'https://etherscan.io/',
-  3: 'https://ropsten.etherscan.io/',
-  4: 'https://rinkeby.etherscan.io/',
-  42:'https://kovan.etherscan.io/',
-  77:'https://sokol-explorer.poa.network/',
-  99:'https://poaexplorer.com/'
-}
-
-export const getExplorerUrl = (id) => explorers[id]
-
-export const getAddressUrl = (id) => getExplorerUrl(id) + (id.toString() === '77' ? 'account/' : 'address/')
 
 export const getNetworkName = (id) => networks[id] || 'Unknown'
 
@@ -92,5 +80,3 @@ export const estimateGas = async (web3, to, gasPrice, from, value, data) =>{
   const gas = await web3.eth.estimateGas({to, gasPrice, from, value, data})
   return Web3Utils.toHex(gas.toString())
 }
-
-export const getGasPrices = () => fetch('https://gasprice.poa.network/').then(response => response.json())

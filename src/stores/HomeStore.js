@@ -1,9 +1,8 @@
 import { action, observable } from 'mobx';
-import { abi as HOME_NATIVE_ABI } from '../contracts/HomeBridgeNativeToErc.json';
-import { abi as HOME_ERC_ABI } from '../contracts/HomeBridgeErcToErc';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
-import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
+import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
+import { getBlockNumber, getBalance } from './utils/web3'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -13,12 +12,18 @@ import {
   getErc677TokenAddress,
   getSymbol,
   getTotalSupply,
-  getBalanceOf
+  getBalanceOf,
+  mintedTotally,
+  totalBurntCoins,
+  getBridgeValidators,
+  getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
+import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
+import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -42,7 +47,8 @@ class HomeStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
-  @observable symbol = 'POA';
+  @observable symbol = process.env.REACT_APP_HOME_NATIVE_NAME || 'NONAME';
+  @observable tokenName = '';
   @observable userBalance = 0
   @observable statistics = {
     deposits: 0,
@@ -53,10 +59,14 @@ class HomeStore {
     users: new Set(),
     finished: false
   }
+  networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
+  explorerTxTemplate = process.env.REACT_APP_HOME_EXPLORER_TX_TEMPLATE || ''
+  explorerAddressTemplate = process.env.REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE || ''
   tokenContract = {}
+  blockRewardContract = {}
 
   constructor (rootStore) {
     this.homeWeb3 = rootStore.web3Store.homeWeb3
@@ -72,10 +82,12 @@ class HomeStore {
       setTimeout(() => this.setHome(), 200)
       return
     }
-    const HOME_ABI = this.rootStore.isErcToErcMode ? HOME_ERC_ABI : HOME_NATIVE_ABI
+    const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
-    if (this.rootStore.isErcToErcMode) {
-        this.getTokenInfo()
+    if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
+      await this.getTokenInfo()
+    } else if(this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
+      await this.getBlockRewardContract()
     }
     await this.getBlockNumber()
     this.getMinPerTxLimit()
@@ -101,6 +113,18 @@ class HomeStore {
       this.tokenAddress = await getErc677TokenAddress(this.homeBridge)
       this.tokenContract = new this.homeWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
+      this.tokenName = await getName(this.tokenContract)
+      const alternativeContract = new this.foreignWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
+      try {
+        this.symbol =await getSymbol(this.tokenContract)
+      } catch(e) {
+        this.symbol = this.homeWeb3.utils.hexToAscii(await getSymbol(alternativeContract)).replace(/\u0000*$/, '')
+      }
+      try {
+        this.tokenName = await getName(this.tokenContract)
+      } catch(e) {
+        this.tokenName = this.homeWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
+      }
     } catch(e) {
       console.error(e)
     }
@@ -114,7 +138,7 @@ class HomeStore {
       console.error(e)
     }
   }
-  
+
   @action
   async getMaxPerTxLimit(){
     try {
@@ -136,12 +160,16 @@ class HomeStore {
   @action
   async getBalance() {
     try {
-      if (this.rootStore.isErcToErcMode) {
+      if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC) {
         this.balance = await getTotalSupply(this.tokenContract)
         this.web3Store.getWeb3Promise.then(async () => {
           this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
           balanceLoaded()
         })
+      } else if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
+        const mintedCoins = await mintedTotally(this.blockRewardContract)
+        const burntCoins = await totalBurntCoins(this.homeBridge)
+        this.balance = Web3Utils.fromWei(mintedCoins.minus(burntCoins).toString(10))
       } else {
         this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
       }
@@ -156,6 +184,11 @@ class HomeStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
+
+      if (fromBlock < 0) {
+        fromBlock = 0
+      }
+
       let events = await getPastEvents(this.homeBridge, fromBlock, toBlock).catch(e => {
         console.error('Couldn\'t get events', e)
         return []
@@ -177,9 +210,10 @@ class HomeStore {
         const confirmationEvents = homeEvents.filter((event) => event.event === "AffirmationCompleted" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
-          const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
+          const urlExplorer = this.getExplorerTxUrl(event.transactionHash)
+          const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
           setTimeout(() => {
-            this.alertStore.pushSuccess(`Tokens received on POA ${this.web3Store.homeNet.name} on Tx 
+            this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
               <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;">
               ${event.transactionHash}</a>`, this.alertStore.HOME_TRANSFER_SUCCESS)}
             , 2000)
@@ -207,6 +241,14 @@ class HomeStore {
     }
   }
 
+  getExplorerTxUrl(txHash) {
+    return this.explorerTxTemplate.replace('%s', txHash)
+  }
+
+  getExplorerAddressUrl(address) {
+    return this.explorerAddressTemplate.replace('%s', address)
+  }
+
   @action
   async filterByTxHashInReturnValues(transactionHash) {
     const events = await this.getEvents(1,"latest");
@@ -225,7 +267,7 @@ class HomeStore {
   setFilter(value){
     this.filter = value
   }
-  
+
   @action
   async setBlockFilter(blockNumber){
     this.filteredBlockNumber = blockNumber
@@ -255,16 +297,7 @@ class HomeStore {
     try {
       const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
       this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-
-      let ValidatorAdded = await this.homeBridgeValidators.getPastEvents('ValidatorAdded', {fromBlock: 0});
-      let ValidatorRemoved = await this.homeBridgeValidators.getPastEvents('ValidatorRemoved', {fromBlock: 0});
-      let homeAddedValidators = ValidatorAdded.map(val => {
-        return val.returnValues.validator
-      })
-      const homeRemovedValidators = ValidatorRemoved.map(val => {
-        return val.returnValues.validator
-      })
-      this.validators =  homeAddedValidators.filter(val => !homeRemovedValidators.includes(val));
+      this.validators =  await getBridgeValidators(this.homeBridgeValidators)
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
     } catch(e){
       console.error(e)
@@ -322,7 +355,12 @@ class HomeStore {
   }
 
   getDisplayedBalance() {
-    return this.rootStore.isErcToErcMode ? this.userBalance : this.web3Store.defaultAccount.homeBalance
+    return this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC ? this.userBalance : this.web3Store.defaultAccount.homeBalance
+  }
+
+  async getBlockRewardContract () {
+    const blockRewardAddress = await this.homeBridge.methods.blockRewardContract().call()
+    this.blockRewardContract = new this.homeWeb3.eth.Contract(BLOCK_REWARD_ABI, blockRewardAddress)
   }
 
   async waitUntilProcessed(txHash, value) {

@@ -10,12 +10,14 @@ docker-compose run -d bridge npm run watcher:affirmation-request
 docker-compose run -d bridge-erc20 npm run watcher:signature-request
 docker-compose run -d bridge-erc20 npm run watcher:collected-signatures
 docker-compose run -d bridge-erc20 npm run watcher:affirmation-request
+docker-compose run -d bridge-erc20-native npm run watcher:signature-request
+docker-compose run -d bridge-erc20-native npm run watcher:collected-signatures
+docker-compose run -d bridge-erc20-native npm run watcher:affirmation-request
 docker-compose run -d bridge npm run sender:home
 docker-compose run -d bridge npm run sender:foreign
 docker-compose run -d ui npm start
 docker-compose run -d ui-erc20 npm start
-echo "Waiting for blocks being generated"
-sleep 5m
+docker-compose run -d ui-erc20-native npm start
 cd ..
 npm run startE2e
 rc=$?

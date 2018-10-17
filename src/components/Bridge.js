@@ -9,12 +9,11 @@ import { BridgeNetwork } from './index'
 import { ModalContainer } from './ModalContainer'
 import { NetworkDetails } from './NetworkDetails'
 import { TransferAlert } from './TransferAlert'
-import homeLogo from '../assets/images/logos/logo-poa-sokol@2x.png'
-import foreignLogo from '../assets/images/logos/logo-poa-20@2x.png'
 import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
 import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
 import leftImage from '../assets/images/pattern-1.png'
 import rightImage from '../assets/images/pattern-2.png'
+import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 
 @inject("RootStore")
 @observer
@@ -62,10 +61,11 @@ export class Bridge extends React.Component {
   }
 
   async _sendToHome(amount){
-    const { web3Store, homeStore, alertStore, txStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, homeStore, alertStore, txStore, bridgeMode } = this.props.RootStore
+    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.homeNet.id.toString()){
-      swal("Error", `Please switch metamask to ${web3Store.homeNet.name} network`, "error")
+      swal("Error", `Please switch wallet to ${web3Store.homeNet.name} network`, "error")
       return
     }
     if(isLessThan(amount, homeStore.minPerTx)){
@@ -110,21 +110,22 @@ export class Bridge extends React.Component {
   }
 
   async _sendToForeign(amount){
-    const { web3Store, foreignStore, alertStore, txStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, foreignStore, alertStore, txStore, bridgeMode } = this.props.RootStore
+    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
-      swal("Error", `Please switch metamask to ${web3Store.foreignNet.name} network`, "error")
+      swal("Error", `Please switch wallet to ${web3Store.foreignNet.name} network`, "error")
       return
     }
-    if(!isErcToErcMode && isLessThan(amount, foreignStore.minPerTx)){
+    if(!isExternalErc20 && isLessThan(amount, foreignStore.minPerTx)){
       alertStore.pushError(`The amount is less than minimum amount per transaction.\nThe min per transaction is: ${foreignStore.minPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(!isErcToErcMode && isGreaterThan(amount, foreignStore.maxPerTx)){
+    if(!isExternalErc20 && isGreaterThan(amount, foreignStore.maxPerTx)){
       alertStore.pushError(`The amount is above maximum amount per transaction.\nThe max per transaction is: ${foreignStore.maxPerTx} ${foreignStore.symbol}`)
       return
     }
-    if(!isErcToErcMode && isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
+    if(!isExternalErc20 && isGreaterThan(amount, foreignStore.maxCurrentDeposit)){
       alertStore.pushError(`The amount is above current daily limit.\nThe max withdrawal today: ${foreignStore.maxCurrentDeposit} ${foreignStore.symbol}`)
       return
     }
@@ -133,7 +134,7 @@ export class Bridge extends React.Component {
     } else {
       try {
         alertStore.setLoading(true)
-        if (isErcToErcMode) {
+        if (isExternalErc20) {
           return await txStore.erc20transfer({
             to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
@@ -176,8 +177,8 @@ export class Bridge extends React.Component {
     }
 
     const { reverse } = this.state
-    const homeDisplayName = 'POA ' + web3Store.homeNet.name
-    const foreignDisplayName = 'ETH ' + web3Store.foreignNet.name
+    const homeDisplayName = homeStore.networkName
+    const foreignDisplayName = foreignStore.networkName
 
     const confirmationData = {
       from: reverse ? foreignDisplayName : homeDisplayName,
@@ -214,7 +215,9 @@ export class Bridge extends React.Component {
   }
 
   loadHomeDetails = () => {
-    const { web3Store, homeStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, homeStore, bridgeMode } = this.props.RootStore
+    const isErcToErcMode = bridgeMode === BRIDGE_MODES.ERC_TO_ERC
+    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
 
     const modalData = {
       isHome: true,
@@ -230,14 +233,18 @@ export class Bridge extends React.Component {
       balance: homeStore.getDisplayedBalance(),
       displayTokenAddress: isErcToErcMode,
       tokenAddress: homeStore.tokenAddress,
-      displayBridgeLimits: true
+      tokenName: homeStore.tokenName,
+      displayBridgeLimits: true,
+      nativeSupplyTitle: !isExternalErc20,
+      getExplorerAddressUrl: address => homeStore.getExplorerAddressUrl(address)
     }
 
     this.setState({ modalData, showModal: true })
   }
 
   loadForeignDetails = () => {
-    const { web3Store, foreignStore, isErcToErcMode } = this.props.RootStore
+    const { web3Store, foreignStore, bridgeMode } = this.props.RootStore
+    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
     const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
 
@@ -252,10 +259,12 @@ export class Bridge extends React.Component {
       maxPerTx: foreignStore.maxPerTx,
       minPerTx: foreignStore.minPerTx,
       tokenAddress: foreignStore.tokenAddress,
+      tokenName: foreignStore.tokenName,
       totalSupply: foreignStore.totalSupply,
       balance: foreignStore.balance,
       displayTokenAddress: true,
-      displayBridgeLimits: !isErcToErcMode
+      displayBridgeLimits: !isExternalErc20,
+      getExplorerAddressUrl: address => foreignStore.getExplorerAddressUrl(address)
     }
 
     this.setState({ modalData, showModal: true })
@@ -274,13 +283,16 @@ export class Bridge extends React.Component {
       }
     }
 
+    const homeNetworkName = homeStore.networkName
+    const foreignNetworkName = foreignStore.networkName
+
     return(
       <div className="bridge-container">
         <div className="bridge">
           <BridgeAddress
             isHome={true}
             reverse={reverse}
-            logo={reverse ? foreignLogo : homeLogo} />
+            labelName={reverse ? foreignStore.symbol : homeStore.symbol} />
           <div className="bridge-transfer">
             <div className="left-image-wrapper">
               <img className="left-image" src={leftImage} alt=""/>
@@ -289,9 +301,8 @@ export class Bridge extends React.Component {
               <div className="bridge-transfer-content-background">
                 <BridgeNetwork
                   isHome={true}
-                  networkTitle={reverse ? 'ETH' : 'POA'}
                   showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
-                  networkData={reverse ? web3Store.foreignNet : web3Store.homeNet}
+                  networkTitle={reverse ? foreignNetworkName : homeNetworkName}
                   currency={reverse ? foreignStore.symbol : homeStore.symbol}
                   balance={reverse ? foreignStore.balance : homeStore.getDisplayedBalance()} />
                 <BridgeForm
@@ -302,9 +313,8 @@ export class Bridge extends React.Component {
                   onInputChange={this.handleInputChange('amount')} />
                 <BridgeNetwork
                   isHome={false}
-                  networkTitle={reverse ? 'POA' : 'ETH'}
                   showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
-                  networkData={reverse ? web3Store.homeNet : web3Store.foreignNet}
+                  networkTitle={reverse ? homeNetworkName : foreignNetworkName}
                   currency={reverse ? homeStore.symbol : foreignStore.symbol}
                   balance={reverse ? homeStore.getDisplayedBalance() : foreignStore.balance} />
               </div>
@@ -316,7 +326,7 @@ export class Bridge extends React.Component {
           <BridgeAddress
             isHome={false}
             reverse={reverse}
-            logo={reverse ? homeLogo : foreignLogo} />
+            labelName={reverse ? homeStore.symbol : foreignStore.symbol} />
           <ModalContainer
             hideModal={() => {this.setState({showModal: false})}}
             showModal={showModal}

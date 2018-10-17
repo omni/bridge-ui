@@ -9,5 +9,6 @@ RUN apt-get clean
 
 RUN git clone https://github.com/poanetwork/bridge-nodejs.git
 WORKDIR /bridge-nodejs
-RUN cd submodules/poa-bridge-contracts && git submodule update --init --recursive && ls && git checkout refactor_v1
+RUN git fetch && git checkout support-erc20-native-#81
+RUN cd submodules/poa-bridge-contracts && git submodule update --init --recursive && git fetch && git checkout erc20-to-native-#79
 RUN npm install

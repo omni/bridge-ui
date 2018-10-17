@@ -5,7 +5,6 @@ import infoIcon from '../assets/images/icons/icon-info.svg'
 export const BridgeNetwork = ({
   isHome,
   networkTitle,
-  networkData,
   currency,
   balance,
   showModal
@@ -30,7 +29,6 @@ export const BridgeNetwork = ({
     <div className={`network-container-${containerName}`}>
       <p>
         <span className="network-title">{networkTitle}</span>
-        <span className="network-name">{networkData.name}</span>
       </p>
       <p>
         <span className="network-basic-label">Balance:</span>

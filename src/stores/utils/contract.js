@@ -42,3 +42,27 @@ export const getBalanceOf = async (contract, address) => {
   const balance = await contract.methods.balanceOf(address).call()
   return Web3Utils.fromWei(balance)
 }
+
+export const mintedTotally = async (contract) => {
+  const mintedCoins = await contract.methods.mintedTotally().call()
+  return new BN(mintedCoins)
+}
+
+export const totalBurntCoins = async (contract) => {
+  const burntCoins = await contract.methods.totalBurntCoins().call()
+  return new BN(burntCoins)
+}
+
+export const getBridgeValidators = async (bridgeValidatorContract) => {
+  let ValidatorAdded = await bridgeValidatorContract.getPastEvents('ValidatorAdded', {fromBlock: 0});
+  let ValidatorRemoved = await bridgeValidatorContract.getPastEvents('ValidatorRemoved', {fromBlock: 0});
+  let addedValidators = ValidatorAdded.map(val => {
+    return val.returnValues.validator
+  })
+  const removedValidators = ValidatorRemoved.map(val => {
+    return val.returnValues.validator
+  })
+  return addedValidators.filter(val => !removedValidators.includes(val));
+}
+
+export const getName = (contract) => contract.methods.name().call()
