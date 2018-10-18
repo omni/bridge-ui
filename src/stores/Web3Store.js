@@ -81,9 +81,12 @@ class Web3Store {
       this.defaultAccount.homeBalance = await getBalance(this.homeWeb3, this.defaultAccount.address)
       if(accountUpdated) {
         await this.rootStore.foreignStore.getTokenBalance()
+        await this.rootStore.homeStore.getBalance()
         this.alertStore.setLoading(false)
       }
-      balanceLoaded()
+      if (this.rootStore.bridgeModeInitialized && !this.rootStore.isErcToErcMode) {
+        balanceLoaded()
+      }
     } catch(e){
       console.error(e)
     }

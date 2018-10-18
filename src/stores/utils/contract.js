@@ -11,9 +11,9 @@ export const getMinPerTxLimit = async (contract) => {
   return Web3Utils.fromWei(minPerTx)
 }
 
-export const getCurrentLimit = async (contract, isHome) => {
+export const getCurrentLimit = async (contract) => {
   const currentDay = await contract.methods.getCurrentDay().call()
-  const dailyLimit = isHome ? (await contract.methods.homeDailyLimit().call()) : (await contract.methods.foreignDailyLimit().call())
+  const dailyLimit = await contract.methods.dailyLimit().call()
   const totalSpentPerDay = await contract.methods.totalSpentPerDay(currentDay).call()
   const maxCurrentDeposit = new BN(dailyLimit).minus(new BN(totalSpentPerDay)).toString(10)
   return {
@@ -26,6 +26,8 @@ export const getCurrentLimit = async (contract, isHome) => {
 export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents({ fromBlock, toBlock })
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
+
+export const getErc20TokenAddress = (contract) => contract.methods.erc20token().call()
 
 export const getSymbol = (contract) => contract.methods.symbol().call()
 

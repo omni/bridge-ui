@@ -20,7 +20,7 @@ export class StatusPage extends React.Component {
               <Configuration
                 requiredSignatures={homeStore.requiredSignatures}
                 authorities={homeStore.validators.length}
-                estGasCost={0}
+                symbol={homeStore.symbol}
                 maxSingleDeposit={homeStore.maxPerTx}
                 maxTotalBalance={homeStore.maxCurrentDeposit} />
           </div>

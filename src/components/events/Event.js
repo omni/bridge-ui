@@ -10,7 +10,7 @@ export const Event = ({ color, eventName, transactionHash, recipient, value, blo
       <div className="event-tx-container txhash-column">
         <span className={`event-name background-${color}`}>{eventName}</span>
         <span>
-          <a href={txUrl+transactionHash} target="_blank" className="event-txhash">{transactionHash.slice(0,24).concat('...')}</a>
+          <a href={txUrl+transactionHash} target="_blank" className="event-txhash">{transactionHash.slice(0,18).concat('...')}</a>
           <CopyToClipboard text={transactionHash}>
             <img className="event-copy-tx" src={copyIcon} alt=""/>
           </CopyToClipboard>

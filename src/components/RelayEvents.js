@@ -15,10 +15,12 @@ export class RelayEvents extends React.Component {
     super(props)
     this.timer = null;
     this.colors = {
-      'Deposit': 'green',
-      'Withdraw': 'red',
-      'SignedForDeposit': 'purple',
-      'SignedForWithdraw': 'purple',
+      'UserRequestForSignature': 'green',
+      'RelayedMessage': 'green',
+      'UserRequestForAffirmation': 'red',
+      'AffirmationCompleted': 'red',
+      'SignedForUserRequest': 'purple',
+      'SignedForAffirmation': 'purple',
       'CollectedSignatures': 'blue'
     }
     this.homeValue = '0'
@@ -101,7 +103,7 @@ export class RelayEvents extends React.Component {
   }
 
   getHomeEvents = (homeStore) => {
-    return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}, index) =>
+    return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}) =>
       ({
         color: this.colors[event],
         eventName: event,
@@ -153,7 +155,7 @@ export class RelayEvents extends React.Component {
             <Event
               txUrl={getExplorerUrl(web3Store.homeNet.id) + 'tx/'}
               accountUrl={getExplorerUrl(web3Store.homeNet.id) + 'account/'}
-              key={event.transactionHash}
+              key={event.transactionHash+event.eventName}
               {...event} />)}
           {selectedList === this.foreingValue
             && foreign.map(event =>

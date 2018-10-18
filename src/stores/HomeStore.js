@@ -1,11 +1,29 @@
 import { action, observable } from 'mobx';
-import HOME_ABI from '../abis/HomeBridge.json';
-import BRIDGE_VALIDATORS_ABI from '../abis/BridgeValidators.json'
+import { abi as HOME_NATIVE_ABI } from '../contracts/HomeBridgeNativeToErc.json';
+import { abi as HOME_ERC_ABI } from '../contracts/HomeBridgeErcToErc';
+import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
+import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { getBlockNumber, getBalance, getExplorerUrl } from './utils/web3'
-import { getMaxPerTxLimit, getMinPerTxLimit, getCurrentLimit, getPastEvents } from './utils/contract'
-import { removePendingTransaction } from './utils/testUtils'
+import {
+  getMaxPerTxLimit,
+  getMinPerTxLimit,
+  getCurrentLimit,
+  getPastEvents,
+  getMessage,
+  getErc677TokenAddress,
+  getSymbol,
+  getTotalSupply,
+  getBalanceOf
+} from './utils/contract'
+import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
+
+async function asyncForEach(array, callback) {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
 
 class HomeStore {
   @observable state = null;
@@ -22,6 +40,9 @@ class HomeStore {
   @observable requiredSignatures = 0
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
+  @observable tokenAddress = '';
+  @observable symbol = 'POA';
+  @observable userBalance = 0
   @observable statistics = {
     deposits: 0,
     depositsValue: BN(0),
@@ -34,6 +55,7 @@ class HomeStore {
   filteredBlockNumber = 0
   homeBridge = {};
   HOME_BRIDGE_ADDRESS = process.env.REACT_APP_HOME_BRIDGE_ADDRESS;
+  tokenContract = {}
 
   constructor (rootStore) {
     this.homeWeb3 = rootStore.web3Store.homeWeb3
@@ -45,7 +67,15 @@ class HomeStore {
   }
 
   async setHome(){
+    if (!this.rootStore.bridgeModeInitialized) {
+      setTimeout(() => this.setHome(), 200)
+      return
+    }
+    const HOME_ABI = this.rootStore.isErcToErcMode ? HOME_ERC_ABI : HOME_NATIVE_ABI
     this.homeBridge = new this.homeWeb3.eth.Contract(HOME_ABI, this.HOME_BRIDGE_ADDRESS);
+    if (this.rootStore.isErcToErcMode) {
+        this.getTokenInfo()
+    }
     await this.getBlockNumber()
     this.getMinPerTxLimit()
     this.getMaxPerTxLimit()
@@ -62,6 +92,17 @@ class HomeStore {
     setInterval(() => {
       this.getCurrentLimit()
     }, 10000)
+  }
+
+  @action
+  async getTokenInfo() {
+    try {
+      this.tokenAddress = await getErc677TokenAddress(this.homeBridge)
+      this.tokenContract = new this.homeWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
+      this.symbol = await getSymbol(this.tokenContract)
+    } catch(e) {
+      console.error(e)
+    }
   }
 
   @action
@@ -94,7 +135,15 @@ class HomeStore {
   @action
   async getBalance() {
     try {
-      this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
+      if (this.rootStore.isErcToErcMode) {
+        this.balance = await getTotalSupply(this.tokenContract)
+        this.web3Store.getWeb3Promise.then(async () => {
+          this.userBalance = await getBalanceOf(this.tokenContract, this.web3Store.defaultAccount.address)
+          balanceLoaded()
+        })
+      } else {
+        this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
+      }
     } catch(e) {
       console.error(e)
       this.errors.push(e)
@@ -106,14 +155,22 @@ class HomeStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
-      let homeEvents = await getPastEvents(this.homeBridge, fromBlock, toBlock)
-      homeEvents = homeEvents.filter((event) => event.event === "Deposit" || event.event === "Withdraw")
+      let events = await getPastEvents(this.homeBridge, fromBlock, toBlock)
+
+      let homeEvents = []
+      await asyncForEach(events, (async (event) => {
+        if(event.event === "SignedForUserRequest" || event.event === "CollectedSignatures") {
+          event.signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
+        }
+        homeEvents.push(event)
+      }))
+
       if(!this.filter){
         this.events = homeEvents;
       }
 
       if(this.waitingForConfirmation.size) {
-        const confirmationEvents = homeEvents.filter((event) => event.event === "Withdraw" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
+        const confirmationEvents = homeEvents.filter((event) => event.event === "AffirmationCompleted" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(event => {
           this.alertStore.setLoadingStepIndex(3)
           const urlExplorer = getExplorerUrl(this.web3Store.homeNet.id) + 'tx/' + event.transactionHash
@@ -136,6 +193,16 @@ class HomeStore {
                  Please make sure you have set it up in env variables`, this.alertStore.HOME_CONNECTION_ERROR)
     }
   }
+
+  async getSignedTx(messageHash){
+    try {
+      const message = await getMessage(this.homeBridge, messageHash)
+      return "0x" + message.substring(106, 170);
+    } catch(e){
+      console.error(e)
+    }
+  }
+
   @action
   async filterByTxHashInReturnValues(transactionHash) {
     const events = await this.getEvents(1,"latest");
@@ -164,7 +231,7 @@ class HomeStore {
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.homeBridge, true)
+      const result = await getCurrentLimit(this.homeBridge)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay
@@ -212,10 +279,10 @@ class HomeStore {
 
   processEvent = (event) => {
     this.statistics.users.add(event.returnValues.recipient)
-    if(event.event === "Deposit") {
+    if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
       this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
-    } else if (event.event === "Withdraw") {
+    } else if (event.event === "AffirmationCompleted") {
       this.statistics.withdraws++
       this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
     }
@@ -250,6 +317,9 @@ class HomeStore {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
+  getDisplayedBalance() {
+    return this.rootStore.isErcToErcMode ? this.userBalance : this.web3Store.defaultAccount.homeBalance
+  }
 }
 
 export default HomeStore;

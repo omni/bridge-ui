@@ -17,12 +17,13 @@ export const NetworkDetails = ({
   tokenAddress,
   totalSupply,
   totalBalance,
-  balance
+  balance,
+  displayTokenAddress,
+  displayBridgeLimits
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
-  const action = isHome ? 'POA' : 'POA20'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
-  const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
+  const totalTitle = isHome ? `Locked ${currency} in Bridge Contract` : `${currency} Tokens Amount`
   const totalAmount = isHome ? totalBalance : totalSupply
   const explorerPath = getAddressUrl(networkData.id)
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
@@ -50,19 +51,19 @@ export const NetworkDetails = ({
               </CopyToClipboard>
             </span>
         </p>
-        <p className="details-data-container">
-          <span className="details-label">Remaining Daily {action} Quota</span>
+        {displayBridgeLimits && <p className="details-data-container">
+          <span className="details-label">Remaining Daily {currency} Quota</span>
           <span className="details-description-black">{numeral(maxCurrentLimit).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        <p className="details-data-container">
+        </p>}
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Maximum Amount Per Transaction</span>
           <span className="details-description-black">{numeral(maxPerTx).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        <p className="details-data-container">
+        </p>}
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Minimum Amount Per Transaction</span>
           <span className="details-description-black">{numeral(minPerTx).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        {!isHome && (
+        </p>}
+        {displayTokenAddress && (
           <p className="details-data-container">
             <span className="details-label">Token Address</span>
             <span className="details-description details-copy">
