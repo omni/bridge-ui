@@ -33,22 +33,22 @@ export class DailyQuotaModal extends React.Component {
 
     const isHome = web3Store.metamaskNet.id.toString() === web3Store.homeNet.id.toString()
     const value = isHome ? homeStore.maxCurrentDeposit : foreignStore.maxCurrentDeposit
+    const limit = isHome ? homeStore.maxPerTx : foreignStore.maxPerTx
     const from = isHome ? homeStore.symbol : foreignStore.symbol
     const to = isHome ? foreignStore.symbol : homeStore.symbol
-    const networkFrom = isHome ? 'POA' : 'ETH'
-    const networkTo = isHome ? 'ETH' : 'POA'
-    const networkNameFrom = isHome ? web3Store.homeNet.name : web3Store.foreignNet.name
-    const networkNameTo = isHome ? web3Store.foreignNet.name : web3Store.homeNet.name
-
+    const networkNameFrom = isHome ? homeStore.networkName : foreignStore.networkName
+    const networkNameTo = isHome ? foreignStore.networkName : homeStore.networkName
+    const description = limit && limit !== '0' ? `${numeral(value).format('0,0.0', Math.floor)} ${from} on ${networkNameFrom + ' '}
+            remaining for transfer to ${to + ' '}
+            on ${networkNameTo}`
+      : `No limit configured`
     return (
       <div className="daily-quota-modal-container">
         <div className="daily-quota-modal" style={{left, top}}>
           <div className='modal-container'>
             <span className="daily-quota-title">Daily Quota</span>
             <span className="daily-quota-description">
-              {numeral(value).format('0,0.0', Math.floor)} {from} on {networkFrom} {networkNameFrom + ' '}
-              remaining for transfer to {to + ' '}
-              on {networkTo} {networkNameTo}
+              {description}
             </span>
           </div>
         </div>

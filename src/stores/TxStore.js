@@ -1,10 +1,8 @@
-import { action, observable } from "mobx";
+import { action } from "mobx";
 import { estimateGas } from './utils/web3'
 import { addPendingTransaction } from './utils/testUtils'
 
 class TxStore {
-  @observable txs = []
-  txHashToIndex = {}
   constructor(rootStore) {
     this.web3Store = rootStore.web3Store
     this.gasPriceStore = rootStore.gasPriceStore
@@ -15,10 +13,9 @@ class TxStore {
 
   @action
   async doSend({to, from, value, data}){
-    const index = this.txs.length;
     return this.web3Store.getWeb3Promise.then(async ()=> {
       if(!this.web3Store.defaultAccount){
-        this.alertStore.pushError("Please unlock metamask")
+        this.alertStore.pushError("Please unlock wallet")
         return
       }
       try {
@@ -33,15 +30,13 @@ class TxStore {
           data
         }).on('transactionHash', (hash) => {
           console.log('txHash', hash)
-          this.txHashToIndex[hash] = index;
-          this.txs[index] = {status: 'pending', name: `Sending ${to} ${value}`, hash}
           this.alertStore.setLoadingStepIndex(1)
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
           if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')){
             this.alertStore.setLoading(false)
-            this.alertStore.pushError('Transaction rejected on Metamask');
+            this.alertStore.pushError('Transaction rejected on wallet');
           }
         })
       } catch(e) {
@@ -60,7 +55,7 @@ class TxStore {
           ).encodeABI()
           return this.doSend({to: tokenAddress, from, value: '0x00', data})
         } else {
-          this.alertStore.pushError('Please unlock metamask');
+          this.alertStore.pushError('Please unlock wallet');
         }
       })
     } catch(e) {
@@ -78,7 +73,7 @@ class TxStore {
           ).encodeABI({ from: this.web3Store.defaultAccount.address })
           return this.doSend({to: this.foreignStore.tokenAddress, from, value: '0x', data})
         } else {
-          this.alertStore.pushError('Please unlock metamask');
+          this.alertStore.pushError('Please unlock wallet');
         }
       })
     } catch(e) {
@@ -102,11 +97,10 @@ class TxStore {
 
   async getTxStatus(hash) {
     const web3 = this.web3Store.injectedWeb3;
+    const { toBN } = web3.utils
     web3.eth.getTransactionReceipt(hash, (error, res) => {
       if(res && res.blockNumber){
-        if(res.status === '0x1'){
-          const index = this.txHashToIndex[hash]
-          this.txs[index].status = `mined`
+        if(toBN(res.status).eq(toBN(1))){
           if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id.toString()) {
             const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
@@ -135,9 +129,6 @@ class TxStore {
           }
         } else {
           this.alertStore.setLoading(false)
-          const index = this.txHashToIndex[hash]
-          this.txs[index].status = `error`
-          this.txs[index].name = `Mined but with errors. Perhaps out of gas`
           this.alertStore.pushError(`${hash} Mined but with errors. Perhaps out of gas`)
         }
       } else {

@@ -2,6 +2,7 @@ import { action, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 import { balanceLoaded } from './utils/testUtils'
 import swal from 'sweetalert'
+import { BRIDGE_MODES } from './utils/bridgeMode'
 
 class Web3Store {
   @observable injectedWeb3 = {};
@@ -14,6 +15,7 @@ class Web3Store {
   @observable errors = [];
 
   @observable getWeb3Promise = null;
+  @observable setHomeWeb3Promise = null;
   @observable metamaskNotSetted = false;
 
   @observable homeNet = {id: '', name: ''};
@@ -56,7 +58,9 @@ class Web3Store {
   @action
   async setWeb3Home() {
     this.homeWeb3 = getWeb3Instance(this.HOME_HTTP_PARITY_URL)
-    this.homeNet = await getNetwork(this.homeWeb3)
+    this.setHomeWeb3Promise = getNetwork(this.homeWeb3).then(homeNet => {
+      this.homeNet = homeNet
+    })
   }
 
   @action
@@ -84,7 +88,7 @@ class Web3Store {
         await this.rootStore.homeStore.getBalance()
         this.alertStore.setLoading(false)
       }
-      if (this.rootStore.bridgeModeInitialized && !this.rootStore.isErcToErcMode) {
+      if (this.rootStore.bridgeModeInitialized && this.rootStore.bridgeMode !== BRIDGE_MODES.ERC_TO_ERC) {
         balanceLoaded()
       }
     } catch(e){
@@ -101,14 +105,14 @@ class Web3Store {
       }
       if(this.metamaskNet.name !== this.homeNet.name && this.metamaskNet.name !== this.foreignNet.name) {
         this.metamaskNotSetted = true
-        this.alertStore.pushError(`You are on an unknown network on metamask. Please select POA ${this.homeNet.name} or ETH ${this.foreignNet.name} in order to communicate with the bridge.`)
+        this.alertStore.pushError(`You are on an unknown network on your wallet. Please select ${this.homeNet.name} or ${this.foreignNet.name} in order to communicate with the bridge.`)
       }
     }
   }
 
   showInstallMetamaskAlert() {
     const errorNode = document.createElement("div")
-    errorNode.innerHTML = "You need to install metamask and select an account. Please follow the instructions on the POA Network <a href='https://github.com/poanetwork/wiki/wiki/POA-Network-on-MetaMask' target='blank'>wiki</a> and reload the page."
+    errorNode.innerHTML = "You need to install a wallet and select an account. Please follow the instructions on the POA Network <a href='https://github.com/poanetwork/wiki/wiki/POA-Network-on-MetaMask' target='blank'>wiki</a> and reload the page."
     swal({
       title: "Error",
       content: errorNode,
@@ -117,6 +121,11 @@ class Web3Store {
     });
   }
 
+  async onHomeSide() {
+    await this.getWeb3Promise
+    await this.setHomeWeb3Promise
+    return this.metamaskNet.id === this.homeNet.id.toString()
+  }
 }
 
 export default Web3Store;
