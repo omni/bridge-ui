@@ -32,6 +32,24 @@ class Utils {
     }
   }
 
+  static async getErc20StartURL() {
+    try {
+      let obj = JSON.parse(fs.readFileSync(configFile), "utf8");
+      return obj.erc20Url;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  static async getErc20NativeStartURL() {
+    try {
+      let obj = JSON.parse(fs.readFileSync(configFile), "utf8");
+      return obj.erc20NativeUrl;
+    } catch (err) {
+      return null;
+    }
+  }
+
   static async startBrowserWithMetamask() {
     let source = './e2e-script/MetaMask.crx';
     let options = new chrome.Options();

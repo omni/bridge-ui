@@ -10,7 +10,14 @@ import pattern from '../assets/images/pattern.svg'
 export class StatusPage extends React.Component {
 
   render() {
-    const { homeStore } = this.props.RootStore
+    const { homeStore, foreignStore, web3Store } = this.props.RootStore
+    const isHome = web3Store.metamaskNet.id.toString() === web3Store.homeNet.id.toString()
+    const requiredSignatures = isHome ? homeStore.requiredSignatures : foreignStore.requiredSignatures
+    const authorities = isHome ? homeStore.validators.length : foreignStore.validators.length
+    const symbol = isHome ? homeStore.symbol : foreignStore.symbol
+    const maxSingleDeposit = isHome ? homeStore.maxPerTx : foreignStore.maxPerTx
+    const maxTotalBalance = isHome ? homeStore.maxCurrentDeposit : foreignStore.maxCurrentDeposit
+    const validatorsList = isHome ? homeStore.validators : foreignStore.validators
     return (
       <div className="status-page">
         <div className='status-left-container' />
@@ -18,16 +25,16 @@ export class StatusPage extends React.Component {
           <div className='status-configuration-container'>
             <span className='status-configuration-title status-title'>Configuration</span>
               <Configuration
-                requiredSignatures={homeStore.requiredSignatures}
-                authorities={homeStore.validators.length}
-                estGasCost={0}
-                maxSingleDeposit={homeStore.maxPerTx}
-                maxTotalBalance={homeStore.maxCurrentDeposit} />
+                requiredSignatures={requiredSignatures}
+                authorities={authorities}
+                symbol={symbol}
+                maxSingleDeposit={maxSingleDeposit}
+                maxTotalBalance={maxTotalBalance} />
           </div>
           <div className='status-authorities-container'>
             <span className='status-authorities-title status-title'>Authorities</span>
             <div className='status-authorities-data'>
-              {homeStore.validators.map((validator,i) => (
+              {validatorsList.map((validator,i) => (
                 <Authority key={validator} address={validator} number={(i+1)} logoIndex={(i) % 3} />
               ))}
             </div>

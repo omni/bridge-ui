@@ -2,7 +2,6 @@ import React from 'react'
 import copyIcon from '../assets/images/icons/copy.svg'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
-import { getAddressUrl } from '../stores/utils/web3'
 
 export const NetworkDetails = ({
   isHome,
@@ -17,22 +16,31 @@ export const NetworkDetails = ({
   tokenAddress,
   totalSupply,
   totalBalance,
-  balance
+  balance,
+  displayTokenAddress,
+  displayBridgeLimits,
+  nativeSupplyTitle,
+  tokenName,
+  getExplorerAddressUrl
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
-  const action = isHome ? 'POA' : 'POA20'
   const logoClass = isHome ? 'home-logo' : 'foreign-logo'
-  const totalTitle = isHome ? 'Locked POA in Bridge Contract' : 'POA20 Tokens Amount'
+  const totalTitle = isHome
+    ? nativeSupplyTitle ? `Native Coins Amount` : `Totally minted by the bridge`
+    : `${currency} Tokens Amount`
   const totalAmount = isHome ? totalBalance : totalSupply
-  const explorerPath = getAddressUrl(networkData.id)
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
     ? numeral(0).format('0,0.00', Math.floor)
-    : numeral(balance).format('0,0.00', Math.floor)
+    : numeral(balance).format('0,0.000', Math.floor)
 
   return (
     <div className="network-details">
         <div className="details-logo-container">
-          <img className={logoClass} src={logo} alt="home logo"/>
+          <div className={logoClass}
+               style={{color: '#5c34a2', textAlign: 'center', fontWeight: 'bold'}}
+          >
+            {currency}
+          </div>
       </div>
       <div className="details-body">
         <p className="details-data-container">
@@ -42,7 +50,7 @@ export const NetworkDetails = ({
         <p className="details-data-container">
           <span className="details-label">{networkTitle} Address</span>
             <span className="details-description details-copy">
-              <a className="details-description"  href={explorerPath+address} target="_blank" >
+              <a className="details-description"  href={getExplorerAddressUrl(address)} target="_blank" >
                 {address.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={address}>
@@ -50,23 +58,23 @@ export const NetworkDetails = ({
               </CopyToClipboard>
             </span>
         </p>
-        <p className="details-data-container">
-          <span className="details-label">Remaining Daily {action} Quota</span>
+        {displayBridgeLimits && <p className="details-data-container">
+          <span className="details-label">Remaining Daily {currency} Quota</span>
           <span className="details-description-black">{numeral(maxCurrentLimit).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        <p className="details-data-container">
+        </p>}
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Maximum Amount Per Transaction</span>
           <span className="details-description-black">{numeral(maxPerTx).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        <p className="details-data-container">
+        </p>}
+        {displayBridgeLimits && <p className="details-data-container">
           <span className="details-label">Minimum Amount Per Transaction</span>
-          <span className="details-description-black">{numeral(minPerTx).format('0,0.0', Math.floor)} {currency}</span>
-        </p>
-        {!isHome && (
+          <span className="details-description-black">{numeral(minPerTx).format('0,0.000', Math.floor)} {currency}</span>
+        </p>}
+        {displayTokenAddress && (
           <p className="details-data-container">
             <span className="details-label">Token Address</span>
             <span className="details-description details-copy">
-              <a className="details-description" href={explorerPath+tokenAddress} target="_blank" >
+              <a className="details-description" href={getExplorerAddressUrl(tokenAddress)} target="_blank" >
                 {tokenAddress.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={tokenAddress}>
@@ -75,9 +83,15 @@ export const NetworkDetails = ({
             </span>
           </p>
         )}
+        {displayTokenAddress && (
+          <p className="details-data-container">
+            <span className="details-label">Token Name</span>
+            <span className="details-description-black">{tokenName || 'No token name'}</span>
+          </p>
+        )}
         <p className="details-data-container">
           <span className="details-label">{totalTitle}</span>
-          <span className="details-description-black">{numeral(totalAmount).format('0,0.00', Math.floor)} {currency}</span>
+          <span className="details-description-black">{numeral(totalAmount).format('0,0.000', Math.floor)} {currency}</span>
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>

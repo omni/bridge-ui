@@ -2,6 +2,10 @@ language: node_js
 node_js:
   - "8"
 sudo: required
+
+services:
+- docker
+
 dist: trusty
 addons:
   apt:
@@ -29,7 +33,7 @@ before_script:
   - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
 
 script:
-  - npm run startBridge & npm run startE2e
   - npm run coverage
+  - cd e2e-script && ./run-tests.sh
 after_script:
   - npm run coveralls

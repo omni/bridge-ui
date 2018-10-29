@@ -2,7 +2,6 @@ import React from 'react';
 import { inject, observer } from "mobx-react";
 import { EventsListHeader } from './index'
 import { Event } from './index'
-import { getExplorerUrl } from '../stores/utils/web3'
 
 
 const WAIT_INTERVAL = 700;
@@ -15,10 +14,12 @@ export class RelayEvents extends React.Component {
     super(props)
     this.timer = null;
     this.colors = {
-      'Deposit': 'green',
-      'Withdraw': 'red',
-      'SignedForDeposit': 'purple',
-      'SignedForWithdraw': 'purple',
+      'UserRequestForSignature': 'green',
+      'RelayedMessage': 'green',
+      'UserRequestForAffirmation': 'red',
+      'AffirmationCompleted': 'red',
+      'SignedForUserRequest': 'purple',
+      'SignedForAffirmation': 'purple',
       'CollectedSignatures': 'blue'
     }
     this.homeValue = '0'
@@ -101,7 +102,7 @@ export class RelayEvents extends React.Component {
   }
 
   getHomeEvents = (homeStore) => {
-    return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}, index) =>
+    return homeStore.events.slice().map(({event, transactionHash, blockNumber, returnValues}) =>
       ({
         color: this.colors[event],
         eventName: event,
@@ -131,7 +132,7 @@ export class RelayEvents extends React.Component {
   }
 
   render(){
-    const { homeStore, foreignStore, web3Store } = this.props.RootStore
+    const { homeStore, foreignStore } = this.props.RootStore
     const { selectedList } = this.state
     const home = this.getHomeEvents(homeStore, foreignStore)
     const foreign = this.getForeignEvents(foreignStore, homeStore)
@@ -144,22 +145,22 @@ export class RelayEvents extends React.Component {
             handleKeyDown={selectedList === this.homeValue ? this.handleKeyDownHome : this.handleKeyDownForeign}
             onChangeList={this.onChangeList}
             selected={selectedList}
-            homeName={'POA ' + web3Store.homeNet.name}
+            homeName={homeStore.networkName}
             homeValue={this.homeValue}
-            foreignName={'ETH ' + web3Store.foreignNet.name}
+            foreignName={foreignStore.networkName}
             foreignValue={this.foreingValue} />
           {selectedList === this.homeValue
             && home.map(event =>
             <Event
-              txUrl={getExplorerUrl(web3Store.homeNet.id) + 'tx/'}
-              accountUrl={getExplorerUrl(web3Store.homeNet.id) + 'account/'}
-              key={event.transactionHash}
+              txUrl={homeStore.getExplorerTxUrl(event.transactionHash)}
+              accountUrl={homeStore.getExplorerAddressUrl(event.recipient)}
+              key={event.transactionHash+event.eventName}
               {...event} />)}
           {selectedList === this.foreingValue
             && foreign.map(event =>
             <Event
-              txUrl={getExplorerUrl(web3Store.foreignNet.id) + 'tx/'}
-              accountUrl={getExplorerUrl(web3Store.foreignNet.id) + 'address/'}
+              txUrl={foreignStore.getExplorerTxUrl(event.transactionHash)}
+              accountUrl={foreignStore.getExplorerAddressUrl(event.recipient)}
               key={event.transactionHash+event.eventName}
               {...event} />)}
         </div>

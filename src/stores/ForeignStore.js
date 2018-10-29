@@ -1,7 +1,6 @@
 import { action, observable } from 'mobx';
-import FOREIGN_ABI from '../abis/ForeignBridge.json';
-import ERC677_ABI from '../abis/ERC677.json';
-import { getBlockNumber, getExplorerUrl } from './utils/web3'
+import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json';
+import { getBlockNumber } from './utils/web3'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -11,46 +10,58 @@ import {
   getBalanceOf,
   getErc677TokenAddress,
   getSymbol,
-  getMessage
+  getErc20TokenAddress,
+  getBridgeValidators,
+  getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
-
-async function asyncForEach(array, callback) {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array)
-  }
-}
+import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
+import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
+import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 
 class ForeignStore {
   @observable state = null;
   @observable loading = true;
   @observable events = [];
   @observable totalSupply = '';
-  @observable symbol = '';
+  @observable symbol = 'NOSYM';
+  @observable tokenName = '';
   @observable balance = '';
   @observable filter = false;
   @observable maxCurrentDeposit = '';
   @observable maxPerTx = '';
   @observable minPerTx = '';
   @observable latestBlockNumber = 0;
+  @observable validators = []
+  @observable foreignBridgeValidators = ''
+  @observable requiredSignatures = 0
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
+  networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
   foreignBridge = {};
   tokenContract = {}
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
+  explorerTxTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE || ''
+  explorerAddressTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_ADDRESS_TEMPLATE || ''
 
   constructor (rootStore) {
     this.web3Store = rootStore.web3Store;
     this.foreignWeb3 = rootStore.web3Store.foreignWeb3
     this.alertStore = rootStore.alertStore
     this.homeStore = rootStore.homeStore;
+    this.rootStore = rootStore
     this.waitingForConfirmation = new Set()
     this.setForeign()
   }
 
   async setForeign(){
+    if (!this.rootStore.bridgeModeInitialized) {
+      setTimeout(() => this.setForeign(), 200)
+      return
+    }
+    const { FOREIGN_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
     this.foreignBridge = new this.foreignWeb3.eth.Contract(FOREIGN_ABI, this.FOREIGN_BRIDGE_ADDRESS);
     await this.getBlockNumber()
     await this.getTokenInfo()
@@ -59,6 +70,7 @@ class ForeignStore {
     this.getEvents()
     this.getTokenBalance()
     this.getCurrentLimit()
+    this.getValidators()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -97,9 +109,21 @@ class ForeignStore {
   @action
   async getTokenInfo(){
     try {
-      this.tokenAddress = await getErc677TokenAddress(this.foreignBridge)
+      this.tokenAddress = this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_ERC || this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
+        ? await getErc20TokenAddress(this.foreignBridge)
+        : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
-      this.symbol = await getSymbol(this.tokenContract)
+      const alternativeContract = new this.foreignWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
+      try {
+        this.symbol =await getSymbol(this.tokenContract)
+      } catch(e) {
+        this.symbol = this.foreignWeb3.utils.hexToAscii(await getSymbol(alternativeContract)).replace(/\u0000*$/, '')
+      }
+      try {
+        this.tokenName = await getName(this.tokenContract)
+      } catch(e) {
+        this.tokenName = this.foreignWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
+      }
     } catch(e) {
       console.error(e)
     }
@@ -123,28 +147,27 @@ class ForeignStore {
     try {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
+
+      if(fromBlock < 0) {
+        fromBlock = 0
+      }
+
       let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock)
-      let events = []
-      await asyncForEach(foreignEvents, (async (event) => {
-        if(event.event === "SignedForWithdraw" || event.event === "CollectedSignatures") {
-          event.signedTxHash = await this.getSignedTx(event.returnValues.messageHash)
-        }
-        events.push(event)
-      }))
 
       if(!this.filter){
-        this.events = events;
+        this.events = foreignEvents;
       }
 
       if(this.waitingForConfirmation.size) {
-        const confirmationEvents = foreignEvents.filter((event) => event.event === "Deposit" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
+        const confirmationEvents = foreignEvents.filter((event) => event.event === "RelayedMessage" && this.waitingForConfirmation.has(event.returnValues.transactionHash))
         confirmationEvents.forEach(async event => {
           const TxReceipt = await this.getTxReceipt(event.transactionHash)
           if(TxReceipt && TxReceipt.logs && TxReceipt.logs.length > 1 && this.waitingForConfirmation.size) {
             this.alertStore.setLoadingStepIndex(3)
-            const urlExplorer = getExplorerUrl(this.web3Store.foreignNet.id) + 'tx/' + event.transactionHash
+            const urlExplorer = this.getExplorerTxUrl(event.transactionHash)
+            const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
             setTimeout(() => {
-                this.alertStore.pushSuccess(`Tokens received on Ethereum ${this.web3Store.foreignNet.name} on Tx
+                this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
             <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
             ${event.transactionHash}</a>`, this.alertStore.FOREIGN_TRANSFER_SUCCESS)}
               , 2000)
@@ -157,24 +180,17 @@ class ForeignStore {
         }
       }
 
-      return events
+      return foreignEvents
     } catch(e) {
       this.alertStore.pushError(`Cannot establish connection to Foreign Network.\n
                  Please make sure you have set it up in env variables`, this.alertStore.FOREIGN_CONNECTION_ERROR)
     }
   }
-  async getSignedTx(messageHash){
-    try {
-        const message = await getMessage(this.foreignBridge, messageHash)
-        return "0x" + message.substring(106, 170);
-    } catch(e){
-      console.error(e)
-    }
-  }
+
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.foreignBridge, false)
+      const result = await getCurrentLimit(this.foreignBridge)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay
@@ -231,6 +247,26 @@ class ForeignStore {
 
   getDailyQuotaCompleted() {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
+  }
+
+  getExplorerTxUrl(txHash) {
+    return this.explorerTxTemplate.replace('%s', txHash)
+  }
+
+  getExplorerAddressUrl(address) {
+    return this.explorerAddressTemplate.replace('%s', address)
+  }
+
+  @action
+  async getValidators(){
+    try {
+      const foreignValidatorsAddress = await this.foreignBridge.methods.validatorContract().call()
+      this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
+      this.validators =  await getBridgeValidators(this.foreignBridgeValidators)
+      this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
+    } catch(e){
+      console.error(e)
+    }
   }
 
 }

@@ -21,7 +21,7 @@ const arrowBackRPCURL = By.xpath("//*[@id=\"app-content\"]/div/div[4]/div/div[1]
 const iconChangeAccount = By.className("cursor-pointer color-orange accounts-selector");
 
 var accountOrderNumber = 1;
-var networks = [0, 3, 42, 4, 8545];
+var networks = [0, 3, 43, 4, 8545];
 
 class MetaMask extends Page {
 
@@ -127,21 +127,19 @@ class MetaMask extends Page {
     let url;
     switch (provider) {
       case 77: {
-        url = "https://sokol.poa.network";
-        networks.push(77);
+        url = "http://10.1.0.102:8545";
+        networks.push(177);
         break;
       }
-      case 99: {
-        url = "https://core.poa.network";
-        networks.push(99);
+      case 42: {
+        url = "http://10.1.0.103:8545";
+        networks.push(142);
         break;
-      }
-      default: {
-        url = "https://sokol.poa.network";
       }
     }
+    const index = networks.length > 8 ? 8 : networks.length;
     await this.driver.executeScript("document.getElementsByClassName('dropdown-menu-item')[" +
-      (networks.length - 1) + "].click();");
+      (index - 1) + "].click();");
     return await super.fillWithWait(fieldNewRPCURL, url) &&
       await super.clickWithWait(buttonSave) &&
       await super.clickWithWait(arrowBackRPCURL);
