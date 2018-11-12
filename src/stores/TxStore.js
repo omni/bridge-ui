@@ -1,6 +1,7 @@
 import { action, observable } from "mobx";
 import { estimateGas } from './utils/web3'
-import { addPendingTransaction } from './utils/testUtils'
+import { addPendingTransaction, removePendingTransaction } from './utils/testUtils'
+import { getUnit } from './utils/bridgeMode'
 
 class TxStore {
   @observable txsValues = {}
@@ -11,6 +12,7 @@ class TxStore {
     this.alertStore = rootStore.alertStore
     this.foreignStore = rootStore.foreignStore
     this.homeStore = rootStore.homeStore
+    this.rootStore = rootStore
   }
 
   @action
@@ -111,6 +113,15 @@ class TxStore {
               this.alertStore.setLoadingStepIndex(2)
               this.foreignStore.waitUntilProcessed(hash).then(() => {
                 this.alertStore.setLoadingStepIndex(3)
+                const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
+                setTimeout(() => {
+                    this.alertStore.pushSuccess(
+                      `${unitReceived} received on ${this.homeStore.networkName}`,
+                      this.alertStore.FOREIGN_TRANSFER_SUCCESS
+                    )
+                  }
+                  , 2000)
+                removePendingTransaction()
               })
             } else {
               if(blockConfirmations > 0) {
@@ -127,6 +138,15 @@ class TxStore {
               this.homeStore.waitUntilProcessed(hash, this.txsValues[hash])
                 .then(() => {
                   this.alertStore.setLoadingStepIndex(3)
+                  const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
+                  setTimeout(() => {
+                      this.alertStore.pushSuccess(
+                        `${unitReceived} received on ${this.foreignStore.networkName}`,
+                        this.alertStore.HOME_TRANSFER_SUCCESS
+                      )
+                    }
+                    , 2000)
+                  removePendingTransaction()
                 })
             } else {
               if(blockConfirmations > 0) {
