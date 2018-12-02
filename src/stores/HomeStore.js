@@ -114,7 +114,7 @@ class HomeStore {
       this.tokenContract = new this.homeWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
       this.symbol = await getSymbol(this.tokenContract)
       this.tokenName = await getName(this.tokenContract)
-      const alternativeContract = new this.foreignWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
+      const alternativeContract = new this.homeWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
       try {
         this.symbol =await getSymbol(this.tokenContract)
       } catch(e) {
