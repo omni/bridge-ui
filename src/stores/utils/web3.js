@@ -40,6 +40,8 @@ const networks = {
   1: 'ETH Mainnet',
   3: 'Ropsten',
   4: 'Rinkeby',
+  30: 'RSK Mainnet',
+  31: 'RSK Testnet',
   42:'Kovan',
   77:'Sokol',
   99: 'POA Network',
