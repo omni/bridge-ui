@@ -707,6 +707,134 @@
   }
 }
 
+.noWallet-alert {
+  display: flex;
+  width: 540px;
+  height: 380px;
+  border-radius: 10px 8px 8px 10px;
+  background-color: #ffffff;
+
+  @media screen and (max-width: $small-mobile-width) {
+    padding-top: 60px;
+  }
+
+  @media screen and (max-width: $tablet-width) {
+    flex-direction: column;
+    width: 92%;
+    height: auto;
+    margin-left: 4%;
+  }
+
+  .noWallet-image-container {
+    width: 150px;
+    background-image: linear-gradient(to right, #7258b0, #5231a0);
+    border-radius: 8px 0 0 8px;
+
+    @media screen and (max-width: $tablet-width) {
+      display: none;
+    }
+
+    .noWallet-icon {
+      width: 150px;
+      margin-top: 0;
+    }
+  }
+
+  .noWallet-alert-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 389px;
+    padding: 24px 30px;
+
+    @media screen and (max-width: $tablet-width) {
+      padding: 10px 0;
+      width: 88%;
+      align-self: center;
+    }
+
+    .noWallet-title {
+      font-size: 44px;
+      color: #5c34a2;
+      line-height: 1;
+
+      @media screen and (max-width: $tablet-width) {
+        font-size: 30px;
+        padding-top: 2%;
+        padding-bottom: 2%;
+      }
+
+    }
+
+    .noWallet-description {
+      font-size: 14px;
+      color: #666666;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      line-height: 1.71;
+
+      @media screen and (max-width: $tablet-width) {
+        padding-left: 1%;
+        padding-right: 1%;
+      }
+    }
+  }
+
+  .noWallet-buttons {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    align-content: space-around;
+    height: 100%;
+
+    @media screen and (max-width: $small-mobile-width) {
+      flex-direction: column;
+    }
+
+    .noWallet-metamask {
+      width: 96px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 3px;
+      color: #ffffff;
+      background-color: #ffaa07;
+
+      @media screen and (max-width: $small-mobile-width) {
+        width: 100%;
+      }
+    }
+
+    .noWallet-niftyWallet {
+      width: 106px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 3px;
+      color: #ffffff;
+      background-color: #5c34a2;
+
+      @media screen and (max-width: $small-mobile-width) {
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+
+    .noWallet-cancel {
+      width: 72px;
+      height: 36px;
+      border-radius: 3px;
+      border: 1px solid #5c34a2;
+      color: #5c34a2;
+      background-color: #ffffff;
+
+      @media screen and (max-width: $small-mobile-width) {
+        width: 100%;
+      }
+    }
+  }
+}
+
 .disclaimer-alert {
   display: flex;
   width: 600px;

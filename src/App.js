@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom'
 import './assets/stylesheets/application.css';
 import { Disclaimer } from './components'
 import { ModalContainer } from './components'
+import { NoWallet } from './components'
 import { setItem, getItem, DISCLAIMER_KEY } from './components/utils/localstorage'
 
 export class App extends React.Component {
@@ -54,6 +55,7 @@ export class App extends React.Component {
           <Disclaimer
             onConfirmation={this.closeDisclaimer} />
         </ModalContainer>
+        <NoWallet showModal={!showDisclaimer} />
       </div>
     )
   }

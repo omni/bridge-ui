@@ -1,7 +1,6 @@
 import { action, observable } from "mobx";
 import getWeb3, { getBalance, getWeb3Instance, getNetwork } from './utils/web3';
 import { balanceLoaded } from './utils/testUtils'
-import swal from 'sweetalert'
 import { BRIDGE_MODES } from './utils/bridgeMode'
 
 class Web3Store {
@@ -22,6 +21,8 @@ class Web3Store {
   @observable foreignNet = {id: '', name: ''};
   @observable metamaskNet = {id: '', name: ''};
 
+  @observable walletInstalled = true
+
   HOME_HTTP_PARITY_URL = process.env.REACT_APP_HOME_HTTP_PARITY_URL;
   FOREIGN_HTTP_PARITY_URL = process.env.REACT_APP_FOREIGN_HTTP_PARITY_URL;
 
@@ -35,11 +36,17 @@ class Web3Store {
       setInterval(() => {
         this.getBalances(true)
       }, 3000)
-    }).catch((e) => {
-      console.error(e,'web3 not loaded')
+    }).catch(e => {
+      const error = {
+        rejected: () => this.alertStore.pushError(e.message),
+        unlock: () => this.alertStore.pushError(e.message),
+        install: () => this.walletInstalled = false
+      }[e.type]
+
+      console.error(e.message, 'web3 not loaded')
       this.errors.push(e.message)
       this.metamaskNotSetted = true
-      this.showInstallMetamaskAlert()
+      error()
     })
     this.setWeb3Home()
     this.setWeb3Foreign()
@@ -108,17 +115,6 @@ class Web3Store {
         this.alertStore.pushError(`You are on an unknown network on your wallet. Please select ${this.homeNet.name} or ${this.foreignNet.name} in order to communicate with the bridge.`)
       }
     }
-  }
-
-  showInstallMetamaskAlert() {
-    const errorNode = document.createElement("div")
-    errorNode.innerHTML = "You need to install a wallet and select an account. Please follow the instructions on the POA Network <a href='https://github.com/poanetwork/wiki/wiki/POA-Network-on-MetaMask' target='blank'>wiki</a> and reload the page."
-    swal({
-      title: "Error",
-      content: errorNode,
-      icon: "error",
-      type: "error"
-    });
   }
 
   async onHomeSide() {
