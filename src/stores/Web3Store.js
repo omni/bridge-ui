@@ -30,7 +30,9 @@ class Web3Store {
     this.alertStore = rootStore.alertStore;
     this.rootStore = rootStore
 
-    this.getWeb3Promise = getWeb3().then((web3Config) => {
+    this.getWeb3Promise = getWeb3()
+
+    this.getWeb3Promise.then((web3Config) => {
       this.setWeb3State(web3Config)
       this.getBalances(false)
       setInterval(() => {
