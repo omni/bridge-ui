@@ -111,18 +111,23 @@ class TxStore {
             if(blockConfirmations >= 8) {
               this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
-              this.foreignStore.waitUntilProcessed(hash).then(() => {
-                this.alertStore.setLoadingStepIndex(3)
-                const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
-                setTimeout(() => {
-                    this.alertStore.pushSuccess(
-                      `${unitReceived} received on ${this.homeStore.networkName}`,
-                      this.alertStore.FOREIGN_TRANSFER_SUCCESS
-                    )
-                  }
-                  , 2000)
-                removePendingTransaction()
-              })
+
+              if (process.env.REACT_APP_FOREIGN_WITHOUT_EVENTS) {
+                this.foreignStore.addWaitingForConfirmation(hash)
+              } else {
+                this.foreignStore.waitUntilProcessed(hash).then(() => {
+                  this.alertStore.setLoadingStepIndex(3)
+                  const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
+                  setTimeout(() => {
+                      this.alertStore.pushSuccess(
+                        `${unitReceived} received on ${this.homeStore.networkName}`,
+                        this.alertStore.FOREIGN_TRANSFER_SUCCESS
+                      )
+                    }
+                    , 2000)
+                  removePendingTransaction()
+                })
+              }
             } else {
               if(blockConfirmations > 0) {
                 this.alertStore.setBlockConfirmations(blockConfirmations)
@@ -135,19 +140,24 @@ class TxStore {
             if(blockConfirmations >= 8) {
               this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
-              this.homeStore.waitUntilProcessed(hash, this.txsValues[hash])
-                .then(() => {
-                  this.alertStore.setLoadingStepIndex(3)
-                  const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
-                  setTimeout(() => {
-                      this.alertStore.pushSuccess(
-                        `${unitReceived} received on ${this.foreignStore.networkName}`,
-                        this.alertStore.HOME_TRANSFER_SUCCESS
-                      )
-                    }
-                    , 2000)
-                  removePendingTransaction()
-                })
+
+              if (process.env.REACT_APP_FOREIGN_WITHOUT_EVENTS) {
+                this.homeStore.addWaitingForConfirmation(hash)
+              } else {
+                this.homeStore.waitUntilProcessed(hash, this.txsValues[hash])
+                  .then(() => {
+                    this.alertStore.setLoadingStepIndex(3)
+                    const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
+                    setTimeout(() => {
+                        this.alertStore.pushSuccess(
+                          `${unitReceived} received on ${this.foreignStore.networkName}`,
+                          this.alertStore.HOME_TRANSFER_SUCCESS
+                        )
+                      }
+                      , 2000)
+                    removePendingTransaction()
+                  })
+              }
             } else {
               if(blockConfirmations > 0) {
                 this.alertStore.setBlockConfirmations(blockConfirmations)
