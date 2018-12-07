@@ -16,17 +16,17 @@ const getWeb3 = () => {
           processWeb3(web3, resolve,  reject)
         } catch (error) {
           console.log(error)
-          const errorMsg = `Wallet account rejected by user`
-          reject({message: errorMsg})
+          const errorMsg = `Wallet account rejected by user. You need to unlock your wallet.
+           Please refresh the page and click 'Connect' button in your wallet popup.`
+          reject({ type: 'rejected', message: errorMsg })
         }
       } else if (typeof web3 !== 'undefined') {
         web3 = new window.Web3(web3.currentProvider)
         processWeb3(web3, resolve,  reject)
       } else {
         // Fallback to localhost if no web3 injection.
-        const errorMsg = `A wallet is not installed. Please go to
-        <a target="_blank" href="https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid">Nifty Wallet</a> and return to this page after you installed it`
-        reject({message: errorMsg})
+        const errorMsg = ''
+        reject({ type: 'install', message: errorMsg })
         console.log('No web3 instance injected, using Local web3.');
         console.error('wallet not found');
       }
@@ -83,7 +83,7 @@ const processWeb3 = (web3, resolve,  reject) => {
     document.title = `${netIdName} - Bridge UI dApp`
     const defaultAccount = web3.eth.defaultAccount || null;
     if(defaultAccount === null){
-      reject({message: 'Please unlock your wallet and refresh the page'})
+      reject({ type: 'unlock', message: 'Please unlock your wallet and refresh the page' })
     }
     const results = {
       web3Instance: new Web3(web3.currentProvider),
