@@ -26,7 +26,8 @@
     "react-transition-group": "^2.2.1",
     "selenium-webdriver": "^3.6.0",
     "sweetalert": "^2.1.0",
-    "web3": "^1.0.0-beta.30"
+    "web3": "^1.0.0-beta.30",
+    "yn": "^3.0.0"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/assets/stylesheets/application.scss -o src/assets/stylesheets --output-style=compressed",

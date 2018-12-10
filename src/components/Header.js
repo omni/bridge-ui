@@ -6,6 +6,7 @@ import menuOpenIcon from '../assets/images/icons/icon-close.svg'
 import { Wallet } from './Wallet'
 import { DailyQuotaModal } from './DailyQuotaModal'
 import { inject, observer } from 'mobx-react/index'
+import yn from 'yn'
 
 const getMobileMenuLinks = (onMenuToggle, withoutEvents) =>
   (<div className="links_container_mobile">
@@ -29,7 +30,7 @@ export class Header  extends React.Component {
   render () {
     const { showMobileMenu, onMenuToggle, RootStore: { alertStore, web3Store } } = this.props
     const { REACT_APP_HOME_WITHOUT_EVENTS: HOME, REACT_APP_FOREIGN_WITHOUT_EVENTS: FOREIGN } = process.env
-    const withoutEvents = web3Store.metamaskNet.id === web3Store.homeNet.id.toString() ? HOME : FOREIGN
+    const withoutEvents = web3Store.metamaskNet.id === web3Store.homeNet.id.toString() ? yn(HOME) : yn(FOREIGN)
     return (
       <header className="header">
         {showMobileMenu && (<div className="header-mobile-menu-container">{getMobileMenuLinks(onMenuToggle, withoutEvents)}</div>)}

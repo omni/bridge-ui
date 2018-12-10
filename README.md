@@ -165,8 +165,8 @@ REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
 REACT_APP_HOME_NATIVE_NAME | name of the home native coin
 REACT_APP_HOME_NETWORK_NAME | name to be displayed for home network
 REACT_APP_FOREIGN_NETWORK_NAME | name to be displayed for foreign network
-REACT_APP_HOME_WITHOUT_EVENTS | set it to `1` if home network doesn't support events
-REACT_APP_FOREIGN_WITHOUT_EVENTS | set it to `1` if foreign network doesn't support events 
+REACT_APP_HOME_WITHOUT_EVENTS | `true` if home network doesn't support events
+REACT_APP_FOREIGN_WITHOUT_EVENTS | `true` if foreign network doesn't support events 
 REACT_APP_HOME_EXPLORER_TX_TEMPLATE | template link to transaction on home explorer. `%s` will be replaced by transaction hash
 REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE | template link to transaction on foreign explorer. `%s` will be replaced by transaction hash
 REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE | template link to address on home explorer. `%s` will be replaced by address

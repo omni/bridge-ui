@@ -4,6 +4,7 @@ import pattern from '../assets/images/pattern.svg'
 import { BridgeStatistics } from './index'
 import { TransactionsStatistics } from './TransactionsStatistics'
 import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
+import yn from 'yn'
 
 @inject("RootStore")
 @observer
@@ -15,7 +16,7 @@ export class StatisticsPage extends React.Component {
     const leftTitle = isNativeToErc ? 'Deposits' : 'Withdraws'
     const rightTitle = isNativeToErc ? 'Withdraws' : 'Deposits'
     const { REACT_APP_HOME_WITHOUT_EVENTS: HOME, REACT_APP_FOREIGN_WITHOUT_EVENTS: FOREIGN } = process.env
-    const withoutEvents = web3Store.metamaskNet.id === web3Store.homeNet.id.toString() ? HOME : FOREIGN
+    const withoutEvents = web3Store.metamaskNet.id === web3Store.homeNet.id.toString() ? yn(HOME) : yn(FOREIGN)
     return(
       <div className="statistics-page">
         <div className='statistics-left-container' />
