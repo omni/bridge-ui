@@ -2,6 +2,8 @@ import React from 'react';
 import { inject, observer } from "mobx-react";
 import { EventsListHeader } from './index'
 import { Event } from './index'
+import yn from 'yn'
+import { Redirect } from 'react-router'
 
 
 const WAIT_INTERVAL = 700;
@@ -132,12 +134,14 @@ export class RelayEvents extends React.Component {
   }
 
   render(){
-    const { homeStore, foreignStore } = this.props.RootStore
+    const { homeStore, foreignStore, web3Store } = this.props.RootStore
     const { selectedList } = this.state
     const home = this.getHomeEvents(homeStore, foreignStore)
     const foreign = this.getForeignEvents(foreignStore, homeStore)
+    const { REACT_APP_HOME_WITHOUT_EVENTS: HOME, REACT_APP_FOREIGN_WITHOUT_EVENTS: FOREIGN } = process.env
+    const withoutEvents = web3Store.metamaskNet.id === web3Store.homeNet.id.toString() ? yn(HOME) : yn(FOREIGN)
 
-    return(
+    return withoutEvents ? (<Redirect to="/" />) : (
       <div className="events-page">
         <div className="events-container">
           <EventsListHeader

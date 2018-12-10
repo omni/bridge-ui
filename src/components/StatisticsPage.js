@@ -5,6 +5,7 @@ import { BridgeStatistics } from './index'
 import { TransactionsStatistics } from './TransactionsStatistics'
 import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 import yn from 'yn'
+import { Redirect } from 'react-router'
 
 @inject("RootStore")
 @observer
@@ -17,23 +18,22 @@ export class StatisticsPage extends React.Component {
     const rightTitle = isNativeToErc ? 'Withdraws' : 'Deposits'
     const { REACT_APP_HOME_WITHOUT_EVENTS: HOME, REACT_APP_FOREIGN_WITHOUT_EVENTS: FOREIGN } = process.env
     const withoutEvents = web3Store.metamaskNet.id === web3Store.homeNet.id.toString() ? yn(HOME) : yn(FOREIGN)
-    return(
+
+    return withoutEvents ? ( <Redirect to="/" />) : (
       <div className="statistics-page">
         <div className='statistics-left-container' />
         <div className='statistics-page-container'>
-          {withoutEvents ? null :
-            <div className='statistics-bridge-container'>
-              <span className='statistics-bridge-title statistics-title'>Bridge Statistics</span>
-              <BridgeStatistics
-                users={homeStore.statistics.finished ? homeStore.statistics.users.size : ''}
-                totalBridged={homeStore.statistics.finished ? homeStore.statistics.totalBridged.toString() : ''}
-                homeBalance={homeStore.balance}
-                homeSymbol={homeStore.symbol}
-                homeNativeSupplyTitle={isNativeToErc}
-                foreignSymbol={foreignStore.symbol}
-                foreignSupply={foreignStore.totalSupply} />
-            </div>
-          }
+          <div className='statistics-bridge-container'>
+            <span className='statistics-bridge-title statistics-title'>Bridge Statistics</span>
+            <BridgeStatistics
+              users={homeStore.statistics.finished ? homeStore.statistics.users.size : ''}
+              totalBridged={homeStore.statistics.finished ? homeStore.statistics.totalBridged.toString() : ''}
+              homeBalance={homeStore.balance}
+              homeSymbol={homeStore.symbol}
+              homeNativeSupplyTitle={isNativeToErc}
+              foreignSymbol={foreignStore.symbol}
+              foreignSupply={foreignStore.totalSupply} />
+          </div>
           <div className='statistics-transaction-container'>
             <div className='statistics-deposit-container'>
               <span className='statistics-deposit-title statistics-title'>Tokens {leftTitle}</span>

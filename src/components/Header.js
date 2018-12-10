@@ -18,9 +18,11 @@ const getMobileMenuLinks = (onMenuToggle, withoutEvents) =>
     <Link to='/status' className="link" onClick={onMenuToggle}>
       <i className="icon_status" /><span className='link_text'>Status</span>
     </Link>
-    <Link to='/statistics' className="link" onClick={onMenuToggle}>
-      <i className="icon_statistics" /><span className='link_text'>Statistics</span>
-    </Link>
+    {withoutEvents ? null :
+      <Link to='/statistics' className="link" onClick={onMenuToggle}>
+        <i className="icon_statistics" /><span className='link_text'>Statistics</span>
+      </Link>
+    }
   </div>)
 
 
@@ -46,9 +48,11 @@ export class Header  extends React.Component {
             <Link to='/status' className="link">
               <i className="icon_status"/><span className='link_text'>Status</span>
             </Link>
-            <Link to='/statistics' className="link">
-              <i className="icon_statistics"/><span className='link_text'>Statistics</span>
-            </Link>
+            {withoutEvents ? null :
+              <Link to='/statistics' className="link">
+                <i className="icon_statistics"/><span className='link_text'>Statistics</span>
+              </Link>
+            }
             <Wallet/>
           </div>
           <div className="mobile-menu">
