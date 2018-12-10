@@ -34,6 +34,7 @@ class ForeignStore {
   @observable minPerTx = '';
   @observable latestBlockNumber = 0;
   @observable validators = []
+  @observable validatorsCount = 0
   @observable foreignBridgeValidators = ''
   @observable requiredSignatures = 0
   @observable dailyLimit = 0
@@ -278,8 +279,9 @@ class ForeignStore {
     try {
       const foreignValidatorsAddress = await this.foreignBridge.methods.validatorContract().call()
       this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
-      this.validators =  await getBridgeValidators(this.foreignBridgeValidators)
+      this.validators = await getBridgeValidators(this.foreignBridgeValidators)
       this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
+      this.validatorsCount = await this.foreignBridgeValidators.methods.validatorCount().call()
     } catch(e){
       console.error(e)
     }

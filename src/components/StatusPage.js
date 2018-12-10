@@ -13,7 +13,7 @@ export class StatusPage extends React.Component {
     const { homeStore, foreignStore, web3Store } = this.props.RootStore
     const isHome = web3Store.metamaskNet.id.toString() === web3Store.homeNet.id.toString()
     const requiredSignatures = isHome ? homeStore.requiredSignatures : foreignStore.requiredSignatures
-    const authorities = isHome ? homeStore.validators.length : foreignStore.validators.length
+    const authorities = isHome ? homeStore.validatorsCount : foreignStore.validatorsCount
     const symbol = isHome ? homeStore.symbol : foreignStore.symbol
     const maxSingleDeposit = isHome ? homeStore.maxPerTx : foreignStore.maxPerTx
     const maxTotalBalance = isHome ? homeStore.maxCurrentDeposit : foreignStore.maxCurrentDeposit

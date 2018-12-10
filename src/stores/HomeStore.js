@@ -42,6 +42,7 @@ class HomeStore {
   @observable maxPerTx = "";
   @observable latestBlockNumber = 0;
   @observable validators = []
+  @observable validatorsCount = 0
   @observable homeBridgeValidators = ''
   @observable requiredSignatures = 0
   @observable dailyLimit = 0
@@ -295,8 +296,9 @@ class HomeStore {
     try {
       const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
       this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-      this.validators =  await getBridgeValidators(this.homeBridgeValidators)
+      this.validators = await getBridgeValidators(this.homeBridgeValidators)
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
+      this.validatorsCount = await this.homeBridgeValidators.methods.validatorCount().call()
     } catch(e){
       console.error(e)
     }
