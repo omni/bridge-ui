@@ -4,7 +4,7 @@ import pattern from '../assets/images/pattern.svg'
 import { BridgeStatistics } from './index'
 import { TransactionsStatistics } from './TransactionsStatistics'
 import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
-import yn from 'yn'
+import yn from './utils/yn'
 import { Redirect } from 'react-router'
 
 @inject("RootStore")

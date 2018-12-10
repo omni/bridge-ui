@@ -2,7 +2,7 @@ import React from 'react';
 import { inject, observer } from "mobx-react";
 import { EventsListHeader } from './index'
 import { Event } from './index'
-import yn from 'yn'
+import yn from './utils/yn'
 import { Redirect } from 'react-router'
 
 

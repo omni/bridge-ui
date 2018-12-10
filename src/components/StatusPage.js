@@ -3,7 +3,7 @@ import { inject, observer } from "mobx-react"
 import { Configuration } from './Configuration'
 import { Authority } from './Authority'
 import pattern from '../assets/images/pattern.svg'
-import yn from 'yn'
+import yn from './utils/yn'
 
 
 @inject("RootStore")

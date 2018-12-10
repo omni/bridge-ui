@@ -6,7 +6,7 @@ import menuOpenIcon from '../assets/images/icons/icon-close.svg'
 import { Wallet } from './Wallet'
 import { DailyQuotaModal } from './DailyQuotaModal'
 import { inject, observer } from 'mobx-react/index'
-import yn from 'yn'
+import yn from './utils/yn'
 
 const getMobileMenuLinks = (onMenuToggle, withoutEvents) =>
   (<div className="links_container_mobile">
