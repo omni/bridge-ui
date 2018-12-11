@@ -1,8 +1,8 @@
 # POA Bridge - User Interface (UI) Application
 
-[![Build Status](https://travis-ci.org/patitonar/bridge-ui.svg?branch=master)](https://travis-ci.org/patitonar/bridge-ui)
+[![Build Status](https://travis-ci.org/poanetwork/bridge-ui.svg?branch=master)](https://travis-ci.org/poanetwork/bridge-ui)
 [![Gitter](https://badges.gitter.im/poanetwork/poa-bridge.svg)](https://gitter.im/poanetwork/poa-bridge?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Coverage Status](https://coveralls.io/repos/github/patitonar/bridge-ui/badge.svg?branch=master)](https://coveralls.io/github/patitonar/bridge-ui?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/poanetwork/bridge-ui/badge.svg?branch=master)](https://coveralls.io/github/poanetwork/bridge-ui?branch=master)
 [![dependencies Status](https://david-dm.org/poanetwork/bridge-ui/status.svg)](https://david-dm.org/poanetwork/bridge-ui)
 
 Welcome to the POA Bridge! Following is an overview of the POA Bridge and Bridge UI Application, as well as [basic instructions for getting started](#getting-started).
@@ -165,6 +165,8 @@ REACT_APP_HOME_HTTP_PARITY_URL | http public rpc node for Foreign Network
 REACT_APP_HOME_NATIVE_NAME | name of the home native coin
 REACT_APP_HOME_NETWORK_NAME | name to be displayed for home network
 REACT_APP_FOREIGN_NETWORK_NAME | name to be displayed for foreign network
+REACT_APP_HOME_WITHOUT_EVENTS | `true` if home network doesn't support events
+REACT_APP_FOREIGN_WITHOUT_EVENTS | `true` if foreign network doesn't support events 
 REACT_APP_HOME_EXPLORER_TX_TEMPLATE | template link to transaction on home explorer. `%s` will be replaced by transaction hash
 REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE | template link to transaction on foreign explorer. `%s` will be replaced by transaction hash
 REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE | template link to address on home explorer. `%s` will be replaced by address
@@ -177,6 +179,7 @@ REACT_APP_FOREIGN_GAS_PRICE_ORACLE_URL | The URL used to get a JSON response fro
 REACT_APP_FOREIGN_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
 REACT_APP_FOREIGN_GAS_PRICE_FALLBACK | The gas price (in Wei) that is used if both the oracle and the fall back gas price specified in the Foreign Bridge contract are not available.
 REACT_APP_FOREIGN_GAS_PRICE_UPDATE_INTERVAL | An interval in milliseconds used to get the updated gas price value either from the oracle or from the Foreign Bridge contract.
+REACT_APP_DESCRIPTION | The meta description for the deployed bridge page
 
   * Run `npm run start`
   * Make sure your web3 wallet (Nifty Wallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)

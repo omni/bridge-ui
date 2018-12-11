@@ -19,6 +19,7 @@ import {
   getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
+import sleep from './utils/sleep'
 import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
 import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
@@ -41,6 +42,7 @@ class HomeStore {
   @observable maxPerTx = "";
   @observable latestBlockNumber = 0;
   @observable validators = []
+  @observable validatorsCount = 0
   @observable homeBridgeValidators = ''
   @observable requiredSignatures = 0
   @observable dailyLimit = 0
@@ -100,10 +102,8 @@ class HomeStore {
       this.getEvents()
       this.getBalance()
       this.getBlockNumber()
-    }, 5000)
-    setInterval(() => {
       this.getCurrentLimit()
-    }, 10000)
+    }, 15000)
   }
 
   @action
@@ -184,11 +184,14 @@ class HomeStore {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
 
-      if(fromBlock < 0) {
+      if (fromBlock < 0) {
         fromBlock = 0
       }
 
-      let events = await getPastEvents(this.homeBridge, fromBlock, toBlock)
+      let events = await getPastEvents(this.homeBridge, fromBlock, toBlock).catch(e => {
+        console.error('Couldn\'t get events', e)
+        return []
+      })
 
       let homeEvents = []
       await asyncForEach(events, (async (event) => {
@@ -293,8 +296,9 @@ class HomeStore {
     try {
       const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
       this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-      this.validators =  await getBridgeValidators(this.homeBridgeValidators)
+      this.validators = await getBridgeValidators(this.homeBridgeValidators)
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
+      this.validatorsCount = await this.homeBridgeValidators.methods.validatorCount().call()
     } catch(e){
       console.error(e)
     }
@@ -357,6 +361,22 @@ class HomeStore {
   async getBlockRewardContract () {
     const blockRewardAddress = await this.homeBridge.methods.blockRewardContract().call()
     this.blockRewardContract = new this.homeWeb3.eth.Contract(BLOCK_REWARD_ABI, blockRewardAddress)
+  }
+
+  async waitUntilProcessed(txHash, value) {
+    const web3 = this.rootStore.foreignStore.foreignWeb3
+    const bridge = this.homeBridge
+
+    const tx = await web3.eth.getTransaction(txHash)
+    const messageHash = web3.utils.soliditySha3(tx.from, web3.utils.toBN(value).toString(), txHash)
+    const numSigned = await bridge.methods.numAffirmationsSigned(messageHash).call()
+    const processed = await bridge.methods.isAlreadyProcessed(numSigned).call()
+
+    if (processed) {
+      return Promise.resolve()
+    } else {
+      return sleep(5000).then(() => this.waitUntilProcessed(txHash, value))
+    }
   }
 }
 

@@ -32,7 +32,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 600px;
+    max-width: 700px;
 
     @media screen and (max-width: $mobile-width) {
       display: none;
@@ -57,7 +57,7 @@
   }
 
   .link {
-    margin-left: 30px;
+    margin: 0 15px;
     line-height: 16px;
     text-decoration: none;
     font-weight: bold;
