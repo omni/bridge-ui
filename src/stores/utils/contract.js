@@ -1,25 +1,25 @@
-import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js';
+import { fromDecimals } from './web3'
 
-export const getMaxPerTxLimit = async (contract) => {
+export const getMaxPerTxLimit = async (contract,decimals) => {
   const maxPerTx = await contract.methods.maxPerTx().call()
-  return Web3Utils.fromWei(maxPerTx)
+  return fromDecimals(maxPerTx,decimals)
 }
 
-export const getMinPerTxLimit = async (contract) => {
+export const getMinPerTxLimit = async (contract,decimals) => {
   const minPerTx = await contract.methods.minPerTx().call()
-  return Web3Utils.fromWei(minPerTx)
+  return fromDecimals(minPerTx,decimals)
 }
 
-export const getCurrentLimit = async (contract) => {
+export const getCurrentLimit = async (contract,decimals) => {
   const currentDay = await contract.methods.getCurrentDay().call()
   const dailyLimit = await contract.methods.dailyLimit().call()
   const totalSpentPerDay = await contract.methods.totalSpentPerDay(currentDay).call()
   const maxCurrentDeposit = new BN(dailyLimit).minus(new BN(totalSpentPerDay)).toString(10)
   return {
-    maxCurrentDeposit: Web3Utils.fromWei(maxCurrentDeposit),
-    dailyLimit: Web3Utils.fromWei(dailyLimit),
-    totalSpentPerDay: Web3Utils.fromWei(totalSpentPerDay)
+    maxCurrentDeposit: fromDecimals(maxCurrentDeposit,decimals),
+    dailyLimit: fromDecimals(dailyLimit,decimals),
+    totalSpentPerDay: fromDecimals(totalSpentPerDay,decimals)
   }
 }
 
@@ -31,16 +31,20 @@ export const getErc20TokenAddress = (contract) => contract.methods.erc20token().
 
 export const getSymbol = (contract) => contract.methods.symbol().call()
 
+export const getDecimals= (contract) => contract.methods.decimals().call()
+
 export const getMessage = (contract, messageHash) => contract.methods.message(messageHash).call()
 
 export const getTotalSupply = async (contract) => {
   const totalSupply = await contract.methods.totalSupply().call()
-  return Web3Utils.fromWei(totalSupply)
+  const decimals = await contract.methods.decimals().call()
+  return fromDecimals(totalSupply,decimals)
 }
 
 export const getBalanceOf = async (contract, address) => {
   const balance = await contract.methods.balanceOf(address).call()
-  return Web3Utils.fromWei(balance)
+  const decimals = await contract.methods.decimals().call()
+  return fromDecimals(balance,decimals)
 }
 
 export const mintedTotally = async (contract) => {

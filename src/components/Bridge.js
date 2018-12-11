@@ -1,6 +1,7 @@
 import React from 'react';
 import { inject, observer } from "mobx-react";
 import Web3Utils from 'web3-utils'
+import { toDecimals } from '../stores/utils/web3'
 import swal from 'sweetalert'
 import BN from 'bignumber.js'
 import { BridgeForm } from './index'
@@ -89,12 +90,12 @@ export class Bridge extends React.Component {
           return txStore.erc677transferAndCall({
             to: homeStore.HOME_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
-            value: Web3Utils.toWei(amount),
+            value: toDecimals(amount,homeStore.tokenDecimals),
             contract: homeStore.tokenContract,
             tokenAddress: homeStore.tokenAddress
           })
         } else {
-          const value = Web3Utils.toHex(Web3Utils.toWei(amount))
+          const value = Web3Utils.toHex(toDecimals(amount,homeStore.tokenDecimals))
           return txStore.doSend({
             to: homeStore.HOME_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
@@ -138,13 +139,13 @@ export class Bridge extends React.Component {
           return await txStore.erc20transfer({
             to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
-            value: Web3Utils.toWei(amount)
+            value: toDecimals(amount,foreignStore.tokenDecimals)
           })
         } else {
           return await txStore.erc677transferAndCall({
             to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
-            value: Web3Utils.toHex(Web3Utils.toWei(amount)),
+            value: Web3Utils.toHex(toDecimals(amount,foreignStore.tokenDecimals)),
             contract: foreignStore.tokenContract,
             tokenAddress: foreignStore.tokenAddress
           })
