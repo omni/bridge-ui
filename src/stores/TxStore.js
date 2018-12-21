@@ -105,7 +105,7 @@ class TxStore {
     const { toBN } = web3.utils
     web3.eth.getTransactionReceipt(hash, (error, res) => {
       if(res && res.blockNumber){
-        if(toBN(res.status).eq(toBN(1))){
+        if(res.status === true || toBN(res.status).eq(toBN(1))){
           if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id.toString()) {
             const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
