@@ -15,6 +15,7 @@ import {
   getName
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
+import sleep from './utils/sleep'
 import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
@@ -33,6 +34,7 @@ class ForeignStore {
   @observable minPerTx = '';
   @observable latestBlockNumber = 0;
   @observable validators = []
+  @observable validatorsCount = 0
   @observable foreignBridgeValidators = ''
   @observable requiredSignatures = 0
   @observable dailyLimit = 0
@@ -148,11 +150,14 @@ class ForeignStore {
       fromBlock = fromBlock || this.filteredBlockNumber || this.latestBlockNumber - 50
       toBlock =  toBlock || this.filteredBlockNumber || "latest"
 
-      if(fromBlock < 0) {
+      if (fromBlock < 0) {
         fromBlock = 0
       }
 
-      let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock)
+      let foreignEvents = await getPastEvents(this.foreignBridge, fromBlock, toBlock).catch(e => {
+        console.error('Couldn\'t get events', e)
+        return []
+      })
 
       if(!this.filter){
         this.events = foreignEvents;
@@ -249,6 +254,18 @@ class ForeignStore {
     return this.dailyLimit ? this.totalSpentPerDay / this.dailyLimit * 100 : 0
   }
 
+  async waitUntilProcessed(txHash) {
+    const bridge = this.foreignBridge
+
+    const processed = await bridge.methods.relayedMessages(txHash).call()
+
+    if (processed) {
+      return Promise.resolve()
+    } else {
+      return sleep(5000).then(() => this.waitUntilProcessed(txHash))
+    }
+  }
+
   getExplorerTxUrl(txHash) {
     return this.explorerTxTemplate.replace('%s', txHash)
   }
@@ -262,13 +279,13 @@ class ForeignStore {
     try {
       const foreignValidatorsAddress = await this.foreignBridge.methods.validatorContract().call()
       this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
-      this.validators =  await getBridgeValidators(this.foreignBridgeValidators)
+      this.validators = await getBridgeValidators(this.foreignBridgeValidators)
       this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
+      this.validatorsCount = await this.foreignBridgeValidators.methods.validatorCount().call()
     } catch(e){
       console.error(e)
     }
   }
-
 }
 
 export default ForeignStore;
