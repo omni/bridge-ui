@@ -53,8 +53,8 @@ export const getUnit = (bridgeMode) => {
     unitHome = 'Tokens'
     unitForeign = 'Tokens'
   } else if (bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
-    unitHome = 'Tokens'
-    unitForeign = 'Native coins'
+    unitHome = 'Native coins'
+    unitForeign = 'Tokens'
   } else {
     throw new Error(`Unrecognized bridge mode: ${bridgeMode}`)
   }
