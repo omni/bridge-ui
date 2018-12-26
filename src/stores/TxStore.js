@@ -2,6 +2,7 @@ import { action, observable } from "mobx";
 import { estimateGas } from './utils/web3'
 import { addPendingTransaction, removePendingTransaction } from './utils/testUtils'
 import { getUnit } from './utils/bridgeMode'
+import yn from '../components/utils/yn'
 
 class TxStore {
   @observable txsValues = {}
@@ -112,9 +113,7 @@ class TxStore {
               this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
 
-              if (process.env.REACT_APP_FOREIGN_WITHOUT_EVENTS) {
-                this.foreignStore.addWaitingForConfirmation(hash)
-              } else {
+              if (yn(process.env.REACT_APP_FOREIGN_WITHOUT_EVENTS)) {
                 this.foreignStore.waitUntilProcessed(hash).then(() => {
                   this.alertStore.setLoadingStepIndex(3)
                   const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
@@ -127,6 +126,8 @@ class TxStore {
                     , 2000)
                   removePendingTransaction()
                 })
+              } else {
+                this.foreignStore.addWaitingForConfirmation(hash)
               }
             } else {
               if(blockConfirmations > 0) {
@@ -141,22 +142,21 @@ class TxStore {
               this.alertStore.setBlockConfirmations(8)
               this.alertStore.setLoadingStepIndex(2)
 
-              if (process.env.REACT_APP_FOREIGN_WITHOUT_EVENTS) {
-                this.homeStore.addWaitingForConfirmation(hash)
+              if (yn(process.env.REACT_APP_HOME_WITHOUT_EVENTS)) {
+                this.homeStore.waitUntilProcessed(hash, this.txsValues[hash]).then(() => {
+                  this.alertStore.setLoadingStepIndex(3)
+                  const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
+                  setTimeout(() => {
+                      this.alertStore.pushSuccess(
+                        `${unitReceived} received on ${this.homeStore.networkName}`,
+                        this.alertStore.HOME_TRANSFER_SUCCESS
+                      )
+                    }
+                    , 2000)
+                  removePendingTransaction()
+                })
               } else {
-                this.homeStore.waitUntilProcessed(hash, this.txsValues[hash])
-                  .then(() => {
-                    this.alertStore.setLoadingStepIndex(3)
-                    const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
-                    setTimeout(() => {
-                        this.alertStore.pushSuccess(
-                          `${unitReceived} received on ${this.homeStore.networkName}`,
-                          this.alertStore.HOME_TRANSFER_SUCCESS
-                        )
-                      }
-                      , 2000)
-                    removePendingTransaction()
-                  })
+                this.homeStore.addWaitingForConfirmation(hash)
               }
             } else {
               if(blockConfirmations > 0) {
