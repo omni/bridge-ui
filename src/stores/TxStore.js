@@ -120,7 +120,7 @@ class TxStore {
                   const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
                   setTimeout(() => {
                       this.alertStore.pushSuccess(
-                        `${unitReceived} received on ${this.homeStore.networkName}`,
+                        `${unitReceived} received on ${this.foreignStore.networkName}`,
                         this.alertStore.FOREIGN_TRANSFER_SUCCESS
                       )
                     }
@@ -150,7 +150,7 @@ class TxStore {
                     const unitReceived = getUnit(this.rootStore.bridgeMode).unitHome
                     setTimeout(() => {
                         this.alertStore.pushSuccess(
-                          `${unitReceived} received on ${this.foreignStore.networkName}`,
+                          `${unitReceived} received on ${this.homeStore.networkName}`,
                           this.alertStore.HOME_TRANSFER_SUCCESS
                         )
                       }
