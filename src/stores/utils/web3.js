@@ -50,13 +50,13 @@ const explorers = {
   3: 'https://ropsten.etherscan.io/',
   4: 'https://rinkeby.etherscan.io/',
   42:'https://kovan.etherscan.io/',
-  77:'https://sokol-explorer.poa.network/',
-  99:'https://poaexplorer.com/'
+  77:'https://blockscout.com/poa/sokol/',
+  99:'https://blockscout.com/poa/core/'
 }
 
 export const getExplorerUrl = (id) => explorers[id]
 
-export const getAddressUrl = (id) => getExplorerUrl(id) + (id.toString() === '77' ? 'account/' : 'address/')
+export const getAddressUrl = (id) => getExplorerUrl(id) + 'address/'
 
 export const getNetworkName = (id) => networks[id] || 'Unknown'
 
