@@ -128,11 +128,9 @@ class ForeignStore {
       } catch(e) {
         this.tokenName = this.foreignWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
       }
-      try {
-        this.tokenDecimals = await getDecimals(this.tokenContract)
-      } catch(e) {
-        this.tokenDecimals = this.foreignWeb3.utils.hexToAscii(await getDecimals(alternativeContract)).replace(/\u0000*$/, '')
-      }
+
+      this.tokenDecimals = await getDecimals(this.tokenContract)
+
     } catch(e) {
       console.error(e)
     }

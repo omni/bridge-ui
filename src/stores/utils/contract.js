@@ -1,5 +1,5 @@
 import BN from 'bignumber.js';
-import { fromDecimals } from './web3'
+import { fromDecimals } from './decimals'
 
 export const getMaxPerTxLimit = async (contract,decimals) => {
   const maxPerTx = await contract.methods.maxPerTx().call()

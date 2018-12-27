@@ -2,7 +2,8 @@ import { action, observable } from 'mobx';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
-import { getBlockNumber, getBalance, fromDecimals } from './utils/web3'
+import { getBlockNumber, getBalance } from './utils/web3'
+import { fromDecimals } from './utils/decimals'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -125,11 +126,7 @@ class HomeStore {
       } catch(e) {
         this.tokenName = this.homeWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
       }
-      try {
-        this.tokenDecimals = await getDecimals(this.tokenContract)
-      } catch(e) {
-        this.tokenDecimals = this.homeWeb3.utils.hexToAscii(await getDecimals(alternativeContract)).replace(/\u0000*$/, '')
-      }
+      this.tokenDecimals = await getDecimals(this.tokenContract)
     } catch(e) {
       console.error(e)
     }

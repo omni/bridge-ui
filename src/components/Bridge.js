@@ -1,7 +1,7 @@
 import React from 'react';
 import { inject, observer } from "mobx-react";
 import Web3Utils from 'web3-utils'
-import { toDecimals } from '../stores/utils/web3'
+import { toDecimals } from '../stores/utils/decimals'
 import swal from 'sweetalert'
 import BN from 'bignumber.js'
 import { BridgeForm } from './index'
