@@ -10,6 +10,7 @@ import {
   getBalanceOf,
   getErc677TokenAddress,
   getSymbol,
+  getDecimals,
   getErc20TokenAddress,
   getBridgeValidators,
   getName
@@ -44,6 +45,7 @@ class ForeignStore {
   filteredBlockNumber = 0;
   foreignBridge = {};
   tokenContract = {}
+  tokenDecimals = 18;
   FOREIGN_BRIDGE_ADDRESS = process.env.REACT_APP_FOREIGN_BRIDGE_ADDRESS;
   explorerTxTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_TX_TEMPLATE || ''
   explorerAddressTemplate = process.env.REACT_APP_FOREIGN_EXPLORER_ADDRESS_TEMPLATE || ''
@@ -93,7 +95,7 @@ class ForeignStore {
   @action
   async getMaxPerTxLimit(){
     try {
-      this.maxPerTx = await getMaxPerTxLimit(this.foreignBridge)
+      this.maxPerTx = await getMaxPerTxLimit(this.foreignBridge,this.tokenDecimals)
     } catch(e){
       console.error(e)
     }
@@ -102,7 +104,7 @@ class ForeignStore {
   @action
   async getMinPerTxLimit(){
     try {
-      this.minPerTx = await getMinPerTxLimit(this.foreignBridge)
+      this.minPerTx = await getMinPerTxLimit(this.foreignBridge,this.tokenDecimals)
     } catch(e){
       console.error(e)
     }
@@ -126,6 +128,9 @@ class ForeignStore {
       } catch(e) {
         this.tokenName = this.foreignWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
       }
+
+      this.tokenDecimals = await getDecimals(this.tokenContract)
+
     } catch(e) {
       console.error(e)
     }
@@ -173,7 +178,7 @@ class ForeignStore {
             const unitReceived = getUnit(this.rootStore.bridgeMode).unitForeign
             setTimeout(() => {
                 this.alertStore.pushSuccess(`${unitReceived} received on ${this.networkName} on Tx
-            <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;"> 
+            <a href='${urlExplorer}' target='blank' style="overflow-wrap: break-word;word-wrap: break-word;">
             ${event.transactionHash}</a>`, this.alertStore.FOREIGN_TRANSFER_SUCCESS)}
               , 2000)
             this.waitingForConfirmation.delete(event.returnValues.transactionHash)
@@ -195,7 +200,7 @@ class ForeignStore {
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.foreignBridge)
+      const result = await getCurrentLimit(this.foreignBridge,this.tokenDecimals)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay
@@ -234,7 +239,7 @@ class ForeignStore {
     this.events = await this.getEvents()
   }
 
-  
+
   @action
   setFilter(value){
     this.filter = value

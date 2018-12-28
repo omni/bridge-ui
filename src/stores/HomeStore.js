@@ -3,6 +3,7 @@ import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
 import { getBlockNumber, getBalance } from './utils/web3'
+import { fromDecimals } from './utils/decimals'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -11,6 +12,7 @@ import {
   getMessage,
   getErc677TokenAddress,
   getSymbol,
+  getDecimals,
   getTotalSupply,
   getBalanceOf,
   mintedTotally,
@@ -20,7 +22,6 @@ import {
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
-import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
 import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
@@ -67,6 +68,7 @@ class HomeStore {
   explorerTxTemplate = process.env.REACT_APP_HOME_EXPLORER_TX_TEMPLATE || ''
   explorerAddressTemplate = process.env.REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE || ''
   tokenContract = {}
+  tokenDecimals = 18;
   blockRewardContract = {}
 
   constructor (rootStore) {
@@ -124,6 +126,7 @@ class HomeStore {
       } catch(e) {
         this.tokenName = this.homeWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
       }
+      this.tokenDecimals = await getDecimals(this.tokenContract)
     } catch(e) {
       console.error(e)
     }
@@ -141,7 +144,7 @@ class HomeStore {
   @action
   async getMaxPerTxLimit(){
     try {
-      this.maxPerTx = await getMaxPerTxLimit(this.homeBridge)
+      this.maxPerTx = await getMaxPerTxLimit(this.homeBridge,this.tokenDecimals)
     } catch(e){
       console.error(e)
     }
@@ -150,7 +153,7 @@ class HomeStore {
   @action
   async getMinPerTxLimit(){
     try {
-      this.minPerTx = await getMinPerTxLimit(this.homeBridge)
+      this.minPerTx = await getMinPerTxLimit(this.homeBridge,this.tokenDecimals)
     } catch(e){
       console.error(e)
     }
@@ -168,7 +171,7 @@ class HomeStore {
       } else if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
         const mintedCoins = await mintedTotally(this.blockRewardContract)
         const burntCoins = await totalBurntCoins(this.homeBridge)
-        this.balance = Web3Utils.fromWei(mintedCoins.minus(burntCoins).toString(10))
+        this.balance = fromDecimals(mintedCoins.minus(burntCoins).toString(10),this.tokenDecimals)
       } else {
         this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
       }
@@ -276,7 +279,7 @@ class HomeStore {
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.homeBridge)
+      const result = await getCurrentLimit(this.homeBridge,this.tokenDecimals)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay
@@ -318,10 +321,10 @@ class HomeStore {
     this.statistics.users.add(event.returnValues.recipient)
     if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
-      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
     } else if (event.event === "AffirmationCompleted") {
       this.statistics.withdraws++
-      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
     }
   }
 
