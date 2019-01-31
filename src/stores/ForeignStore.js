@@ -20,6 +20,7 @@ import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
 import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
+import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 
 class ForeignStore {
@@ -295,6 +296,11 @@ class ForeignStore {
       this.validators = await getBridgeValidators(this.foreignBridgeValidators)
       this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
       this.validatorsCount = await this.foreignBridgeValidators.methods.validatorCount().call()
+
+      if(this.validators.length !== Number(this.validatorsCount)) {
+        this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
+        this.validators = await getBridgeValidators(this.foreignBridgeValidators)
+      }
     } catch(e){
       console.error(e)
     }
