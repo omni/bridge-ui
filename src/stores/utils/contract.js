@@ -1,5 +1,13 @@
 import BN from 'bignumber.js';
 import { fromDecimals } from './decimals'
+import Web3Utils from 'web3-utils'
+
+export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
+
+export const validFee = (fee) => {
+  const zeroBN = new BN(0)
+  return !zeroBN.eq(fee)
+}
 
 export const getMaxPerTxLimit = async (contract,decimals) => {
   const maxPerTx = await contract.methods.maxPerTx().call()
@@ -70,3 +78,14 @@ export const getBridgeValidators = async (bridgeValidatorContract) => {
 }
 
 export const getName = (contract) => contract.methods.name().call()
+
+export const getFee = async (contract) => {
+  let fee = new BN(0)
+  const feeContract = await contract.methods.feeManagerContract().call()
+  if (feeContract !== ZERO_ADDRESS) {
+    const feeInWei = await contract.methods.getFee().call()
+    fee = new BN(Web3Utils.fromWei(feeInWei))
+  }
+
+  return fee
+}

@@ -18,7 +18,8 @@ import {
   mintedTotally,
   totalBurntCoins,
   getBridgeValidators,
-  getName
+  getName,
+  getFee
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -52,6 +53,7 @@ class HomeStore {
   @observable symbol = process.env.REACT_APP_HOME_NATIVE_NAME || 'NONAME';
   @observable tokenName = '';
   @observable userBalance = 0
+  @observable fee = new BN(0)
   @observable statistics = {
     deposits: 0,
     depositsValue: BN(0),
@@ -98,6 +100,7 @@ class HomeStore {
     this.getEvents()
     this.getBalance()
     this.getCurrentLimit()
+    this.getFee()
     this.getValidators()
     this.getStatistics()
     setInterval(() => {
@@ -179,6 +182,11 @@ class HomeStore {
       console.error(e)
       this.errors.push(e)
     }
+  }
+
+  @action
+  async getFee() {
+    this.fee = await getFee(this.homeBridge)
   }
 
   @action

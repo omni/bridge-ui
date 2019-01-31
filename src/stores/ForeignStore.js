@@ -13,7 +13,8 @@ import {
   getDecimals,
   getErc20TokenAddress,
   getBridgeValidators,
-  getName
+  getName,
+  getFee
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -74,6 +75,7 @@ class ForeignStore {
     this.getEvents()
     this.getTokenBalance()
     this.getCurrentLimit()
+    this.getFee()
     this.getValidators()
     setInterval(() => {
       this.getBlockNumber()
@@ -148,6 +150,12 @@ class ForeignStore {
       console.error(e)
     }
   }
+
+  @action
+  async getFee() {
+    this.fee = await getFee(this.foreignBridge)
+  }
+
 
   @action
   async getEvents(fromBlock, toBlock) {
