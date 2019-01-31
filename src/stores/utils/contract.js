@@ -81,11 +81,14 @@ export const getName = (contract) => contract.methods.name().call()
 
 export const getFee = async (contract) => {
   let fee = new BN(0)
-  const feeContract = await contract.methods.feeManagerContract().call()
-  if (feeContract !== ZERO_ADDRESS) {
-    const feeInWei = await contract.methods.getFee().call()
-    fee = new BN(Web3Utils.fromWei(feeInWei))
+  try {
+    const feeContract = await contract.methods.feeManagerContract().call()
+    if (feeContract !== ZERO_ADDRESS) {
+      const feeInWei = await contract.methods.getFee().call()
+      fee = new BN(Web3Utils.fromWei(feeInWei))
+    }
+  } catch (e) {
+    return fee
   }
-
   return fee
 }
