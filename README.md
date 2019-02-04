@@ -88,7 +88,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
     * as the validator's wallet address(es)
 
 3. Fund the test account(s).
-    * Fund Home account(s) using the [POA Sokol Faucet](https://faucet-sokol.herokuapp.com/)
+    * Fund Home account(s) using the [POA Sokol Faucet](https://faucet.poa.network/)
     * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) for Foreign account(s). Get 5 Keth to 1 acc, and transfer from there to all other wallets if more than one account is used.
 
 4. Deploy the Sokol <-> Kovan Bridge contracts.
