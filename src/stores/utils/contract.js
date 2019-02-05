@@ -80,9 +80,9 @@ export const getBridgeValidators = async (bridgeValidatorContract) => {
 
 export const getName = (contract) => contract.methods.name().call()
 
-export const getFeeManager = (contract) => {
+export const getFeeManager = async (contract) => {
  try {
-   return contract.methods.feeManagerContract().call()
+   return await contract.methods.feeManagerContract().call()
  } catch (e) {
    return ZERO_ADDRESS
  }
