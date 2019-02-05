@@ -48,7 +48,7 @@ export const TransferAlert = ({
             </div>
           </div>
         </div>
-        <p className="transfer-description">
+        <p className="transfer-description" data-testid="transfer-description">
           <strong>{fee && `Fee: ${fee.toString()}%`}</strong>
           <br />
           Please confirm that you would like to send <strong>{formattedFromAmount}</strong> {fromCurrency} from {from} to receive <strong>{formattedToAmount}</strong> {toCurrency} on {to}.
