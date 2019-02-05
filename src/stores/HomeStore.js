@@ -20,12 +20,16 @@ import {
   totalBurntCoins,
   getBridgeValidators,
   getName,
-  getFee
+  getFeeManager,
+  getHomeFee,
+  getForeignFee,
+  getFeeManagerMode,
+  ZERO_ADDRESS
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
 import BN from 'bignumber.js'
-import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
+import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 
 async function asyncForEach(array, callback) {
@@ -54,7 +58,6 @@ class HomeStore {
   @observable symbol = process.env.REACT_APP_HOME_NATIVE_NAME || 'NONAME';
   @observable tokenName = '';
   @observable userBalance = 0
-  @observable fee = new BN(0)
   @observable statistics = {
     deposits: 0,
     depositsValue: BN(0),
@@ -64,6 +67,7 @@ class HomeStore {
     users: new Set(),
     finished: false
   }
+  feeManager = {};
   networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
   homeBridge = {};
@@ -187,7 +191,23 @@ class HomeStore {
 
   @action
   async getFee() {
-    this.fee = await getFee(this.homeBridge)
+    const feeManager = await getFeeManager(this.homeBridge)
+    if (feeManager !== ZERO_ADDRESS) {
+      const feeManagerModeHash = await getFeeManagerMode(this.homeBridge)
+      this.feeManager.feeManagerMode = decodeFeeManagerMode(feeManagerModeHash)
+
+      if(this.feeManager.feeManagerMode === FEE_MANAGER_MODE.BOTH_DIRECTIONS) {
+        this.feeManager.homeFee = await getHomeFee(this.homeBridge)
+        this.feeManager.foreignFee = await getForeignFee(this.homeBridge)
+      } else {
+        this.feeManager.homeFee = new BN(0);
+        this.feeManager.foreignFee = await getForeignFee(this.homeBridge)
+      }
+    } else {
+      this.feeManager.feeManagerMode = FEE_MANAGER_MODE.UNDEFINED
+      this.feeManager.homeFee = new BN(0);
+      this.feeManager.foreignFee = new BN(0);
+    }
   }
 
   @action

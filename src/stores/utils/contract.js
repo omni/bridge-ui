@@ -1,6 +1,7 @@
 import BN from 'bignumber.js';
 import { fromDecimals } from './decimals'
 import Web3Utils from 'web3-utils'
+import { FEE_MANAGER_MODE } from './bridgeMode'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -79,16 +80,39 @@ export const getBridgeValidators = async (bridgeValidatorContract) => {
 
 export const getName = (contract) => contract.methods.name().call()
 
-export const getFee = async (contract) => {
-  let fee = new BN(0)
-  try {
-    const feeContract = await contract.methods.feeManagerContract().call()
-    if (feeContract !== ZERO_ADDRESS) {
-      const feeInWei = await contract.methods.getFee().call()
-      fee = new BN(Web3Utils.fromWei(feeInWei))
-    }
-  } catch (e) {
-    return fee
+export const getFeeManager = (contract) => {
+ try {
+   return contract.methods.feeManagerContract().call()
+ } catch (e) {
+   return ZERO_ADDRESS
+ }
+}
+
+export const getFeeManagerMode = (contract) => contract.methods.getFeeManagerMode().call()
+
+export const getHomeFee = async (contract) => {
+  const feeInWei = await contract.methods.getHomeFee().call()
+  return new BN(Web3Utils.fromWei(feeInWei))
+}
+
+export const getForeignFee = async (contract) => {
+  const feeInWei = await contract.methods.getForeignFee().call()
+  return new BN(Web3Utils.fromWei(feeInWei))
+}
+
+export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {
+  if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.BOTH_DIRECTIONS) {
+    return homeToForeignDirection ? homeFeeManager.homeFee : homeFeeManager.foreignFee
+  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
+    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
+    return homeToForeignDirection ? foreignFeeManager.homeFee : homeFeeManager.foreignFee
+  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
+    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED) {
+    return homeToForeignDirection ? new BN(0) : homeFeeManager.foreignFee
+  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED
+    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
+    return homeToForeignDirection ? foreignFeeManager.homeFee : new BN(0)
+  } else {
+    return new BN(0)
   }
-  return fee
 }

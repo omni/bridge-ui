@@ -14,14 +14,18 @@ import {
   getErc20TokenAddress,
   getBridgeValidators,
   getName,
-  getFee
+  getFeeManager,
+  getHomeFee,
+  getFeeManagerMode,
+  ZERO_ADDRESS
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
-import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
+import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
+import BN from 'bignumber.js'
 
 class ForeignStore {
   @observable state = null;
@@ -43,6 +47,7 @@ class ForeignStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
+  feeManager = {};
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
   foreignBridge = {};
@@ -154,7 +159,20 @@ class ForeignStore {
 
   @action
   async getFee() {
-    this.fee = await getFee(this.foreignBridge)
+    const feeManager = await getFeeManager(this.foreignBridge)
+    if (feeManager !== ZERO_ADDRESS) {
+      const feeManagerModeHash = await getFeeManagerMode(this.foreignBridge)
+      this.feeManager.feeManagerMode = decodeFeeManagerMode(feeManagerModeHash)
+
+      if(this.feeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
+        this.feeManager.foreignFee = new BN(0);
+        this.feeManager.homeFee = await getHomeFee(this.foreignBridge)
+      }
+    } else {
+      this.feeManager.feeManagerMode = FEE_MANAGER_MODE.UNDEFINED
+      this.feeManager.homeFee = new BN(0);
+      this.feeManager.foreignFee = new BN(0);
+    }
   }
 
 
