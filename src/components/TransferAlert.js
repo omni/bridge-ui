@@ -14,9 +14,14 @@ export const TransferAlert = ({
   toLogo,
   fromCurrency,
   toCurrency,
-  amount,
+  fromAmount,
+  toAmount,
+  fee,
   reverse
   }) => {
+
+  const formattedFromAmount = numeral(fromAmount).format('0,0[.][000000000000000000]', Math.floor)
+  const formattedToAmount = numeral(toAmount).format('0,0[.][000000000000000000]', Math.floor)
 
   return (
     <div className="transfer-alert">
@@ -32,9 +37,9 @@ export const TransferAlert = ({
               {fromCurrency}
             </div>
           </div>
-          <div><strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {fromCurrency}</div>
+          <div><strong>{formattedFromAmount}</strong> {fromCurrency}</div>
           <img className="icon_arrow_right" src={arrowIconRight} alt="arrow right"/>
-          <div><strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {toCurrency}</div>
+          <div><strong>{formattedToAmount}</strong> {toCurrency}</div>
           <div className="alert-logo-box">
             <div className={reverse ? 'alert-home-logo' : 'alert-foreign-logo'}
                  style={{color: 'white', textAlign: 'center', fontWeight: 'bold'}}
@@ -43,7 +48,11 @@ export const TransferAlert = ({
             </div>
           </div>
         </div>
-        <p className="transfer-description">Please confirm that you would like to send <strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {fromCurrency} from {from} to receive <strong>{numeral(amount).format('0,0[.][000000000000000000]', Math.floor)}</strong> {toCurrency} on {to}.</p>
+        <p className="transfer-description" data-testid="transfer-description">
+          <strong>{fee && `Fee: ${fee.toString()}%`}</strong>
+          <br />
+          Please confirm that you would like to send <strong>{formattedFromAmount}</strong> {fromCurrency} from {from} to receive <strong>{formattedToAmount}</strong> {toCurrency} on {to}.
+        </p>
         <div className="transfer-buttons">
           <button className="transfer-confirm" onClick={onConfirmation}>Continue</button>
           <button className="transfer-cancel" onClick={onCancel}>Cancel</button>

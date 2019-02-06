@@ -15,6 +15,7 @@ import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
 import leftImage from '../assets/images/pattern-1.png'
 import rightImage from '../assets/images/pattern-2.png'
 import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
+import { getFeeToApply, validFee } from '../stores/utils/contract'
 
 @inject("RootStore")
 @observer
@@ -181,12 +182,23 @@ export class Bridge extends React.Component {
     const homeDisplayName = homeStore.networkName
     const foreignDisplayName = foreignStore.networkName
 
+    let fee = null
+    let finalAmount = new BN(amount)
+    const feeToApply = getFeeToApply(homeStore.feeManager, foreignStore.feeManager, !reverse)
+
+    if(validFee(feeToApply)) {
+      fee = feeToApply.multipliedBy(100)
+      finalAmount = finalAmount.multipliedBy(1 - feeToApply)
+    }
+
     const confirmationData = {
       from: reverse ? foreignDisplayName : homeDisplayName,
       to: reverse ? homeDisplayName : foreignDisplayName,
       fromCurrency: reverse ? foreignStore.symbol : homeStore.symbol,
       toCurrency: reverse ? homeStore.symbol : foreignStore.symbol,
-      amount,
+      fromAmount: amount,
+      toAmount: finalAmount,
+      fee,
       reverse
     }
 
