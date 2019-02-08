@@ -31,6 +31,7 @@ import sleep from './utils/sleep'
 import BN from 'bignumber.js'
 import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
+import HomeBridgeV1Abi from './utils/HomeBridgeV1.abi'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -345,20 +346,29 @@ class HomeStore {
   async getStatistics() {
     try {
       const events = await getPastEvents(this.homeBridge, 0, 'latest')
-      this.processLargeArrayAsync(events, this.processEvent)
+      this.processLargeArrayAsync(events, this.processEvent('UserRequestForSignature', 'AffirmationCompleted'))
+
+      // if contracts started with V1 version we should get that statistics too
+      const homeBridgeV1 = new this.homeWeb3.eth.Contract(HomeBridgeV1Abi, this.HOME_BRIDGE_ADDRESS);
+      const eventsFromV1 = await getPastEvents(homeBridgeV1, 0, 'latest')
+      this.processLargeArrayAsync(eventsFromV1, this.processEvent('Deposit', 'Withdraw'))
     } catch(e){
       console.error(e)
     }
   }
 
-  processEvent = (event) => {
-    this.statistics.users.add(event.returnValues.recipient)
-    if(event.event === "UserRequestForSignature") {
-      this.statistics.deposits++
-      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
-    } else if (event.event === "AffirmationCompleted") {
-      this.statistics.withdraws++
-      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+  processEvent = (depositEvent, withdrawEvent) => {
+    return (event) => {
+      if(event.returnValues.recipient) {
+        this.statistics.users.add(event.returnValues.recipient)
+      }
+      if(event.event === depositEvent) {
+        this.statistics.deposits++
+        this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+      } else if (event.event === withdrawEvent) {
+        this.statistics.withdraws++
+        this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+      }
     }
   }
 
