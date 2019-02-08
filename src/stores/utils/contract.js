@@ -100,7 +100,7 @@ const processValidatorsEvents = (events) => {
 
 const getValidatorEvents = async (bridgeValidatorContract) => {
   try {
-    return await bridgeValidatorContract.getPastEvents({ fromBlock: 0 })
+    return await bridgeValidatorContract.getPastEvents('allEvents', { fromBlock: 0 })
   } catch (e) {
     return []
   }
