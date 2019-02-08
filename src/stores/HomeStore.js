@@ -1,6 +1,5 @@
 import { action, observable } from 'mobx';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
-import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
 import { getBlockNumber, getBalance } from './utils/web3'
@@ -18,13 +17,13 @@ import {
   getBalanceOf,
   mintedTotally,
   totalBurntCoins,
-  getBridgeValidators,
   getName,
   getFeeManager,
   getHomeFee,
   getForeignFee,
   getFeeManagerMode,
-  ZERO_ADDRESS
+  ZERO_ADDRESS,
+  getValidatorList
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -329,19 +328,15 @@ class HomeStore {
     try {
       const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
       this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-      this.validators = await getBridgeValidators(this.homeBridgeValidators)
+
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
       this.validatorsCount = await this.homeBridgeValidators.methods.validatorCount().call()
 
-      if(this.validators.length !== Number(this.validatorsCount)) {
-        this.homeBridgeValidators = new this.homeWeb3.eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-        this.validators = await getBridgeValidators(this.homeBridgeValidators)
-      }
+      this.validators = await getValidatorList(homeValidatorsAddress, this.homeWeb3.eth)
     } catch(e){
       console.error(e)
     }
   }
-
 
   async getStatistics() {
     try {

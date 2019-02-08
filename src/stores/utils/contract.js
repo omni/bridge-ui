@@ -1,7 +1,10 @@
-import BN from 'bignumber.js';
+import BN from 'bignumber.js'
 import { fromDecimals } from './decimals'
 import Web3Utils from 'web3-utils'
 import { FEE_MANAGER_MODE } from './bridgeMode'
+import BridgeValidatorsV1Abi from './BridgeValidatorsV1.abi'
+import { abi as BRIDGE_VALIDATORS_ABI } from '../../contracts/BridgeValidators'
+import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../../contracts/RewardableValidators'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -66,16 +69,41 @@ export const totalBurntCoins = async (contract) => {
   return new BN(burntCoins)
 }
 
-export const getBridgeValidators = async (bridgeValidatorContract) => {
-  let ValidatorAdded = await bridgeValidatorContract.getPastEvents('ValidatorAdded', {fromBlock: 0});
-  let ValidatorRemoved = await bridgeValidatorContract.getPastEvents('ValidatorRemoved', {fromBlock: 0});
-  let addedValidators = ValidatorAdded.map(val => {
-    return val.returnValues.validator
+export const getValidatorList = async (address, eth) => {
+  const v1Contract = new eth.Contract(BridgeValidatorsV1Abi, address);
+  const v1ValidatorsEvents = await getValidatorEvents(v1Contract)
+
+  const contract = new eth.Contract(BRIDGE_VALIDATORS_ABI, address);
+  const validatorsEvents = await getValidatorEvents(contract)
+
+  const rewardableContract = new eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, address);
+  const rewardableValidatorsEvents = await getValidatorEvents(rewardableContract)
+
+  const eventList = [...v1ValidatorsEvents, ...validatorsEvents, ...rewardableValidatorsEvents]
+
+  const sortedEvents = eventList.sort((a, b) => a.blockNumber - b.blockNumber)
+
+  return processValidatorsEvents(sortedEvents)
+}
+
+const processValidatorsEvents = (events) => {
+  const validatorList = new Set()
+  events.forEach(event => {
+    if(event.event === 'ValidatorAdded') {
+      validatorList.add(event.returnValues.validator)
+    } else if(event.event === 'ValidatorRemoved') {
+      validatorList.delete(event.returnValues.validator)
+    }
   })
-  const removedValidators = ValidatorRemoved.map(val => {
-    return val.returnValues.validator
-  })
-  return addedValidators.filter(val => !removedValidators.includes(val));
+  return Array.from(validatorList)
+}
+
+const getValidatorEvents = async (bridgeValidatorContract) => {
+  try {
+    return await bridgeValidatorContract.getPastEvents({ fromBlock: 0 })
+  } catch (e) {
+    return []
+  }
 }
 
 export const getName = (contract) => contract.methods.name().call()
