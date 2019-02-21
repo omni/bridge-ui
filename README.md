@@ -65,7 +65,7 @@ The same address is used to send a coin from the Home network and receive a toke
 - Wallet Resources
   - [MetaMask](https://consensys.zendesk.com/hc/en-us/categories/360001045692-Using-MetaMask)
   - [Nifty Wallet](https://poanet.zendesk.com/hc/en-us/articles/360008957634-Nifty-Wallet)
-
+  - [AlphaWallet (iOS and Android)](https://alphawallet.github.io/AlphaWallet-Download-Page/)
 ## Getting Started
 
 The following is an example setup using the POA Sokol testnet as the Home network, and the Ethereum Kovan testnet as the Foreign network. The instructions for the Bridge UI are identical for an `ERC20-to-ERC20` configuration, but the smart contract deployment steps will vary.
@@ -75,7 +75,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
 - [poa-bridge-contracts](https://github.com/poanetwork/poa-bridge-contracts)
 - [token-bridge](https://github.com/poanetwork/token-bridge)
 - [node.js](https://nodejs.org/en/download/)
-- [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/)
+- [AlphaWallet](https://alphawallet.github.io/AlphaWallet-Download-Page/) or [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/)
 
 ### Example Setup
 
@@ -182,7 +182,7 @@ REACT_APP_FOREIGN_GAS_PRICE_UPDATE_INTERVAL | An interval in milliseconds used t
 REACT_APP_DESCRIPTION | The meta description for the deployed bridge page
 
   * Run `npm run start`
-  * Make sure your web3 wallet (Nifty Wallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)
+  * Make sure your web3 wallet (Nifty Wallet, AlphaWallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)
   * Specify an amount and click `Transfer` to complete a cross-chain transaction from Sokol to Kovan
 
 ## Testing

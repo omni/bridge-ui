@@ -28,7 +28,7 @@ export class NoWallet extends Component {
           </div>
           <div className="noWallet-alert-container">
             <h2 className="noWallet-title">Wallet not found</h2>
-            <p className="noWallet-description">A wallet is not installed. Before continue, please install one (Metamask
+            <p className="noWallet-description">A wallet is not installed. Before continue, please install one (AlphaWallet, Metamask
               or Nifty Wallet) and return to this page to continue using the application.</p>
             <p className="noWallet-description">For further information on how to install any of both wallets, please
               click the buttons below.</p>
@@ -48,6 +48,14 @@ export class NoWallet extends Component {
                 target="_blank"
               >
                 Nifty Wallet
+              </a>
+              <a
+                  className="noWallet-alphawallet"
+                  href="https://alphawallet.github.io/AlphaWallet-Download-Page/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+              >
+                 AlphaWallet
               </a>
               <button className="noWallet-cancel" onClick={this.handleCancel}>Cancel</button>
             </div>
