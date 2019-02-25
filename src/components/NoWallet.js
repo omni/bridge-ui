@@ -35,7 +35,7 @@ export class NoWallet extends Component {
             <div className="noWallet-buttons">
               <a
                 className="noWallet-metamask"
-                href="https://poanet.zendesk.com/hc/en-us/articles/360007464553-MetaMask"
+                href="https://forum.poa.network/t/wallet-metamask-extension/1819"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -43,7 +43,7 @@ export class NoWallet extends Component {
               </a>
               <a
                 className="noWallet-niftyWallet"
-                href="https://poanet.zendesk.com/hc/en-us/articles/360008957634-Nifty-Wallet"
+                href="https://forum.poa.network/t/nifty-wallet-guide/1789"
                 rel="noopener noreferrer"
                 target="_blank"
               >
