@@ -820,6 +820,20 @@
       }
     }
 
+    .noWallet-alphawallet {
+      width: 106px;
+      line-height: 36px;
+      text-align: center;
+      border-radius: 3px;
+      color: #ffffff;
+      background-color: #64a231;
+
+      @media screen and (max-width: $small-mobile-width) {
+        width: 100%;
+        margin: 10px 0;
+      }
+    }
+
     .noWallet-cancel {
       width: 72px;
       height: 36px;
