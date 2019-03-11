@@ -177,7 +177,7 @@ class TxStore {
   isStatusSuccess(tx) {
     const { toBN } = this.web3Store.injectedWeb3.utils
     const statusSuccess =  tx.status && (tx.status === true || toBN(tx.status).eq(toBN(1)))
-    const eventEmitted = tx.logs.length
+    const eventEmitted = tx.logs && tx.logs.length
     return statusSuccess || eventEmitted
   }
 
