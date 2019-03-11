@@ -1,4 +1,4 @@
-FROM node:8 as build-deps
+FROM node:10 as build-deps
 
 WORKDIR /bridge
 COPY package.json .
