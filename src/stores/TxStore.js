@@ -103,10 +103,9 @@ class TxStore {
 
   async getTxStatus(hash) {
     const web3 = this.web3Store.injectedWeb3;
-    const { toBN } = web3.utils
     web3.eth.getTransactionReceipt(hash, (error, res) => {
       if(res && res.blockNumber){
-        if(res.status === true || toBN(res.status).eq(toBN(1))){
+        if(this.isStatusSuccess(res)){
           if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id.toString()) {
             const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
@@ -173,6 +172,13 @@ class TxStore {
         this.getTxStatus(hash)
       }
     })
+  }
+
+  isStatusSuccess(tx) {
+    const { toBN } = this.web3Store.injectedWeb3.utils
+    const statusSuccess =  tx.status && (tx.status === true || toBN(tx.status).eq(toBN(1)))
+    const eventEmitted = tx.logs && tx.logs.length
+    return statusSuccess || eventEmitted
   }
 
 }
