@@ -13,15 +13,15 @@ const getMobileMenuLinks = (onMenuToggle, withoutEvents) =>
   (<div className="links_container_mobile">
     {withoutEvents ? null :
       <Link to='/events' className="link" onClick={onMenuToggle}>
-        <i className="icon_events" /><span className='link_text'>Events</span>
+        <span className="header-menu-icon">{EventsIcon()}</span><span className='link_text'>Events</span>
       </Link>
     }
     <Link to='/status' className="link" onClick={onMenuToggle}>
-      <i className="icon_status" /><span className='link_text'>Status</span>
+      <span className="header-menu-icon">{StatusIcon()}</span><span className='link_text'>Status</span>
     </Link>
     {withoutEvents ? null :
       <Link to='/statistics' className="link" onClick={onMenuToggle}>
-        <i className="icon_statistics" /><span className='link_text'>Statistics</span>
+        <span className="header-menu-icon">{StatisticsIcon()}</span><span className='link_text'>Statistics</span>
       </Link>
     }
   </div>)
