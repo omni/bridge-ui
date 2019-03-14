@@ -28,7 +28,6 @@
     width: 162px;
   }
 
-
   .links_container {
     align-items: center;
     display: flex;
@@ -58,11 +57,10 @@
   }
 
   .link {
-    margin: 0 15px;
-    line-height: 16px;
-    text-decoration: none;
     font-weight: bold;
-    color: #ffffff;
+    line-height: 16px;
+    margin: 0 15px;
+    text-decoration: none;
 
     @media screen and (max-width: $mobile-width) {
       margin-left: 0;
@@ -70,39 +68,28 @@
   }
 
   .link_text {
+    color: $header-menu-text-color;
     margin-left: 10px;
   }
 
-  .icon_events {
-    width: 18px;
-    height: 16px;
-    background-image: url(../images/icons/icon-events.svg);
+  &-menu-icon {
     float: left;
-  }
 
-  .icon_status {
-    width: 18px;
-    height: 18px;
-    background-image: url(../images/icons/icon-status.svg);
-    float: left;
-  }
-
-  .icon_statistics {
-    width: 18px;
-    height: 18px;
-    background-image: url(../images/icons/icon-statistics.svg);
-    float: left;
+    path {
+      fill: $header-menu-icon-color;
+    }
   }
 
   .mobile-menu {
     display: none;
+
     @media screen and (max-width: $mobile-width) {
       display: block;
     }
 
     .mobile-menu-icon {
-      width: 18px;
       height: 14px;
+      width: 18px;
     }
 
     .mobile-menu-open-icon {

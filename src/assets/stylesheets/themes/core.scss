@@ -1,10 +1,17 @@
 $theme-name: 'core';
+
 $primary-color: #5c34a2;
+$secondary-color: #60db97;
 
 // header
 $header-background-color: $primary-color;
 $header-logo-width: '180px';
 $header-logo-height: '26px';
+
+// header menu
+$header-menu-icon-color: $secondary-color;
+$header-menu-text-color: #fff;
+
 
 // logo
 $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';
