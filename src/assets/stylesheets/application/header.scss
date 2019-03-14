@@ -1,19 +1,19 @@
 .header {
-  width: 100%;
-  background-color: #5c34a2;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-color: $header-background-color;
   background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
   z-index: 9999;
 
   .container {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
     @media screen and (max-width: $mobile-width) {
-      width: 93%;
       padding: 22px 0;
+      width: 93%;
     }
 
     @media screen and (max-width: $tablet-width) {
@@ -22,16 +22,17 @@
   }
 
   &-logo {
+    background-image: url('#{ $logo-image }');
+  	height: 26px;
     display: block;
     width: 162px;
-  	height: 26px;
   }
 
 
   .links_container {
+    align-items: center;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     max-width: 700px;
 
     @media screen and (max-width: $mobile-width) {
