@@ -1,9 +1,9 @@
 html,
 body,
 p, h1, h2, h3 {
+  font-weight: normal;
   margin: 0;
   padding: 0;
-  font-weight: normal;
 }
 
 html {
@@ -12,12 +12,12 @@ html {
 }
 
 body {
+  background-color: $main-background-color;
+  box-sizing: border-box;
+  font-family: $main-font-family;
+  padding-bottom: $footer-height_desktop;
   position: relative;
   width: 100%;
-  box-sizing: border-box;
-  padding-bottom: $footer-height_desktop;
-  background-color: #ffffff;
-  font-family: 'Nunito', sans-serif;
 
   @media screen and (max-width: $tablet-width) {
     padding-bottom: $footer-height_mobile;
@@ -34,9 +34,11 @@ a {
 }
 
 button {
-  margin-left: 5px;
   color: #08b3f2;
+  margin-left: 5px;
+
   cursor: pointer;
+
   &:hover {
     text-decoration: underline;
   }
@@ -44,12 +46,12 @@ button {
 
 input,
 button {
-  margin: 0;
-  padding: 0;
-  outline: none;
   border: 0;
   font-family: 'Open Sans', sans-serif;
   font-size: 14px;
+  margin: 0;
+  outline: none;
+  padding: 0;
 }
 
 strong {
@@ -65,9 +67,9 @@ strong {
 }
 
 .label {
-  margin-top: 15px;
-  margin-bottom: 7px;
   font-weight: bold;
+  margin-bottom: 7px;
+  margin-top: 15px;
 }
 
 .description {
@@ -80,53 +82,24 @@ strong {
 }
 
 .separator {
-  width: 1px;
-  height: 51px;
   background-color: #e4e4e4;
+  height: 51px;
+  width: 1px;
 
   @media screen and (max-width: $tablet-width) {
     display: none;
   }
 }
 
-.datablock-container {
-  height: 60px;
-  display: flex;
-  justify-content: space-evenly;
-  flex-direction: column;
-  align-items: center;
-
-  @media screen and (max-width: $tablet-width) {
-    align-items: normal;
-  }
-
-  .datablock-value {
-    font-size: 30px;
-    font-weight: bold;
-    color: #5c34a2;
-  }
-
-  .datablock-type {
-    font-size: 18px;
-    color: #5c34a2;
-    margin-left: 10px;
-  }
-
-  .datablock-description {
-    font-size: 14px;
-    color: #333333;
-  }
-}
-
 .app-container {
-  position: relative;
-  width: 100%;
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  width: 100%;
 }
+
 .only-mobile {
   display: none;
-
   @media screen and (max-width: $tablet-width) {
     display: inherit;
   }
