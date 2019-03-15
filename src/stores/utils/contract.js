@@ -74,10 +74,11 @@ export const getValidatorList = async (address, eth) => {
   const v1ValidatorsEvents = await getValidatorEvents(v1Contract)
 
   const contract = new eth.Contract(BRIDGE_VALIDATORS_ABI, address);
-  const validatorsEvents = await getValidatorEvents(contract)
+  const deployedAtBlock = await getDeployedAtBlock(contract);
+  const validatorsEvents = await getValidatorEvents(contract, deployedAtBlock)
 
   const rewardableContract = new eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, address);
-  const rewardableValidatorsEvents = await getValidatorEvents(rewardableContract)
+  const rewardableValidatorsEvents = await getValidatorEvents(rewardableContract, deployedAtBlock)
 
   const eventList = [...v1ValidatorsEvents, ...validatorsEvents, ...rewardableValidatorsEvents]
 
@@ -98,9 +99,9 @@ const processValidatorsEvents = (events) => {
   return Array.from(validatorList)
 }
 
-const getValidatorEvents = async (bridgeValidatorContract) => {
+const getValidatorEvents = async (bridgeValidatorContract, fromBlock = 0) => {
   try {
-    return await bridgeValidatorContract.getPastEvents('allEvents', { fromBlock: 0 })
+    return await bridgeValidatorContract.getPastEvents('allEvents', { fromBlock })
   } catch (e) {
     return []
   }
@@ -117,6 +118,14 @@ export const getFeeManager = async (contract) => {
 }
 
 export const getFeeManagerMode = (contract) => contract.methods.getFeeManagerMode().call()
+
+export const getDeployedAtBlock = async (contract) => {
+ try {
+  return await contract.methods.deployedAtBlock().call()
+ } catch (e) {
+   return 0
+ }
+}
 
 export const getHomeFee = async (contract) => {
   const feeInWei = await contract.methods.getHomeFee().call()

@@ -23,7 +23,8 @@ import {
   getForeignFee,
   getFeeManagerMode,
   ZERO_ADDRESS,
-  getValidatorList
+  getValidatorList,
+  getDeployedAtBlock
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -340,12 +341,13 @@ class HomeStore {
 
   async getStatistics() {
     try {
-      const events = await getPastEvents(this.homeBridge, 0, 'latest')
+      const deployedAtBlock = await getDeployedAtBlock(this.homeBridge);
+      const events = await getPastEvents(this.homeBridge, deployedAtBlock, 'latest')
       this.processLargeArrayAsync(events, this.processEvent('UserRequestForSignature', 'AffirmationCompleted'))
 
       // if contracts started with V1 version we should get that statistics too
       const homeBridgeV1 = new this.homeWeb3.eth.Contract(HomeBridgeV1Abi, this.HOME_BRIDGE_ADDRESS);
-      const eventsFromV1 = await getPastEvents(homeBridgeV1, 0, 'latest')
+      const eventsFromV1 = await getPastEvents(homeBridgeV1, deployedAtBlock, 'latest')
       this.processLargeArrayAsync(eventsFromV1, this.processEvent('Deposit', 'Withdraw'))
     } catch(e){
       console.error(e)
