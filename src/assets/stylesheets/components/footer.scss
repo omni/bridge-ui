@@ -1,51 +1,51 @@
 .footer {
   @extend %full-width;
-  position: absolute;
+  background-color: $footer-background-color;
   bottom: 0;
+  color: $footer-text-color;
   padding: 18px 0;
-  background-color: #5c34a2;
+  position: absolute;
 
   .container {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
+    display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
 
     @media screen and (max-width: $tablet-width) {
       flex-direction: column;
     }
   }
 
-  .socials {
+  .social-icons {
     order: 2;
 
     @media screen and (max-width: $tablet-width) {
-      order: 1;
       margin-top: 15px;
+      order: 1;
     }
   }
 
   &-logo {
+    background-image: url('#{ $logo-image }');
+    background-size: cover;
     display: block;
-    background-image: url(../images/logos/logo-poa-bottom.png);
-    @include image-2x('../images/logos/logo-poa-bottom@2x.png', 126px, 18px);
-    order: 0;
+    height: $footer-logo-height;
     left: 0;
-    width: 126px;
-  	height: 18px;
+    order: 0;
+    width: $footer-logo-width;
   }
 
   &-rights {
-    order: 1;
-    color: #fff;
-    text-align: center;
     font-size: 12px;
+    order: 1;
+    text-align: center;
 
     @media screen and (max-width: $tablet-width) {
+      line-height: normal;
+      margin-top: 15px;
       order: 2;
       width: 100%;
-      margin-top: 15px;
-      line-height: normal;
     }
   }
 }

@@ -8,19 +8,19 @@
 @import "application/fonts";
 @import "application/base";
 @import "application/bridge";
-@import "application/header";
-@import "application/footer";
-@import "application/socials";
-@import "application/events";
 @import "application/color-scheme";
+@import "application/events";
 @import "application/loading";
 @import "application/modal";
-@import "application/status";
 @import "application/statistics";
+@import "application/status";
 
 @import "components/daily-quota-modal-container";
+@import "components/footer";
+@import "components/header";
 @import "components/header-menu";
 @import "components/header-wallet";
 @import "components/menu-items";
 @import "components/mobile-menu";
 @import "components/mobile-menu-button";
+@import "components/social-icons";

@@ -1,5 +1,6 @@
 $theme-name: 'core';
 
+// base colors
 $primary-color: #5c34a2;
 $primary-color-dark: #502d8d;
 $primary-color-darker: #45277a;
@@ -7,13 +8,22 @@ $secondary-color: #60db97;
 
 // header
 $header-background-color: $primary-color;
-$header-logo-width: '180px';
-$header-logo-height: '26px';
+$header-logo-width: 180px;
+$header-logo-height: 26px;
 
 // header menu
 $header-menu-icon-color: $secondary-color;
 $header-menu-text-color: #fff;
 
+// footer
+$footer-background-color: $primary-color;
+$footer-logo-width: 130px;
+$footer-logo-height: 18px;
+$footer-text-color: #fff;
+
+// social icons
+$social-icons-background-color: #fff;
+$social-icons-icon-color: $primary-color;
 
 // logo
 $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';

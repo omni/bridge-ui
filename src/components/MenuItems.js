@@ -6,19 +6,19 @@ export const MenuItems = ({ onMenuToggle = null, withoutEvents }) => {
   const menuItems = [
     {
       hide: withoutEvents,
-      icon: EventsIcon(),
+      icon: <EventsIcon />,
       link: "/events",
       text: "Events"
     },
     {
       hide: false,
-      icon: StatusIcon(),
+      icon: <StatusIcon />,
       link: "/status",
       text: "Status"
     },
     {
       hide: withoutEvents,
-      icon: StatisticsIcon(),
+      icon: <StatisticsIcon />,
       link: "/statistics",
       text: "Statistics"
     }

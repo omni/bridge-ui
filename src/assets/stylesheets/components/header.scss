@@ -24,9 +24,10 @@
 
   &-logo {
     background-image: url('#{ $logo-image }');
-  	height: 26px;
+    background-size: cover;
+  	height: $header-logo-height;
     display: block;
-    width: 162px;
+    width: $header-logo-width;
   }
 
 }
