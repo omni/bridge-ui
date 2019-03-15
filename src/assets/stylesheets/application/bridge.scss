@@ -285,6 +285,14 @@
                 font-size: 14px;
                 font-weight: bold;
             }
+            .info-icon {
+              align-items: center;
+              display: flex;
+              justify-content: center;
+              path {
+                fill: $bridge-link-color;
+              }
+            }
             .info-icon-left {
                 margin-right: 10px;
             }
