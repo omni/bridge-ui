@@ -31,3 +31,19 @@ $social-icons-icon-color: $primary-color;
 
 // logo
 $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';
+
+// bridge
+$bridge-gradient-start: $primary-color;
+$bridge-gradient-end: #7b5ab2;
+$bridge-logo-background-color: $primary-color;
+$bridge-link-color: $secondary-color;
+$bridge-button-background-color: $secondary-color;
+$bridge-button-text-color: #fff;
+$bridge-label-color: #fff;
+$bridge-textfield-color: #fff;
+$bridge-side-image-width: 272px;
+$bridge-side-image-height: 276px;
+$bridge-image-center-pointing-left: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-left.svg';
+$bridge-image-center-pointing-right: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-right.svg';
+$bridge-image-left: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-1.png';
+$bridge-image-right: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-2.png';
