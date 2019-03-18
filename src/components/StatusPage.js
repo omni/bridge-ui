@@ -45,8 +45,8 @@ export class StatusPage extends React.Component {
             </div>
           }
         </div>
-        <div className='status-right-container'>
-          <div className="status-right-image" />
+        <div className='pattern-background'>
+          <div className="pattern-background-image" />
         </div>
       </div>
     )

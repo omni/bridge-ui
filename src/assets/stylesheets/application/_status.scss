@@ -112,22 +112,4 @@
       display: none;
     }
   }
-
-  .status-right-container {
-    overflow: hidden;
-    padding-top: 25px;
-    width: 15%;
-
-    .status-right-image {
-      background-image: url('#{ $status-pattern }');
-      background-position: 0 50%;
-      background-repeat: repeat-x;
-      height: 360px;
-      min-width: 192px;
-    }
-
-    @media screen and (max-width: $mobile-width) {
-      display: none;
-    }
-  }
 }

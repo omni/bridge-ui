@@ -35,6 +35,9 @@ $footer-text-color: #fff;
 // separator
 $separator-color: #e4e4e4;
 
+// background
+$pattern-background-image: $base-images-path + '/themes/' + $theme-name + '/background/bg-pattern.svg';
+
 // social icons
 $social-icons-background-color: #fff;
 $social-icons-icon-color: $primary-color;
@@ -93,8 +96,6 @@ $copy-icon-color: $primary-color;
 $status-text-color: #333;
 $status-authority-number-color: $primary-color;
 $status-authority-address-color: #333;
-
-$status-pattern: $base-images-path + '/themes/' + $theme-name + '/status/bg-pattern.svg';
 
 $status-authority-logo-0: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-0.svg';
 $status-authority-logo-1: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-1.svg';
