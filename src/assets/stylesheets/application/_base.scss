@@ -25,7 +25,7 @@ body {
 }
 
 a {
-  color: #08b3f2;
+  color: $primary-color;
   text-decoration: none;
 
   &:hover {
@@ -47,7 +47,6 @@ button {
 input,
 button {
   border: 0;
-  font-family: 'Open Sans', sans-serif;
   font-size: 14px;
   margin: 0;
   outline: none;

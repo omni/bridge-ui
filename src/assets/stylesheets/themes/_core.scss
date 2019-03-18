@@ -5,6 +5,11 @@ $primary-color: #5c34a2;
 $primary-color-dark: #502d8d;
 $primary-color-darker: #45277a;
 $secondary-color: #60db97;
+$secondary-color-dark: #64a231;
+$tertiary-color: #ffaa07;
+
+$gradient-color-1: $primary-color;
+$gradient-color-2: #7b5ab2;
 
 // main
 $main-background-color: #fff;
@@ -32,13 +37,38 @@ $social-icons-icon-color: $primary-color;
 // logo
 $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';
 
+// buttons
+$button-background-color: $secondary-color;
+$button-text-color: #fff;
+
+$button-background-color-2: $tertiary-color;
+$button-text-color-2: #fff;
+
+$button-background-color-3: $secondary-color-dark;
+$button-text-color-3: #fff;
+
+$button-background-color-4: $primary-color;
+$button-text-color-4: #fff;
+
+$button-bordered-background-color: #fff;
+$button-bordered-text-color: $primary-color;
+$button-bordered-border-color: $primary-color;
+
+// modals
+$modal-background-color: #fff;
+$modal-overlay-background-color: $primary-color-dark;
+
+// loading
+$loading-item-background-color: $secondary-color;
+$loading-item-text-color: #fff;
+
 // bridge
-$bridge-gradient-start: $primary-color;
-$bridge-gradient-end: #7b5ab2;
+$bridge-gradient-start: $gradient-color-1;
+$bridge-gradient-end: $gradient-color-2;
 $bridge-logo-background-color: $primary-color;
 $bridge-link-color: $secondary-color;
-$bridge-button-background-color: $secondary-color;
-$bridge-button-text-color: #fff;
+$bridge-button-background-color: $button-background-color;
+$bridge-button-text-color: $button-text-color;
 $bridge-label-color: #fff;
 $bridge-textfield-color: #fff;
 $bridge-side-image-width: 272px;
@@ -47,3 +77,9 @@ $bridge-image-center-pointing-left: $base-images-path + '/themes/' + $theme-name
 $bridge-image-center-pointing-right: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-right.svg';
 $bridge-image-left: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-1.png';
 $bridge-image-right: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-2.png';
+
+// bridge alert
+$alert-logo-box-background-color: $primary-color;
+
+// copy icon
+$copy-icon-color: $primary-color;

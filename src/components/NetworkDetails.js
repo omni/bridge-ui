@@ -1,7 +1,7 @@
 import React from 'react'
-import copyIcon from '../assets/images/icons/copy.svg'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
+import { CopyIcon } from './icons/CopyIcon'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 export const NetworkDetails = ({
   isHome,
@@ -54,7 +54,7 @@ export const NetworkDetails = ({
                 {address.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={address}>
-                <img className="info-icon-right" src={copyIcon} alt=""/>
+                <span className="copy-icon copy-icon-right"><CopyIcon /></span>
               </CopyToClipboard>
             </span>
         </p>
@@ -78,7 +78,7 @@ export const NetworkDetails = ({
                 {tokenAddress.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={tokenAddress}>
-                <img className="info-icon-right" src={copyIcon} alt=""/>
+                <span className="copy-icon copy-icon-right"><CopyIcon /></span>
               </CopyToClipboard>
             </span>
           </p>
