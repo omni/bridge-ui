@@ -3,19 +3,19 @@
   justify-content: center;
 
   .statistics-page-container {
-    width: 70%;
     display: flex;
     flex-direction: column;
+    width: 70%;
 
     @media screen and (max-width: $tablet-width) {
       width: 90%;
     }
 
     .statistics-title {
+      color: $statistics-title-color;
       font-size: 24px;
       line-height: 3;
       text-align: left;
-      color: #333333;
     }
 
     .statistics-bridge-container {
@@ -60,8 +60,8 @@
   }
 
   .statistics-left-container {
-    width: 15%;
     padding-top: 25px;
+    width: 15%;
 
     @media screen and (max-width: $mobile-width) {
       display: none;
@@ -69,9 +69,10 @@
   }
 
   .statistics-right-container {
-    width: 15%;
-    padding-top: 25px;
     overflow: hidden;
+    padding-top: 25px;
+    width: 15%;
+
     @media screen and (max-width: $mobile-width) {
       display: none;
     }

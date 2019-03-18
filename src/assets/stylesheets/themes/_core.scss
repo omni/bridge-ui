@@ -83,6 +83,7 @@ $bridge-side-image-width: 272px;
 $bridge-side-image-height: 276px;
 $bridge-image-center-pointing-left: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-left.svg';
 $bridge-image-center-pointing-right: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-right.svg';
+$bridge-image-center-pointing-down: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-down@2x.png';
 $bridge-image-left: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-1.png';
 $bridge-image-right: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-2.png';
 
@@ -105,3 +106,6 @@ $status-authority-logo-2: $base-images-path + '/themes/' + $theme-name + '/statu
 $datablock-value-color: $primary-color;
 $datablock-type-color: $primary-color;
 $datablock-text-color: #333;
+
+// statistics
+$statistics-title-color: #333;

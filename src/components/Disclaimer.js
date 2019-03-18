@@ -1,5 +1,5 @@
 import React from 'react'
-import disclaimerIcon from '../assets/images/disclaimer@2x.png'
+import disclaimerIcon from '../assets/images/disclaimer-modal/disclaimer@2x.png'
 
 export const Disclaimer = ({ onConfirmation }) => (
   <div className="disclaimer-alert">
@@ -21,7 +21,7 @@ export const Disclaimer = ({ onConfirmation }) => (
         improper app configuration, or other negative outcomes.
         <br/>
         <br/>
-        By hitting the “continue” button, you are representing that you’ve read our <a
+        By hitting the "continue" button, you are representing that you’ve read our <a
         href="https://poanet.zendesk.com/hc/en-us/articles/360004054794-Terms-and-Conditions-of-The-POA-Bridge"
         target="_blank" rel="noopener noreferrer">Terms of
         Service</a> in full, and that you agree to be legally bound by them.

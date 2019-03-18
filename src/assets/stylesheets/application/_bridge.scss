@@ -201,7 +201,7 @@
                 width: 880px;
 
                 @media screen and (max-width: $tablet-width) {
-                    background-image: url("../images/arrows-down@2x.png");
+                    background-image: url('#{ $bridge-image-center-pointing-down }');
                     background-position: center;
                     background-repeat: no-repeat;
                     background-size: 164px 203px;
