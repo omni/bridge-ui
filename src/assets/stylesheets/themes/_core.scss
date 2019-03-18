@@ -32,6 +32,9 @@ $footer-logo-width: 130px;
 $footer-logo-height: 18px;
 $footer-text-color: #fff;
 
+// separator
+$separator-color: #e4e4e4;
+
 // social icons
 $social-icons-background-color: #fff;
 $social-icons-icon-color: $primary-color;
@@ -64,7 +67,7 @@ $modal-overlay-background-color: $primary-color-dark;
 $loading-item-background-color: $secondary-color;
 $loading-item-text-color: #fff;
 
-// bridge
+// bridge section
 $bridge-gradient-start: $gradient-color-1;
 $bridge-gradient-end: $gradient-color-2;
 $bridge-logo-background-color: $primary-color;
@@ -85,3 +88,19 @@ $alert-logo-box-background-color: $primary-color;
 
 // copy icon
 $copy-icon-color: $primary-color;
+
+// status section
+$status-text-color: #333;
+$status-authority-number-color: $primary-color;
+$status-authority-address-color: #333;
+
+$status-pattern: $base-images-path + '/themes/' + $theme-name + '/status/bg-pattern.svg';
+
+$status-authority-logo-0: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-0.svg';
+$status-authority-logo-1: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-1.svg';
+$status-authority-logo-2: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-2.svg';
+
+// datablock
+$datablock-value-color: $primary-color;
+$datablock-type-color: $primary-color;
+$datablock-text-color: #333;

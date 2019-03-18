@@ -10,19 +10,19 @@
     }
 
     .datablock-value {
-      color: $primary-color;
+      color: $datablock-value-color;
       font-size: 30px;
       font-weight: bold;
     }
 
     .datablock-type {
-      color: $primary-color;
+      color: $datablock-type-color;
       font-size: 18px;
       margin-left: 10px;
     }
 
     .datablock-description {
-      color: #333;
+      color: $datablock-text-color;
       font-size: 14px;
     }
   }
