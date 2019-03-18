@@ -12,9 +12,16 @@
     }
 }
 
-.loading {
+.loading-logo {
+    background-image: url('#{ $loading-logo }');
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: contain;
     height: 50px;
     width: 234px;
+}
+
+.loading {
     &-container {
         align-items: center;
         background-color: rgba($modal-overlay-background-color, 0.8);
@@ -27,6 +34,7 @@
         top: 0;
         z-index: 1000000;
     }
+
     &-i {
         animation-duration: 2s;
         animation-fill-mode: forwards;
@@ -38,10 +46,12 @@
         height: 50px;
         opacity: .2;
         width: 2px;
+
         &:nth-child(2) {
             animation-delay: .1s;
         }
     }
+
     &-text {
         color: $loading-item-text-color;
         font-size: 24px;
@@ -52,6 +62,7 @@
         line-height: 3;
         text-align: center;
         width: 500px;
+
         @media screen and (max-width: $mobile-width) {
             font-size: 18px;
         }

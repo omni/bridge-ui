@@ -15,6 +15,7 @@ export class App extends React.Component {
 
   componentDidMount() {
     const disclaimerDisplayed = getItem(DISCLAIMER_KEY)
+
     if(!disclaimerDisplayed) {
       this.setState({ showDisclaimer: true })
     }
