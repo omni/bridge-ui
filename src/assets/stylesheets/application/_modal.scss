@@ -41,15 +41,16 @@
       i {
         &.icon {
           &:before {
-            content: url("../images/icons/close.svg");
+            content: url("../images/modal/close.svg");
           }
         }
       }
-      position: absolute;
-      top: 40px;
-      right: -40px;
-      z-index: 400000;
+
       padding: 15px;
+      position: absolute;
+      right: -40px;
+      top: 40px;
+      z-index: 400000;
 
       &:hover {
         cursor: pointer;
