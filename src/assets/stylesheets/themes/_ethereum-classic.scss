@@ -10,8 +10,8 @@ $tertiary-color: #ffaa07;
 $danger-color: #f13662;
 $blue-color: #3ab9fe;
 
-$gradient-color-1: $primary-color;
-$gradient-color-2: #7b5ab2;
+$gradient-color-1: #352d59;
+$gradient-color-2: #352d59;
 
 // main
 $main-background-color: #17132b;
@@ -53,18 +53,18 @@ $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';
 $button-background-color: $secondary-color;
 $button-text-color: #fff;
 
-$button-background-color-2: $tertiary-color;
+$button-background-color-2: #29eb8b;
 $button-text-color-2: #fff;
 
 $button-background-color-3: $secondary-color-dark;
 $button-text-color-3: #fff;
 
-$button-background-color-4: $primary-color;
+$button-background-color-4: $primary-color-dark;
 $button-text-color-4: #fff;
 
 $button-bordered-background-color: #fff;
-$button-bordered-text-color: $primary-color;
-$button-bordered-border-color: $primary-color;
+$button-bordered-text-color: $primary-color-dark;
+$button-bordered-border-color: $primary-color-dark;
 
 // modals
 $modal-background-color: #fff;
