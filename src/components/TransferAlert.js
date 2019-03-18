@@ -1,17 +1,13 @@
 import React from 'react'
-import arrowsIcon from '../assets/images/icon-arrows@2x.png'
-import arrowIconRight from '../assets/images/icons/icon-arrow-right.svg'
+import arrowsIcon from '../assets/images/transfer-modal/icon-arrows@2x.png'
 import numeral from 'numeral'
-
-
+import { ArrowRight } from './icons/ArrowRight'
 
 export const TransferAlert = ({
   onConfirmation,
   onCancel,
   from,
   to,
-  fromLogo,
-  toLogo,
   fromCurrency,
   toCurrency,
   fromAmount,
@@ -38,7 +34,7 @@ export const TransferAlert = ({
             </div>
           </div>
           <div><strong>{formattedFromAmount}</strong> {fromCurrency}</div>
-          <img className="icon_arrow_right" src={arrowIconRight} alt="arrow right"/>
+          <ArrowRight />
           <div><strong>{formattedToAmount}</strong> {toCurrency}</div>
           <div className="alert-logo-box">
             <div className={reverse ? 'alert-home-logo' : 'alert-foreign-logo'}

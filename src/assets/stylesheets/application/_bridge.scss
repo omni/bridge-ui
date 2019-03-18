@@ -614,6 +614,10 @@
                     border-radius: 1px;
                     height: 10px;
                     width: 14px;
+
+                    path {
+                        fill: $primary-color;
+                    }
                 }
             }
             .transfer-description {
