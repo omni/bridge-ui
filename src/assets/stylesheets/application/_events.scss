@@ -15,29 +15,29 @@
       }
 
       .events-header-title {
+        color: #333;
         font-size: 24px;
-        color: #333333;
         line-height: 38px;
       }
 
       .events-filter-container {
-        width: 400px;
-        height: 38px;
-        border-radius: 3px;
         background-color: #ffffff;
+        border-radius: 3px;
         border: solid 1px #dadada;
         display: flex;
+        height: 38px;
+        width: 400px;
 
         @media screen and (max-width: $tablet-width) {
           width: auto;
         }
 
         .events-filter {
+          color: #333;
+          font-size: 14px;
+          line-height: 38px;
           padding-left: 10px;
           width: 205px;
-          line-height: 38px;
-          color: #333333;
-          font-size: 14px;
 
           @media screen and (max-width: 330px) {
             width: 180px;
@@ -50,27 +50,27 @@
 
         .events-filter-icon {
           align-self: center;
-          display: inline-block;
-          width: 16px;
-          height: 16px;
-          margin-right: 10px;
-          margin-left: 5px;
           background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAA0lBMVEWAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6OAl6McEf5GAAAARXRSTlMAAQIDBQYHDA0bHB8gISQmJyg+P0BGR0lMU1RVWFlcXV5iY2tsdXZ4iYqLo6Spqqusra7Cw8TFysvM29zm5+jr8vP4+fzSh6raAAABM0lEQVR4AYWTeVeCQBTFr6AtuaTYkpUVlqZm0JIaLhjBfP+v1NxDyDCcA7+/3nLPecu8QULFGs/9MPTnE6uCPIa9EntWtgGN5lJkWDaR4WwnNHYWFM5DxsLXfqN22Ok7sXeR5ts/jHy0Er/1Tj9oJ77J+tEICqOIfZiIsalnXlUwNvifn/O50HA5bQWky45OoHHMTrsgY2nNkONFhscgX9K6Ro6eDH+C+NKqI0ddhn0QFjtAjhpb2wuOigQscVpQorzJScGYRYv65aLSVTvQcLhqI7YHQjJEhqHyWDC/+dxPUHjkc3tm4nYC6t/Sg3GFdgGX8ZHNeo1qtdGb0ZNEd4oiEBq6ouNlc95zRMW9+nHWaXptG3jQFTCs6YJfbzG1OL+m0EkVt2WKLUoUGxRxs91c/QFA1F3oKOgExAAAAABJRU5ErkJggg==);
-          background-repeat: no-repeat;
           background-position: center center;
+          background-repeat: no-repeat;
           background-size: 16px 16px;
+          display: inline-block;
+          height: 16px;
+          margin-left: 5px;
+          margin-right: 10px;
+          width: 16px;
         }
 
         .events-select {
-          width: 154px;
+          background-color: #ffffff;
+          border-left: solid 1px #dadada;
+          border: solid 1px white;
+          color: #333;
+          font-size: 14px;
           height: 38px;
           line-height: 38px;
-          font-size: 14px;
           text-align: left;
-          color: #333333;
-          border: solid 1px white;
-          border-left: solid 1px #dadada;
-          background-color: #ffffff;
+          width: 154px;
 
           @media screen and (max-width: $tablet-width) {
             width: auto;
@@ -85,10 +85,10 @@
       margin-top: 38px;
 
       .column-title {
+        color: #333;
         font-size: 14px;
         font-weight: bold;
         text-align: left;
-        color: #333333;
       }
 
       @media screen and (max-width: $tablet-width) {
@@ -97,10 +97,10 @@
     }
 
     .events-header-separator {
-      width: 100%;
-      height: 3px;
       background-color: #e4e4e4;
+      height: 3px;
       margin-top: 20px;
+      width: 100%;
     }
 
     .txhash-column {
@@ -127,9 +127,9 @@
     .event {
       display: flex;
       justify-content: space-between;
-      padding-top: 22px;
-      padding-bottom: 22px;
       line-height: 26px;
+      padding-bottom: 22px;
+      padding-top: 22px;
 
       @media screen and (max-width: $tablet-width) {
         flex-direction: column;
@@ -145,16 +145,16 @@
       }
 
       .event-name {
-        width: 66px;
-        height: 26px;
-        line-height: 26px;
         border-radius: 3px;
+        color: #ffffff;
         font-size: 14px;
         font-weight: bold;
-        text-align: left;
-        color: #ffffff;
-        padding: 5px;
+        height: 26px;
+        line-height: 26px;
         margin-right: 5px;
+        padding: 5px 15px;
+        text-align: left;
+        width: 66px;
 
         @media screen and (max-width: $tablet-width) {
           width: fit-content;
@@ -162,9 +162,9 @@
       }
 
       .event-txhash {
+        color: $primary-color;
         font-size: 14px;
         text-align: left;
-        color: #5c34a2;
         text-decoration: none;
       }
 
@@ -175,26 +175,26 @@
     }
 
     .event-recipient {
+      color: $primary-color;
       font-size: 14px;
       text-align: left;
-      color: #5c34a2;
       text-decoration: none;
     }
 
     .event-recipient-label {
-      color: #333333;
+      color: #333;
     }
 
     .event-value {
+      color: #333;
       font-size: 14px;
       text-align: left;
-      color: #333333;
     }
 
     .event-block {
+      color: #333;
       font-size: 14px;
       text-align: right;
-      color: #333333;
 
       @media screen and (max-width: $tablet-width) {
         text-align: left;
@@ -202,11 +202,10 @@
     }
 
     .event-separator {
-      width: 100%;
-      height: 1px;
       background-color: #e4e4e4;
+      height: 1px;
+      width: 100%;
     }
-
   }
 }
 
