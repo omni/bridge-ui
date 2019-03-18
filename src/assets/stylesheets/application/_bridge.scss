@@ -695,8 +695,8 @@
             width: 88%;
         }
         .noWallet-title {
-            color: $primary-color;
-            font-size: 44px;
+            color: $modal-title-color;
+            font-size: 24px;
             line-height: 1;
 
             @media screen and (max-width: $tablet-width) {
@@ -837,7 +837,7 @@
             height: 12px;
         }
         .disclaimer-title {
-            color: $primary-color;
+            color: $modal-title-color;
             font-size: 44px;
             line-height: 1;
 
