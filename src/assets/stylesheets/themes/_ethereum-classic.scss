@@ -37,7 +37,7 @@ $footer-logo-height: 29px;
 $footer-text-color: #fff;
 
 // separator
-$separator-color: #e4e4e4;
+$separator-color: #333;
 
 // background
 $pattern-background-image: $base-images-path + '/themes/' + $theme-name + '/background/bg-pattern.svg';
@@ -103,9 +103,9 @@ $alert-logo-box-background-color: $primary-color;
 $copy-icon-color: $primary-color;
 
 // status section
-$status-text-color: #333;
-$status-authority-number-color: $primary-color;
-$status-authority-address-color: #333;
+$status-text-color: #fff;
+$status-authority-number-color: #fff;
+$status-authority-address-color: $primary-color;
 
 $status-authority-logo-0: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-0.svg';
 $status-authority-logo-1: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-1.svg';
@@ -114,7 +114,7 @@ $status-authority-logo-2: $base-images-path + '/themes/' + $theme-name + '/statu
 // datablock
 $datablock-value-color: $primary-color;
 $datablock-type-color: $primary-color;
-$datablock-text-color: #333;
+$datablock-text-color: #fff;
 
 // statistics
-$statistics-title-color: #333;
+$statistics-title-color: #fff;
