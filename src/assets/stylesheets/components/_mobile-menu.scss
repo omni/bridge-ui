@@ -1,6 +1,6 @@
 .mobile-menu {
     @media screen and (max-width: $mobile-width) {
-        background-color: #45277a;
+        background-color: $primary-color-darker;
         height: 172px;
     }
 }
