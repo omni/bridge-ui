@@ -143,12 +143,12 @@
         }
         .left-image-wrapper {
             background-color: $bridge-gradient-start;
-
             .left-image {
                 background-color: $main-background-color;
                 background-image: url('#{ $bridge-image-left }');
                 background-position: calc(100% - 5px) 5px;
                 background-repeat: no-repeat;
+                background-size: contain;
                 border-top-right-radius: 10px;
                 height: $bridge-side-image-height;
                 max-width: 100%;
@@ -162,12 +162,12 @@
 
         .right-image-wrapper {
             background-color: $bridge-gradient-end;
-
             .right-image {
               background-color: $main-background-color;
               background-image: url('#{ $bridge-image-right }');
               background-position: 5px 5px;
               background-repeat: no-repeat;
+              background-size: contain;
               border-bottom-left-radius: 10px;
               height: $bridge-side-image-height;
               max-width: 100%;
@@ -278,7 +278,7 @@
                 width: 32px;
             }
             .network-balance {
-                color: $bridge-link-color;
+                color: $bridge-balance-color;
                 font-size: 13px;
                 font-weight: 700;
             }
@@ -339,7 +339,7 @@
                     }
                     &-controls {
                         @extend %flex-between;
-                        background-color: rgba(251, 251, 252, 0.2);
+                        background-color: $bridge-textfield-background;
                         border-radius: 5px;
                         padding: 8px 8px 8px 0;
 
@@ -370,7 +370,7 @@
                         width: 165px;
 
                         &::placeholder {
-                            color: rgba(255, 255, 255, 0.7);
+                            color: $bridge-textfield-placeholder-color;
                             font-size: 24px;
                             font-weight: 700;
 
@@ -387,7 +387,7 @@
                         }
                     }
                     &-label {
-                        color: $bridge-label-color;
+                        color: $bridge-input-label-color;
                         font-size: 24px;
                         font-weight: 700;
                         line-height: 48px;

@@ -24,9 +24,10 @@
 
   &-logo {
     background-image: url('#{ $logo-image }');
-    background-size: cover;
-  	height: $header-logo-height;
+    background-repeat: no-repeat;
+    background-size: contain;
     display: block;
+    height: $header-logo-height;
     width: $header-logo-width;
   }
 

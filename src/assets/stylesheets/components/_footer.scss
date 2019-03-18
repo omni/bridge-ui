@@ -28,7 +28,8 @@
 
   &-logo {
     background-image: url('#{ $logo-image }');
-    background-size: cover;
+    background-repeat: no-repeat;
+    background-size: contain;
     display: block;
     height: $footer-logo-height;
     left: 0;

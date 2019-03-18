@@ -1,10 +1,10 @@
-$theme-name: 'core';
+$theme-name: 'ethereum-classic';
 
 // base colors
-$primary-color: #5c34a2;
-$primary-color-dark: #502d8d;
+$primary-color: #31f896;
+$primary-color-dark: #352d59;
 $primary-color-darker: #45277a;
-$secondary-color: #60db97;
+$secondary-color: #31f896;
 $secondary-color-dark: #64a231;
 $tertiary-color: #ffaa07;
 $danger-color: #f13662;
@@ -14,26 +14,26 @@ $gradient-color-1: $primary-color;
 $gradient-color-2: #7b5ab2;
 
 // main
-$main-background-color: #fff;
+$main-background-color: #17132b;
 $main-font-family: 'Nunito', sans-serif;
 
 // header
-$header-background-color: $primary-color;
-$header-logo-width: 180px;
-$header-logo-height: 26px;
+$header-background-color: #221c3f;
+$header-logo-width: 145px;
+$header-logo-height: 39px;
 
 // header menu
 $header-menu-icon-color: $secondary-color;
 $header-menu-text-color: #fff;
 
 // daily quota
-$daily-quota-background: $primary-color-darker;
+$daily-quota-background: rgba(255, 255, 255, 0.2);
 $daily-quota-progress: $secondary-color;
 
 // footer
-$footer-background-color: $primary-color;
-$footer-logo-width: 130px;
-$footer-logo-height: 18px;
+$footer-background-color: #221c3f;
+$footer-logo-width: 105px;
+$footer-logo-height: 29px;
 $footer-text-color: #fff;
 
 // separator
@@ -43,8 +43,8 @@ $separator-color: #e4e4e4;
 $pattern-background-image: $base-images-path + '/themes/' + $theme-name + '/background/bg-pattern.svg';
 
 // social icons
-$social-icons-background-color: #fff;
-$social-icons-icon-color: $primary-color;
+$social-icons-background-color: #343053;
+$social-icons-icon-color: #b9b0e1;
 
 // logo
 $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';
@@ -68,7 +68,7 @@ $button-bordered-border-color: $primary-color;
 
 // modals
 $modal-background-color: #fff;
-$modal-overlay-background-color: $primary-color-dark;
+$modal-overlay-background-color: $main-background-color;
 
 // loading
 $loading-item-background-color: $secondary-color;
@@ -76,23 +76,23 @@ $loading-item-text-color: #fff;
 $loading-logo: $base-images-path + '/themes/' + $theme-name + '/logos/logo-loading.svg';
 
 // bridge section
-$bridge-gradient-start: $gradient-color-1;
-$bridge-gradient-end: $gradient-color-2;
-$bridge-logo-background-color: $primary-color;
+$bridge-gradient-start: #fff;
+$bridge-gradient-end: #fff;
+$bridge-logo-background-color: #fff;
 $bridge-link-color: $secondary-color;
-$bridge-balance-color: $secondary-color;
+$bridge-balance-color: #352d59;
 $bridge-button-background-color: $button-background-color;
 $bridge-button-text-color: $button-text-color;
-$bridge-textfield-background: rgba(251, 251, 252, 0.2);
-$bridge-input-label-color: #fff;
-$bridge-label-color: #fff;
-$bridge-textfield-color: #fff;
-$bridge-textfield-placeholder-color: rgba(255, 255, 255, 0.7);
+$bridge-textfield-background: #f7f6ff;
+$bridge-input-label-color: rgba(53, 45, 89, 0.5);
+$bridge-label-color: $primary-color-dark;
+$bridge-textfield-color: $primary-color-dark;
+$bridge-textfield-placeholder-color: #666;
 $bridge-side-image-width: 272px;
 $bridge-side-image-height: 276px;
-$bridge-image-center-pointing-left: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-left.svg';
-$bridge-image-center-pointing-right: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-right.svg';
-$bridge-image-center-pointing-down: $base-images-path + '/themes/' + $theme-name + '/bridge/center-image-pointing-down@2x.png';
+$bridge-image-center-pointing-left: $base-images-path + '/themes/' + $theme-name + '/transparent.png';
+$bridge-image-center-pointing-right: $base-images-path + '/themes/' + $theme-name + '/transparent.png';
+$bridge-image-center-pointing-down: $base-images-path + '/themes/' + $theme-name + '/transparent.png';
 $bridge-image-left: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-1.png';
 $bridge-image-right: $base-images-path + '/themes/' + $theme-name + '/bridge/pattern-2.png';
 
