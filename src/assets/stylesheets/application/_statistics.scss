@@ -6,21 +6,24 @@
     display: flex;
     flex-direction: column;
     max-width: $container-width;
+    padding-bottom: 25px;
     width: 70%;
 
     @media screen and (max-width: $tablet-width-landscape) {
       width: 100%;
     }
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width) {
       padding-left: 15px;
       padding-right: 15px;
     }
 
     .statistics-title {
       color: $statistics-title-color;
+      display: block;
       font-size: 24px;
-      line-height: 3;
+      line-height: 1.5;
+      margin: 0 0 20px;
       text-align: left;
     }
 
@@ -34,7 +37,10 @@
         justify-content: space-evenly;
 
         @media screen and (max-width: $tablet-width) {
-          flex-direction: column;
+          column-gap: 30px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          row-gap: 20px;
         }
       }
     }
@@ -44,13 +50,27 @@
       justify-content: space-between;
       padding-top: 90px;
 
+      @media screen and (max-width: $tablet-width) {
+        flex-direction: column;
+        padding-top: 45px;
+      }
+
       .statistics-deposit-container {
         width: 40%;
+
+        @media screen and (max-width: $tablet-width) {
+          margin-bottom: 40px;
+          width: auto;
+        }
+
       }
 
       .statistics-withdraw-container {
         width: 40%;
-        margin-bottom: 80px;
+
+        @media screen and (max-width: $tablet-width) {
+          width: auto;
+        }
       }
 
       .statistics-bridge-data {
@@ -58,7 +78,10 @@
         justify-content: space-evenly;
 
         @media screen and (max-width: $tablet-width) {
-          flex-direction: column;
+          column-gap: 30px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          row-gap: 20px;
         }
       }
     }
