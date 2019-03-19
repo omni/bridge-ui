@@ -24,7 +24,7 @@ export const NetworkDetails = ({
   getExplorerAddressUrl
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
-  const logoClass = isHome ? 'home-logo' : 'foreign-logo'
+  const logoClass = isHome ? 'home-logo home-logo-modal' : 'foreign-logo foreign-logo-modal'
   const totalTitle = isHome
     ? nativeSupplyTitle ? `Native Coins Amount` : `Totally minted by the bridge`
     : `${currency} Tokens Amount`
@@ -36,11 +36,7 @@ export const NetworkDetails = ({
   return (
     <div className="network-details">
         <div className="details-logo-container">
-          <div className={logoClass}
-               style={{ color: '#5c34a2', textAlign: 'center', fontWeight: 'bold'}}
-          >
-            {currency}
-          </div>
+          <div className={logoClass} />
       </div>
       <div className="details-body">
         <p className="details-data-container">

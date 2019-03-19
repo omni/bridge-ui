@@ -27,21 +27,13 @@ export const TransferAlert = ({
       <div className="alert-container">
         <div className="transfer-title">
           <div className="alert-logo-box">
-            <div className={reverse ? 'alert-foreign-logo' : 'alert-home-logo'}
-                 style={{color: 'white', textAlign: 'center', fontWeight: 'bold'}}
-            >
-              {fromCurrency}
-            </div>
+            <div className={reverse ? 'foreign-logo' : 'home-logo'} />
           </div>
           <div><strong>{formattedFromAmount}</strong> {fromCurrency}</div>
           <ArrowRight />
           <div><strong>{formattedToAmount}</strong> {toCurrency}</div>
           <div className="alert-logo-box">
-            <div className={reverse ? 'alert-home-logo' : 'alert-foreign-logo'}
-                 style={{color: 'white', textAlign: 'center', fontWeight: 'bold'}}
-            >
-              {toCurrency}
-            </div>
+            <div className={reverse ? 'home-logo' : 'foreign-logo'} />
           </div>
         </div>
         <p className="transfer-description" data-testid="transfer-description">

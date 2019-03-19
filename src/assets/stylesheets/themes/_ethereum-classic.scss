@@ -51,6 +51,18 @@ $social-icons-icon-color: #b9b0e1;
 // logo
 $logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo.svg';
 
+// home logo
+$home-logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo-home.svg';
+$home-logo-image-modal: $home-logo-image;
+$home-logo-width: 25px;
+$home-logo-height: 39px;
+
+// foreign logo
+$foreign-logo-image: $base-images-path + '/themes/' + $theme-name + '/logos/logo-foreign.svg';
+$foreign-logo-image-modal: $foreign-logo-image;
+$foreign-logo-width: 24px;
+$foreign-logo-height: 38px;
+
 // buttons
 $button-background-color: $secondary-color;
 $button-text-color: #fff;
