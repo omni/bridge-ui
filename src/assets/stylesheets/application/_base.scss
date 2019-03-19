@@ -14,6 +14,7 @@ html {
 body {
   background-color: $main-background-color;
   box-sizing: border-box;
+  color: $text-color;
   font-family: $main-font-family;
   padding-bottom: $footer-height_desktop;
   position: relative;
@@ -35,9 +36,8 @@ a {
 
 button {
   color: #08b3f2;
-  margin-left: 5px;
-
   cursor: pointer;
+  margin-left: 5px;
 
   &:hover {
     text-decoration: underline;
@@ -54,7 +54,7 @@ button {
 }
 
 strong {
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .hidden {
@@ -66,7 +66,7 @@ strong {
 }
 
 .label {
-  font-weight: bold;
+  font-weight: 700;
   margin-bottom: 7px;
   margin-top: 15px;
 }

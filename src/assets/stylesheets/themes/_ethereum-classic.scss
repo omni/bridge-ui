@@ -10,6 +10,8 @@ $tertiary-color: #ffaa07;
 $danger-color: #f13662;
 $blue-color: #3ab9fe;
 
+$text-color: #fff;
+
 $gradient-color-1: #352d59;
 $gradient-color-2: #352d59;
 
@@ -104,8 +106,8 @@ $alert-logo-box-background-color: $primary-color;
 $copy-icon-color: $primary-color;
 
 // status section
-$status-text-color: #fff;
-$status-authority-number-color: #fff;
+$status-text-color: $text-color;
+$status-authority-number-color: $text-color;
 $status-authority-address-color: $primary-color;
 
 $status-authority-logo-0: $base-images-path + '/themes/' + $theme-name + '/status/authority/logo-0.svg';
@@ -115,7 +117,16 @@ $status-authority-logo-2: $base-images-path + '/themes/' + $theme-name + '/statu
 // datablock
 $datablock-value-color: $primary-color;
 $datablock-type-color: $primary-color;
-$datablock-text-color: #fff;
+$datablock-text-color: $text-color;
 
 // statistics
-$statistics-title-color: #fff;
+$statistics-title-color: $text-color;
+
+// events
+$events-title-color: $text-color;
+$events-filter-color: #333;
+$events-select-color: #333;
+$events-column-title-color: $text-color;
+$events-recipient-label-color: $text-color;
+$events-value-color: $text-color;
+$events-block-color: $text-color;
