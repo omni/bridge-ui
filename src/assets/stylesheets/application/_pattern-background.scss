@@ -1,4 +1,5 @@
 .pattern-background {
+    margin-left: auto;
     overflow: hidden;
     padding-top: 25px;
     width: 15%;
@@ -11,7 +12,7 @@
       min-width: 192px;
     }
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width-landscape) {
       display: none;
     }
   }

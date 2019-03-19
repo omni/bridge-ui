@@ -5,10 +5,16 @@
   .status-page-container {
     display: flex;
     flex-direction: column;
+    max-width: $container-width;
     width: 70%;
 
-    @media screen and (max-width: $tablet-width) {
-      width: 90%;
+    @media screen and (max-width: $tablet-width-landscape) {
+      width: 100%;
+    }
+
+    @media screen and (max-width: $mobile-width) {
+      padding-left: 15px;
+      padding-right: 15px;
     }
 
     .status-title {
@@ -105,10 +111,11 @@
   }
 
   .status-left-container {
+    margin-right: auto;
     padding-top: 25px;
     width: 15%;
 
-    @media screen and (max-width: $mobile-width) {
+    @media screen and (max-width: $tablet-width-landscape) {
       display: none;
     }
   }
