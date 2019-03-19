@@ -37,7 +37,7 @@ export const NetworkDetails = ({
     <div className="network-details">
         <div className="details-logo-container">
           <div className={logoClass}
-               style={{color: '#5c34a2', textAlign: 'center', fontWeight: 'bold'}}
+               style={{ color: '#5c34a2', textAlign: 'center', fontWeight: 'bold'}}
           >
             {currency}
           </div>
