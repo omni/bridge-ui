@@ -70,8 +70,12 @@ $button-bordered-border-color: $primary-color;
 
 // modals
 $modal-background-color: #fff;
-$modal-overlay-background-color: $primary-color-dark;
+$modal-overlay-background-color: rgba($primary-color-dark, 0.8);
 $modal-title-color: $primary-color;
+
+// mobile menu
+$mobile-menu-background-color: $primary-color-darker;
+$mobile-menu-overlay-color: rgba($primary-color-darker, 0.9);
 
 // loading
 $loading-item-background-color: $secondary-color;

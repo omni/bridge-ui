@@ -24,7 +24,7 @@
 .loading {
     &-container {
         align-items: center;
-        background-color: rgba($modal-overlay-background-color, 0.8);
+        background-color: $modal-overlay-background-color;
         bottom: 0;
         display: flex;
         justify-content: center;

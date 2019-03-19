@@ -4,7 +4,13 @@
   padding-top: 40px;
 
   .events-container {
+    max-width: 100%;
     width: $container-width;
+
+    @media screen and (max-width: $mobile-width) {
+      padding-left: 15px;
+      padding-right: 15px;
+    }
 
     .events-header {
       display: flex;
