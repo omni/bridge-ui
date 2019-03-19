@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const BridgeAddress = ({ isHome, reverse, labelName}) => {
+export const BridgeAddress = ({ isHome, reverse }) => {
   const getAddress = () => isHome ?
     (<div className="home-address-container" />)
     :
@@ -20,7 +20,7 @@ export const BridgeAddress = ({ isHome, reverse, labelName}) => {
       {getAddress()}
       <div className="bridge-foreign-container">
         <div className="foreign-logo-container">
-          <div className={reverse ? 'foreign-logo' : 'home-logo'} />
+          <div className={reverse ? 'home-logo' : 'foreign-logo'} />
         </div>
       </div>
     </div>)

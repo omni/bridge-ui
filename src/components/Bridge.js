@@ -305,7 +305,7 @@ export class Bridge extends React.Component {
           <BridgeAddress
             isHome={true}
             reverse={reverse}
-            labelName={reverse ? foreignStore.symbol : homeStore.symbol} />
+          />
           <div className="bridge-transfer">
             <div className="left-image-wrapper">
               <div className="left-image" />
@@ -341,7 +341,6 @@ export class Bridge extends React.Component {
           </div>
           <BridgeAddress
             isHome={false}
-            labelName={reverse ? homeStore.symbol : foreignStore.symbol}
             reverse={reverse}
           />
           <ModalContainer

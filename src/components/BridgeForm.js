@@ -2,7 +2,7 @@ import React from 'react'
 
 export const BridgeForm = ({ reverse, currency, onTransfer, onInputChange, displayArrow}) => (
   <div className={`form-container ${displayArrow ? 'transfer-right' : ''}` }>
-    <form className="bridge-form" onSubmit={onTransfer}>
+    <form className="bridge-form" onSubmit={onTransfer} autoComplete="off">
       <div className="bridge-form-controls">
         <div className="bridge-form-input-container">
           <input

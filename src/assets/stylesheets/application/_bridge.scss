@@ -505,6 +505,7 @@
                 .details-description-black {
                     color: $modal-text-color;
                     font-size: 14px;
+                    font-weight: 700;
                 }
                 .details-copy {
                     cursor: pointer;
@@ -708,16 +709,13 @@
     }
 
     .noWallet-buttons {
-        align-content: space-around;
-        align-items: flex-end;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        height: 100%;
-        justify-content: space-between;
+        column-gap: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        row-gap: 10px;
 
-        @media screen and (max-width: $small-mobile-width) {
-            flex-direction: column;
+        @media screen and (max-width: $mobile-width) {
+            grid-template-columns: 1fr;
         }
 
         .noWallet-metamask {
@@ -726,10 +724,10 @@
             color: $button-text-color-2;
             line-height: 36px;
             text-align: center;
-            width: 96px;
+            text-decoration: none;
 
-            @media screen and (max-width: $small-mobile-width) {
-                width: 100%;
+            &:hover {
+                background-color: darken($button-background-color-2, 10%);
             }
         }
         .noWallet-niftyWallet {
@@ -738,11 +736,10 @@
             color: $button-text-color-4;
             line-height: 36px;
             text-align: center;
-            width: 106px;
+            text-decoration: none;
 
-            @media screen and (max-width: $small-mobile-width) {
-                width: 100%;
-                margin: 10px 0;
+            &:hover {
+                background-color: darken($button-background-color-4, 10%);
             }
         }
         .noWallet-alphawallet {
@@ -751,11 +748,10 @@
             color: $button-text-color-3;
             line-height: 36px;
             text-align: center;
-            width: 106px;
+            text-decoration: none;
 
-            @media screen and (max-width: $small-mobile-width) {
-                width: 100%;
-                margin: 10px 0;
+            &:hover {
+                background-color: darken($button-background-color-3, 10%);
             }
         }
         .noWallet-cancel {
@@ -764,10 +760,10 @@
             border: 1px solid $button-bordered-border-color;
             color: $button-bordered-text-color;
             height: 36px;
-            width: 72px;
+            text-decoration: none;
 
-            @media screen and (max-width: $small-mobile-width) {
-                width: 100%;
+            &:hover {
+                opacity: 0.7;
             }
         }
     }
@@ -777,18 +773,13 @@
     background-color: $modal-background-color;
     border-radius: 8px;
     display: flex;
-    height: 518px;
-    padding: 30px 0;
+    padding: 15px 0;
     width: 600px;
 
-    @media screen and (max-width: $small-mobile-width) {
-        padding-top: 60px;
-    }
     @media screen and (max-width: $tablet-width) {
         flex-direction: column;
+        margin: 0 auto;
         width: 92%;
-        height: auto;
-        margin-left: 4%;
     }
 
     .image-container {
@@ -799,10 +790,10 @@
         }
 
         .disclaimer-icon {
-            width: 117px;
             height: 173px;
-            margin-top: 44px;
             margin-left: 25px;
+            margin-top: 44px;
+            width: 117px;
         }
     }
     .alert-container {
@@ -821,12 +812,12 @@
         }
 
         .alert-corner {
-            width: 10px;
             height: 12px;
+            width: 10px;
         }
         .disclaimer-title {
             color: $modal-title-color;
-            font-size: 44px;
+            font-size: 24px;
             line-height: 1;
 
             @media screen and (max-width: $tablet-width) {
@@ -836,7 +827,7 @@
             }
         }
         .disclaimer-description {
-            color: #666;
+            color: $modal-text-color;
             font-size: 14px;
             line-height: 1.71;
             padding-bottom: 10px;
@@ -848,12 +839,13 @@
             }
         }
         .disclaimer-tos {
-            color: #333;
+            color: $modal-text-color;
             padding-left: 5px;
         }
         .disclaimer-link {
-            color: $primary-color;
+            color: $modal-link-color;
         }
+
         .disclaimer-buttons {
             .disclaimer-confirm {
                 background-color: $button-background-color;
@@ -863,7 +855,11 @@
                 font-weight: 700;
                 height: 40px;
                 text-decoration: none;
-                width: 91px;
+                min-width: 100px;
+
+                &:hover {
+                    background-color: darken($button-background-color, 10%);
+                }
             }
             .disclaimer-confirm-disabled {
                 background-color: $button-background-color;
@@ -875,7 +871,7 @@
                 height: 40px;
                 opacity: 0.5;
                 text-decoration: none;
-                width: 91px;
+                min-width: 100px;
             }
         }
     }
