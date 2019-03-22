@@ -1,21 +1,19 @@
-import React from 'react';
-import { inject, observer } from "mobx-react";
-import Web3Utils from 'web3-utils'
-import { toDecimals } from '../stores/utils/decimals'
-import swal from 'sweetalert'
 import BN from 'bignumber.js'
-import { BridgeForm } from './index'
+import React from 'react';
+import Web3Utils from 'web3-utils'
+import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
+import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
+import swal from 'sweetalert'
+import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 import { BridgeAddress } from './index'
+import { BridgeForm } from './index'
 import { BridgeNetwork } from './index'
 import { ModalContainer } from './ModalContainer'
 import { NetworkDetails } from './NetworkDetails'
 import { TransferAlert } from './TransferAlert'
-import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
-import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
-import leftImage from '../assets/images/pattern-1.png'
-import rightImage from '../assets/images/pattern-2.png'
-import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 import { getFeeToApply, validFee } from '../stores/utils/contract'
+import { inject, observer } from "mobx-react";
+import { toDecimals } from '../stores/utils/decimals'
 
 @inject("RootStore")
 @observer
@@ -307,41 +305,44 @@ export class Bridge extends React.Component {
           <BridgeAddress
             isHome={true}
             reverse={reverse}
-            labelName={reverse ? foreignStore.symbol : homeStore.symbol} />
+          />
           <div className="bridge-transfer">
             <div className="left-image-wrapper">
-              <img className="left-image" src={leftImage} alt=""/>
+              <div className="left-image" />
             </div>
             <div className="bridge-transfer-content">
               <div className="bridge-transfer-content-background">
                 <BridgeNetwork
-                  isHome={true}
-                  showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
-                  networkTitle={reverse ? foreignNetworkName : homeNetworkName}
+                  balance={reverse ? foreignStore.balance : homeStore.getDisplayedBalance()}
                   currency={reverse ? foreignStore.symbol : homeStore.symbol}
-                  balance={reverse ? foreignStore.balance : homeStore.getDisplayedBalance()} />
+                  isHome={true}
+                  networkTitle={reverse ? foreignNetworkName : homeNetworkName}
+                  showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
+                />
                 <BridgeForm
-                  displayArrow={!web3Store.metamaskNotSetted}
-                  reverse={reverse}
                   currency={formCurrency}
+                  displayArrow={!web3Store.metamaskNotSetted}
+                  onInputChange={this.handleInputChange('amount')}
                   onTransfer={this.onTransfer}
-                  onInputChange={this.handleInputChange('amount')} />
+                  reverse={reverse}
+                />
                 <BridgeNetwork
-                  isHome={false}
-                  showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
-                  networkTitle={reverse ? homeNetworkName : foreignNetworkName}
+                  balance={reverse ? homeStore.getDisplayedBalance() : foreignStore.balance}
                   currency={reverse ? homeStore.symbol : foreignStore.symbol}
-                  balance={reverse ? homeStore.getDisplayedBalance() : foreignStore.balance} />
+                  isHome={false}
+                  networkTitle={reverse ? homeNetworkName : foreignNetworkName}
+                  showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
+                />
               </div>
             </div>
             <div className="right-image-wrapper">
-              <img className="right-image" src={rightImage} alt=""/>
+              <div className="right-image" />
             </div>
           </div>
           <BridgeAddress
             isHome={false}
             reverse={reverse}
-            labelName={reverse ? homeStore.symbol : foreignStore.symbol} />
+          />
           <ModalContainer
             hideModal={() => {this.setState({showModal: false})}}
             showModal={showModal}

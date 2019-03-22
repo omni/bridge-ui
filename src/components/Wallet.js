@@ -1,6 +1,6 @@
 import React from 'react';
 import { inject, observer } from "mobx-react";
-import walletIcon from '../assets/images/icons/icon-wallet.svg'
+import { WalletIcon } from './menu-icons/WalletIcon'
 
 @inject("RootStore")
 @observer
@@ -28,7 +28,7 @@ export class Wallet extends React.Component {
         onMouseLeave={() => alertStore.setShowDailyQuotaInfo(false)}
       >
         <div className="wallet-container">
-          <img className="wallet-icon" src={walletIcon} alt=""/>
+          <span className="wallet-icon">{<WalletIcon />}</span>
           {wallet}
         </div>
         <div className="daily-quota-container">

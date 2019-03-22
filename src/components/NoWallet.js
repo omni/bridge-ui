@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import noWalletIcon from '../assets/images/i@2x.png'
+import noWalletIcon from '../assets/images/no-wallet-modal/i@3x.png'
 import { ModalContainer } from './ModalContainer'
 import { inject, observer } from 'mobx-react'
 

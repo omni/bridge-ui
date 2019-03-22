@@ -1,6 +1,6 @@
 import React from 'react'
 import numeral from 'numeral'
-import infoIcon from '../assets/images/icons/icon-info.svg'
+import { InfoIcon } from './icons/InfoIcon'
 
 export const BridgeNetwork = ({
   isHome,
@@ -16,13 +16,13 @@ export const BridgeNetwork = ({
 
   const showMore = () => isHome ?
     (<div className="bridge-network-data" onClick={showModal}>
-      <img className="info-icon-left" src={infoIcon} alt=""/>
+      <span className="info-icon info-icon-left"><InfoIcon /></span>
       <span className="network-show-more">Show More</span>
     </div>)
     :
     (<div className="bridge-network-data" onClick={showModal}>
       <span className="network-show-more">Show More</span>
-      <img className="info-icon-right" src={infoIcon} alt=""/>
+      <span className="info-icon info-icon-right"><InfoIcon /></span>
     </div>)
 
   return (

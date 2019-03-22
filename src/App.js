@@ -15,6 +15,7 @@ export class App extends React.Component {
 
   componentDidMount() {
     const disclaimerDisplayed = getItem(DISCLAIMER_KEY)
+
     if(!disclaimerDisplayed) {
       this.setState({ showDisclaimer: true })
     }
@@ -32,7 +33,7 @@ export class App extends React.Component {
   render() {
     const { showDisclaimer, showMobileMenu } = this.state
     return (
-      <div>
+      <div className={showMobileMenu ? 'mobile-menu-is-open' : ''}>
         <Route component={Loading}/>
         <Route component={SweetAlert}/>
         <Route render={() =>
