@@ -14,7 +14,6 @@
     "mocha": "^5.1.1",
     "node-sass-chokidar": "^1.0.1",
     "nodemon": "^1.17.1",
-    "npm": "^5.7.1",
     "numeral": "^2.0.6",
     "react": "^16.2.0",
     "react-app-rewire-mobx": "^1.0.7",
