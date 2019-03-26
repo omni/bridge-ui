@@ -1,6 +1,6 @@
 import BN from 'bignumber.js';
 import { fromDecimals } from './decimals'
-import Web3Utils from 'web3-utils'
+import { fromWei } from 'web3-utils'
 import { FEE_MANAGER_MODE } from './bridgeMode'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
@@ -32,7 +32,7 @@ export const getCurrentLimit = async (contract,decimals) => {
   }
 }
 
-export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents({ fromBlock, toBlock })
+export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents('allEvents', { fromBlock, toBlock })
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
 
@@ -92,12 +92,12 @@ export const getFeeManagerMode = (contract) => contract.methods.getFeeManagerMod
 
 export const getHomeFee = async (contract) => {
   const feeInWei = await contract.methods.getHomeFee().call()
-  return new BN(Web3Utils.fromWei(feeInWei))
+  return new BN(fromWei(feeInWei))
 }
 
 export const getForeignFee = async (contract) => {
   const feeInWei = await contract.methods.getForeignFee().call()
-  return new BN(Web3Utils.fromWei(feeInWei))
+  return new BN(fromWei(feeInWei))
 }
 
 export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {

@@ -352,7 +352,9 @@ class HomeStore {
   }
 
   processEvent = (event) => {
-    this.statistics.users.add(event.returnValues.recipient)
+    if(event.returnValues && event.returnValues.recipient) {
+      this.statistics.users.add(event.returnValues.recipient)
+    }
     if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
       this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
