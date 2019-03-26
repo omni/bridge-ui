@@ -235,15 +235,31 @@
                 font-size: 13px;
                 color: $bridge-label-color;
             }
-            .network-name {
-                color: $bridge-label-color;
-                font-size: 24px;
-                padding-left: 5px;
-            }
             .network-title {
                 color: $bridge-label-color;
+                display: block;
                 font-size: 24px;
                 font-weight: 700;
+            }
+            .network-name {
+                color: $bridge-label-color;
+                display: block;
+                font-size: 24px;
+                font-weight: 700;
+            }
+            .text-left {
+                text-align: left;
+
+                @media screen and (max-width: $mobile-width) {
+                    text-align: center;
+                }
+            }
+            .text-right {
+                text-align: right;
+
+                @media screen and (max-width: $mobile-width) {
+                    text-align: center;
+                }
             }
             .network-id {
                 color: $bridge-label-color;

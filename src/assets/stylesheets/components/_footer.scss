@@ -36,17 +36,4 @@
     order: 0;
     width: $footer-logo-width;
   }
-
-  &-rights {
-    font-size: 12px;
-    order: 1;
-    text-align: center;
-
-    @media screen and (max-width: $tablet-width) {
-      line-height: normal;
-      margin-top: 15px;
-      order: 2;
-      width: 100%;
-    }
-  }
 }

@@ -3,11 +3,13 @@ import numeral from 'numeral'
 import { InfoIcon } from './icons/InfoIcon'
 
 export const BridgeNetwork = ({
-  isHome,
-  networkTitle,
-  currency,
   balance,
-  showModal
+  currency,
+  isHome,
+  networkSubtitle,
+  networkTitle,
+  showModal,
+  side
 }) => {
   const containerName = isHome ? 'home' : 'foreign'
   const formattedBalance = isNaN(numeral(balance).format('0.00', Math.floor))
@@ -27,8 +29,9 @@ export const BridgeNetwork = ({
 
   return (
     <div className={`network-container-${containerName}`}>
-      <p>
+      <p className={`${ side ? `text-${side}` : ''}`}>
         <span className="network-title">{networkTitle}</span>
+        {networkSubtitle ? <span className="network-name">{networkSubtitle}</span> : null}
       </p>
       <p>
         <span className="network-basic-label">Balance:</span>

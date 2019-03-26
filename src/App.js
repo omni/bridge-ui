@@ -38,8 +38,8 @@ export class App extends React.Component {
         <Route component={SweetAlert}/>
         <Route render={() =>
           <Header
-            showMobileMenu={showMobileMenu}
             onMenuToggle={this.toggleMobileMenu}
+            showMobileMenu={showMobileMenu}
           />
         }/>
         <div className="app-container">
@@ -53,8 +53,7 @@ export class App extends React.Component {
         <ModalContainer
           showModal={showDisclaimer}
         >
-          <Disclaimer
-            onConfirmation={this.closeDisclaimer} />
+          <Disclaimer onConfirmation={this.closeDisclaimer} />
         </ModalContainer>
         <NoWallet showModal={!showDisclaimer} />
       </div>
