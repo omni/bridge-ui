@@ -67,15 +67,19 @@ export const totalBurntCoins = async (contract) => {
 }
 
 export const getBridgeValidators = async (bridgeValidatorContract) => {
-  let ValidatorAdded = await bridgeValidatorContract.getPastEvents('ValidatorAdded', {fromBlock: 0});
-  let ValidatorRemoved = await bridgeValidatorContract.getPastEvents('ValidatorRemoved', {fromBlock: 0});
-  let addedValidators = ValidatorAdded.map(val => {
-    return val.returnValues.validator
-  })
-  const removedValidators = ValidatorRemoved.map(val => {
-    return val.returnValues.validator
-  })
-  return addedValidators.filter(val => !removedValidators.includes(val));
+  try {
+    let ValidatorAdded = await bridgeValidatorContract.getPastEvents('ValidatorAdded', {fromBlock: 0});
+    let ValidatorRemoved = await bridgeValidatorContract.getPastEvents('ValidatorRemoved', {fromBlock: 0});
+    let addedValidators = ValidatorAdded.map(val => {
+      return val.returnValues.validator
+    })
+    const removedValidators = ValidatorRemoved.map(val => {
+      return val.returnValues.validator
+    })
+    return addedValidators.filter(val => !removedValidators.includes(val));
+  } catch (e) {
+   return []
+  }
 }
 
 export const getName = (contract) => contract.methods.name().call()
