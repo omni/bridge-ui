@@ -21,9 +21,10 @@ export const Disclaimer = ({ onConfirmation }) => (
         improper app configuration, or other negative outcomes.
         <br/>
         <br/>
-        By hitting the "continue" button, you are representing that you’ve read our <a
-          href="hhttps://forum.poa.network/t/end-user-licensing-agreement-and-terms-of-service/2197"
-        target="_blank" rel="noopener noreferrer">Terms of
+        By hitting the "continue" button, you are representing that you’ve read our
+        <a
+          href="https://forum.poa.network/t/end-user-licensing-agreement-and-terms-of-service/2197"
+          target="_blank" rel="noopener noreferrer">Terms of
         Service</a> in full, and that you agree to be legally bound by them.
       </p>
       <div className="disclaimer-buttons">
