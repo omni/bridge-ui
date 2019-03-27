@@ -1,6 +1,5 @@
 import React from "react"
 import { IconGithub, IconPOA, IconTelegram, IconTwitter } from "./social-icons"
-import { Link } from  'react-router-dom'
 
 export const SocialIcons = () => {
   const socialItems = [
@@ -26,9 +25,9 @@ export const SocialIcons = () => {
     <div className="social-icons">
       {socialItems.map((item, index) => {
         return (
-          <Link key={index} to={item.link} className="social-icons-item">
+          <a key={index} href={item.link} target="_blank" className="social-icons-item">
             {item.icon}
-          </Link>
+          </a>
         )
       })}
     </div>
