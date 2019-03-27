@@ -40,7 +40,11 @@ class TxStore {
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')){
+          console.log(e.message)
+          if(e.message.includes('User denied transaction signature')) {
+            this.alertStore.setLoading(false)
+            this.alertStore.pushError('Transaction rejected on wallet');
+          } else if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')){
             // False error is thrown by web3 https://github.com/ethereum/web3.js/issues/2542
             // this.alertStore.setLoading(false)
             // this.alertStore.pushError('Transaction rejected on wallet');
@@ -107,7 +111,7 @@ class TxStore {
     web3.eth.getTransactionReceipt(hash, (error, res) => {
       if(res && res.blockNumber){
         if(this.isStatusSuccess(res)){
-          if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id.toString()) {
+          if(this.web3Store.metamaskNet.id === this.web3Store.homeNet.id) {
             const blockConfirmations = this.homeStore.latestBlockNumber - res.blockNumber
             if(blockConfirmations >= 8) {
               this.alertStore.setBlockConfirmations(8)
