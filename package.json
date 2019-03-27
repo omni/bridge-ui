@@ -4,9 +4,11 @@
   "private": true,
   "homepage": "https://poanetwork.github.io/",
   "dependencies": {
+    "@babel/plugin-proposal-decorators": "^7.4.0",
     "bignumber.js": "^6.0.0",
     "chromedriver": "^2.35.0",
     "coveralls": "^3.0.0",
+    "customize-cra": "^0.2.12",
     "dotenv": "^7.0.0",
     "fs-extra": "^5.0.0",
     "gh-pages": "^1.1.0",
@@ -18,12 +20,12 @@
     "numeral": "^2.0.6",
     "react": "^16.2.0",
     "react-app-rewire-mobx": "^1.0.7",
-    "react-app-rewired": "^1.5.0",
+    "react-app-rewired": "^2.0.3",
     "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^16.2.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.1",
+    "react-scripts": "2.1.8",
     "react-transition-group": "^2.2.1",
     "selenium-webdriver": "^3.6.0",
     "sweetalert": "^2.1.0",
@@ -50,5 +52,11 @@
   "devDependencies": {
     "jest-dom": "^3.0.1",
     "react-testing-library": "^5.4.4"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
