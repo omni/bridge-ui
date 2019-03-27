@@ -3,12 +3,13 @@ import { fromWei, toHex } from 'web3-utils'
 
 const updateTitle = (networkName = 'No chain specified') => {
   const titleReplaceString = '%c'
-  let appTitle = process.env.REACT_APP_TITLE || null
-
-  if (!appTitle) return
+  let appTitle = process.env.REACT_APP_TITLE || 'TokenBridge UI app'
 
   if (appTitle.indexOf(titleReplaceString) !== -1) {
     document.title = appTitle.replace(titleReplaceString, networkName)
+  }
+  else if (!process.env.REACT_APP_TITLE) {
+    document.title = `${appTitle} - ${networkName}`
   }
   else {
     document.title = appTitle
