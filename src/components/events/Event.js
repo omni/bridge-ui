@@ -1,5 +1,5 @@
 import React from 'react'
-import Web3Utils from 'web3-utils'
+import { fromWei } from 'web3-utils'
 import numeral from 'numeral'
 import { CopyIcon } from '../icons/CopyIcon'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
@@ -22,7 +22,7 @@ export const Event = ({ color, eventName, transactionHash, recipient, value, blo
       </a>
       <span className="event-value value-column">
         {recipient ? <strong className="only-mobile">Value</strong> : ''}
-        {value ? numeral(Web3Utils.fromWei(value)).format('0,0.00', Math.floor) : ''}
+        {value ? numeral(fromWei(value)).format('0,0.00', Math.floor) : ''}
       </span>
       <span className="event-block block-column"><strong className="only-mobile">Block</strong>{blockNumber}</span>
     </div>

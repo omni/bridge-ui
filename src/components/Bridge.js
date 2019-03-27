@@ -1,6 +1,6 @@
 import BN from 'bignumber.js'
 import React from 'react';
-import Web3Utils from 'web3-utils'
+import { toHex } from 'web3-utils'
 import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
 import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
 import swal from 'sweetalert'
@@ -94,7 +94,7 @@ export class Bridge extends React.Component {
             tokenAddress: homeStore.tokenAddress
           })
         } else {
-          const value = Web3Utils.toHex(toDecimals(amount,homeStore.tokenDecimals))
+          const value = toHex(toDecimals(amount,homeStore.tokenDecimals))
           return txStore.doSend({
             to: homeStore.HOME_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
@@ -144,7 +144,7 @@ export class Bridge extends React.Component {
           return await txStore.erc677transferAndCall({
             to: foreignStore.FOREIGN_BRIDGE_ADDRESS,
             from: web3Store.defaultAccount.address,
-            value: Web3Utils.toHex(toDecimals(amount,foreignStore.tokenDecimals)),
+            value: toHex(toDecimals(amount,foreignStore.tokenDecimals)),
             contract: foreignStore.tokenContract,
             tokenAddress: foreignStore.tokenAddress
           })

@@ -41,8 +41,9 @@ class TxStore {
           this.getTxReceipt(hash)
         }).on('error', (e) => {
           if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')){
-            this.alertStore.setLoading(false)
-            this.alertStore.pushError('Transaction rejected on wallet');
+            // False error is thrown by web3 https://github.com/ethereum/web3.js/issues/2542
+            // this.alertStore.setLoading(false)
+            // this.alertStore.pushError('Transaction rejected on wallet');
           }
         })
       } catch(e) {
