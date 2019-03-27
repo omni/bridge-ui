@@ -40,7 +40,6 @@ class TxStore {
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          console.log(e.message)
           if(e.message.includes('User denied transaction signature')) {
             this.alertStore.setLoading(false)
             this.alertStore.pushError('Transaction rejected on wallet');
