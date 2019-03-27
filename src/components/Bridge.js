@@ -32,6 +32,7 @@ export class Bridge extends React.Component {
       [name]: event.target.value
     })
   }
+
   componentDidMount() {
     const { web3Store } = this.props.RootStore
     web3Store.getWeb3Promise.then(() => {
@@ -283,6 +284,30 @@ export class Bridge extends React.Component {
     this.setState({ modalData, showModal: true })
   }
 
+  getNetworkTitle = (networkName) => {
+
+    const index = networkName.indexOf(" ")
+
+    if (index === -1) {
+      return networkName
+    }
+
+    return networkName.substring(0, index)
+
+  }
+
+  getNetworkSubTitle = (networkName) => {
+
+    const index = networkName.indexOf(" ")
+
+    if (index === -1) {
+      return false
+    }
+
+    return networkName.substring(index + 1, networkName.length)
+
+  }
+
   render() {
     const { web3Store, foreignStore, homeStore } = this.props.RootStore
     const { reverse, showModal, modalData, showConfirmation, confirmationData } = this.state
@@ -296,8 +321,10 @@ export class Bridge extends React.Component {
       }
     }
 
-    const homeNetworkName = homeStore.networkName
-    const foreignNetworkName = foreignStore.networkName
+    const homeNetworkName = this.getNetworkTitle(homeStore.networkName)
+    const homeNetworkSubtitle = this.getNetworkSubTitle(homeStore.networkName)
+    const foreignNetworkName = this.getNetworkTitle(foreignStore.networkName)
+    const foreignNetworkSubtitle = this.getNetworkSubTitle(foreignStore.networkName)
 
     return(
       <div className="bridge-container">
@@ -316,8 +343,10 @@ export class Bridge extends React.Component {
                   balance={reverse ? foreignStore.balance : homeStore.getDisplayedBalance()}
                   currency={reverse ? foreignStore.symbol : homeStore.symbol}
                   isHome={true}
+                  networkSubtitle={reverse ? foreignNetworkSubtitle : homeNetworkSubtitle}
                   networkTitle={reverse ? foreignNetworkName : homeNetworkName}
                   showModal={reverse ? this.loadForeignDetails : this.loadHomeDetails}
+                  side="left"
                 />
                 <BridgeForm
                   currency={formCurrency}
@@ -330,8 +359,10 @@ export class Bridge extends React.Component {
                   balance={reverse ? homeStore.getDisplayedBalance() : foreignStore.balance}
                   currency={reverse ? homeStore.symbol : foreignStore.symbol}
                   isHome={false}
+                  networkSubtitle={reverse ? homeNetworkSubtitle : foreignNetworkSubtitle}
                   networkTitle={reverse ? homeNetworkName : foreignNetworkName}
                   showModal={reverse ? this.loadHomeDetails : this.loadForeignDetails}
+                  side="right"
                 />
               </div>
             </div>

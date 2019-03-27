@@ -6,7 +6,6 @@ export const Footer = () => (
   <footer className="footer">
     <div className="container">
       <Link to="/" className="footer-logo" />
-      
       <SocialIcons />
     </div>
   </footer>
