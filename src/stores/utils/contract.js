@@ -96,12 +96,12 @@ export const getFeeManagerMode = (contract) => contract.methods.getFeeManagerMod
 
 export const getHomeFee = async (contract) => {
   const feeInWei = await contract.methods.getHomeFee().call()
-  return new BN(fromWei(feeInWei))
+  return new BN(fromWei(feeInWei.toString()))
 }
 
 export const getForeignFee = async (contract) => {
   const feeInWei = await contract.methods.getForeignFee().call()
-  return new BN(fromWei(feeInWei))
+  return new BN(fromWei(feeInWei.toString()))
 }
 
 export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {
