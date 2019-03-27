@@ -1,12 +1,28 @@
 import Web3 from 'web3'
 import Web3Utils from 'web3-utils'
 
+const updateTitle = (networkName = 'No chain specified') => {
+  const titleReplaceString = '%c'
+  let appTitle = process.env.REACT_APP_TITLE || null
+
+  if (!appTitle) return
+
+  if (appTitle.indexOf(titleReplaceString) !== -1) {
+    document.title = appTitle.replace(titleReplaceString, networkName)
+  }
+  else {
+    document.title = appTitle
+  }
+}
+
 const getWeb3 = () => {
   return new Promise(function (resolve, reject) {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener('load',async function () {
       let web3 = window.web3
       const { ethereum } = window
+
+      updateTitle()
 
       if (ethereum) {
         web3 = new window.Web3(ethereum)
@@ -28,7 +44,7 @@ const getWeb3 = () => {
         const errorMsg = ''
         reject({ type: 'install', message: errorMsg })
         console.log('No web3 instance injected, using Local web3.');
-        console.error('wallet not found');
+        console.error('Wallet not found');
       }
     })
   })
@@ -79,12 +95,16 @@ export const estimateGas = async (web3, to, gasPrice, from, value, data) =>{
 const processWeb3 = (web3, resolve,  reject) => {
   web3.version.getNetwork((err, netId) => {
     const netIdName = getNetworkName(netId)
-    console.log(`This is ${netIdName} network.`, netId)
-    document.title = `${netIdName} - Bridge UI dApp`
     const defaultAccount = web3.eth.defaultAccount || null;
+
+    console.log(`This is ${netIdName} network.`, netId)
+
+    updateTitle(netIdName)
+
     if(defaultAccount === null){
       reject({ type: 'unlock', message: 'Please unlock your wallet and refresh the page' })
     }
+
     const results = {
       web3Instance: new Web3(web3.currentProvider),
       netIdName,
