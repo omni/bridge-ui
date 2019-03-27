@@ -2,17 +2,20 @@ import Web3 from 'web3'
 import { fromWei, toHex } from 'web3-utils'
 
 const updateTitle = (networkName = 'No chain specified') => {
-  const titleReplaceString = '%c'
-  let appTitle = process.env.REACT_APP_TITLE || 'TokenBridge UI app'
-
-  if (appTitle.indexOf(titleReplaceString) !== -1) {
-    document.title = appTitle.replace(titleReplaceString, networkName)
-  }
-  else if (!process.env.REACT_APP_TITLE) {
-    document.title = `${appTitle} - ${networkName}`
+  const defaultTitle = 'TokenBridge UI app'
+  if (!process.env.REACT_APP_TITLE) {
+    document.title = defaultTitle
   }
   else {
-    document.title = appTitle
+    const titleReplaceString = '%c'
+    let appTitle = process.env.REACT_APP_TITLE || defaultTitle
+
+    if (appTitle.indexOf(titleReplaceString) !== -1) {
+      document.title = appTitle.replace(titleReplaceString, networkName)
+    }
+    else {
+      document.title = appTitle
+    }
   }
 }
 
