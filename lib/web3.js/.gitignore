@@ -1,0 +1,17 @@
+.DS_Store
+*.swp
+*/**/*un~
+*un~
+*/**/.DS_Store
+npm-debug.log
+.npm/
+/coverage
+/tmp
+node_modules
+bower_components
+/bower
+.idea/
+.npm/
+.vscode/
+dist/
+!./dist/web3.min.js

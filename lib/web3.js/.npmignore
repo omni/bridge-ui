@@ -1,0 +1,10 @@
+*.idea
+test
+dist
+docs
+coverage
+.gitignore
+.editorconfig
+.travis.yml
+.npmignore
+.DS_Store
