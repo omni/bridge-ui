@@ -32,7 +32,8 @@ class TxStore {
           gas,
           from,
           value,
-          data
+          data,
+          chainId: this.web3Store.metamaskNet.id
         }).on('transactionHash', (hash) => {
           console.log('txHash', hash)
           this.txsValues[hash] = sentValue
@@ -40,9 +41,11 @@ class TxStore {
           addPendingTransaction()
           this.getTxReceipt(hash)
         }).on('error', (e) => {
-          if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')) {
+          if(e.message.includes('User denied transaction signature')) {
             this.alertStore.setLoading(false)
             this.alertStore.pushError('Transaction rejected on wallet');
+          } else if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')){
+            console.log(e)
           }
         })
       } catch(e) {
