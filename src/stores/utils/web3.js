@@ -1,12 +1,32 @@
 import Web3 from 'web3'
 import { fromWei, toHex } from 'web3-utils'
 
+const updateTitle = (networkName = 'No chain specified') => {
+  const defaultTitle = 'TokenBridge UI app'
+  if (!process.env.REACT_APP_TITLE) {
+    document.title = defaultTitle
+  }
+  else {
+    const titleReplaceString = '%c'
+    let appTitle = process.env.REACT_APP_TITLE || defaultTitle
+
+    if (appTitle.indexOf(titleReplaceString) !== -1) {
+      document.title = appTitle.replace(titleReplaceString, networkName)
+    }
+    else {
+      document.title = appTitle
+    }
+  }
+}
+
 const getWeb3 = () => {
   return new Promise(function (resolve, reject) {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener('load',async function () {
       let web3 = window.web3
       const { ethereum } = window
+
+      updateTitle()
 
       if (ethereum) {
         web3 = new Web3(ethereum)
@@ -80,13 +100,18 @@ export const estimateGas = async (web3, to, gasPrice, from, value, data) =>{
 const processWeb3 = async (web3, resolve,  reject) => {
   const netId = await web3.eth.getChainId()
   const netIdName = getNetworkName(netId)
+
   console.log(`This is ${netIdName} network.`, netId)
-  document.title = `${netIdName} - Bridge UI dApp`
+
   const accounts = await web3.eth.getAccounts()
   const defaultAccount = accounts[0] || null;
+
   if(defaultAccount === null){
     reject({ type: 'unlock', message: 'Please unlock your wallet and refresh the page' })
   }
+
+  updateTitle(netIdName)
+
   const results = {
     web3Instance: new Web3(web3.currentProvider),
     netIdName,
