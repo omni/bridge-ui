@@ -98,7 +98,11 @@ export const estimateGas = async (web3, to, gasPrice, from, value, data) =>{
 }
 
 const processWeb3 = async (web3, resolve,  reject) => {
-  const netId = await web3.eth.getChainId()
+  try {
+    const netId = await web3.eth.getChainId()
+  } catch (error) {
+    reject({ type: 'chainid', message: 'Wallet does not support getting the Chain ID. Please use another wallet or specify a RPC url of a node that supports eth_chainId call' })
+  }
   const netIdName = getNetworkName(netId)
 
   console.log(`This is ${netIdName} network.`, netId)
