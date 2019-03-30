@@ -67,7 +67,6 @@ export const totalBurntCoins = async (contract) => {
 }
 
 export const getBridgeValidators = async (bridgeValidatorContract) => {
-  try {
     let ValidatorAdded = await bridgeValidatorContract.getPastEvents('ValidatorAdded', {fromBlock: 0});
     let ValidatorRemoved = await bridgeValidatorContract.getPastEvents('ValidatorRemoved', {fromBlock: 0});
     let addedValidators = ValidatorAdded.map(val => {
@@ -77,9 +76,6 @@ export const getBridgeValidators = async (bridgeValidatorContract) => {
       return val.returnValues.validator
     })
     return addedValidators.filter(val => !removedValidators.includes(val));
-  } catch (e) {
-   return []
-  }
 }
 
 export const getName = (contract) => contract.methods.name().call()
@@ -96,12 +92,12 @@ export const getFeeManagerMode = (contract) => contract.methods.getFeeManagerMod
 
 export const getHomeFee = async (contract) => {
   const feeInWei = await contract.methods.getHomeFee().call()
-  return new BN(fromWei(feeInWei))
+  return new BN(fromWei(feeInWei.toString()))
 }
 
 export const getForeignFee = async (contract) => {
   const feeInWei = await contract.methods.getForeignFee().call()
-  return new BN(fromWei(feeInWei))
+  return new BN(fromWei(feeInWei.toString()))
 }
 
 export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {

@@ -29,8 +29,8 @@
     "react-transition-group": "^2.2.1",
     "selenium-webdriver": "^3.6.0",
     "sweetalert": "^2.1.0",
-    "web3": "1.0.0-beta.50",
-    "web3-utils": "1.0.0-beta.50"
+    "web3": "1.0.0-beta.30",
+    "web3-utils": "1.0.0-beta.30"
   },
   "scripts": {
     "select-css-theme": "node scripts/selectTheme.js",
@@ -47,7 +47,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build -o origin",
     "compile:contracts": "cd submodules/poa-bridge-contracts && npm install && npm run compile && cd ../../ && rm -r -f src/contracts && cp -r submodules/poa-bridge-contracts/build/contracts src/contracts",
-    "postinstall": "npm run compile:contracts"
+    "postinstall": "cp lib/web3-eth/index.js node_modules/web3-eth/src && npm run compile:contracts"
   },
   "devDependencies": {
     "jest-dom": "^3.0.1",

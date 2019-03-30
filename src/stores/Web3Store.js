@@ -122,7 +122,7 @@ class Web3Store {
   async onHomeSide() {
     await this.getWeb3Promise
     await this.setHomeWeb3Promise
-    return this.metamaskNet.id === this.homeNet.id.toString()
+    return this.metamaskNet.id === this.homeNet.id
   }
 }
 
