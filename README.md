@@ -179,8 +179,8 @@ REACT_APP_FOREIGN_GAS_PRICE_ORACLE_URL | The URL used to get a JSON response fro
 REACT_APP_FOREIGN_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
 REACT_APP_FOREIGN_GAS_PRICE_FALLBACK | The gas price (in Wei) that is used if both the oracle and the fall back gas price specified in the Foreign Bridge contract are not available.
 REACT_APP_FOREIGN_GAS_PRICE_UPDATE_INTERVAL | An interval in milliseconds used to get the updated gas price value either from the oracle or from the Foreign Bridge contract.
-REACT_APP_TITLE | The title for the bridge UI page. `%c` will be replaced by the name of the network
-REACT_APP_DESCRIPTION | The meta description for the deployed bridge page
+REACT_APP_TITLE | The title for the bridge UI page. `%c` will be replaced by the name of the network.
+REACT_APP_DESCRIPTION | The meta description for the deployed bridge page.
 APP_STYLES | The set of styles to render the bridge UI page. Currently only `classic` is implemented
 
   * Run `npm run start`
