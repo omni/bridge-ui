@@ -1,8 +1,10 @@
 import { action, observable } from 'mobx';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
+import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
 import { getBlockNumber, getBalance } from './utils/web3'
+import { fromDecimals } from './utils/decimals'
 import {
   getMaxPerTxLimit,
   getMinPerTxLimit,
@@ -11,18 +13,23 @@ import {
   getMessage,
   getErc677TokenAddress,
   getSymbol,
+  getDecimals,
   getTotalSupply,
   getBalanceOf,
   mintedTotally,
   totalBurntCoins,
   getBridgeValidators,
-  getName
+  getName,
+  getFeeManager,
+  getHomeFee,
+  getForeignFee,
+  getFeeManagerMode,
+  ZERO_ADDRESS
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
-import Web3Utils from 'web3-utils'
 import BN from 'bignumber.js'
-import { getBridgeABIs, getUnit, BRIDGE_MODES } from './utils/bridgeMode'
+import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 
 async function asyncForEach(array, callback) {
@@ -60,6 +67,7 @@ class HomeStore {
     users: new Set(),
     finished: false
   }
+  feeManager = {};
   networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
   homeBridge = {};
@@ -67,6 +75,7 @@ class HomeStore {
   explorerTxTemplate = process.env.REACT_APP_HOME_EXPLORER_TX_TEMPLATE || ''
   explorerAddressTemplate = process.env.REACT_APP_HOME_EXPLORER_ADDRESS_TEMPLATE || ''
   tokenContract = {}
+  tokenDecimals = 18;
   blockRewardContract = {}
 
   constructor (rootStore) {
@@ -96,6 +105,7 @@ class HomeStore {
     this.getEvents()
     this.getBalance()
     this.getCurrentLimit()
+    this.getFee()
     this.getValidators()
     this.getStatistics()
     setInterval(() => {
@@ -124,6 +134,7 @@ class HomeStore {
       } catch(e) {
         this.tokenName = this.homeWeb3.utils.hexToAscii(await getName(alternativeContract)).replace(/\u0000*$/, '')
       }
+      this.tokenDecimals = await getDecimals(this.tokenContract)
     } catch(e) {
       console.error(e)
     }
@@ -141,7 +152,7 @@ class HomeStore {
   @action
   async getMaxPerTxLimit(){
     try {
-      this.maxPerTx = await getMaxPerTxLimit(this.homeBridge)
+      this.maxPerTx = await getMaxPerTxLimit(this.homeBridge,this.tokenDecimals)
     } catch(e){
       console.error(e)
     }
@@ -150,7 +161,7 @@ class HomeStore {
   @action
   async getMinPerTxLimit(){
     try {
-      this.minPerTx = await getMinPerTxLimit(this.homeBridge)
+      this.minPerTx = await getMinPerTxLimit(this.homeBridge,this.tokenDecimals)
     } catch(e){
       console.error(e)
     }
@@ -168,13 +179,34 @@ class HomeStore {
       } else if (this.rootStore.bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE) {
         const mintedCoins = await mintedTotally(this.blockRewardContract)
         const burntCoins = await totalBurntCoins(this.homeBridge)
-        this.balance = Web3Utils.fromWei(mintedCoins.minus(burntCoins).toString(10))
+        this.balance = fromDecimals(mintedCoins.minus(burntCoins).toString(10),this.tokenDecimals)
       } else {
         this.balance = await getBalance(this.homeWeb3, this.HOME_BRIDGE_ADDRESS)
       }
     } catch(e) {
       console.error(e)
       this.errors.push(e)
+    }
+  }
+
+  @action
+  async getFee() {
+    const feeManager = await getFeeManager(this.homeBridge)
+    if (feeManager !== ZERO_ADDRESS) {
+      const feeManagerModeHash = await getFeeManagerMode(this.homeBridge)
+      this.feeManager.feeManagerMode = decodeFeeManagerMode(feeManagerModeHash)
+
+      if(this.feeManager.feeManagerMode === FEE_MANAGER_MODE.BOTH_DIRECTIONS) {
+        this.feeManager.homeFee = await getHomeFee(this.homeBridge)
+        this.feeManager.foreignFee = await getForeignFee(this.homeBridge)
+      } else {
+        this.feeManager.homeFee = new BN(0);
+        this.feeManager.foreignFee = await getForeignFee(this.homeBridge)
+      }
+    } else {
+      this.feeManager.feeManagerMode = FEE_MANAGER_MODE.UNDEFINED
+      this.feeManager.homeFee = new BN(0);
+      this.feeManager.foreignFee = new BN(0);
     }
   }
 
@@ -276,7 +308,7 @@ class HomeStore {
   @action
   async getCurrentLimit(){
     try {
-      const result = await getCurrentLimit(this.homeBridge)
+      const result = await getCurrentLimit(this.homeBridge,this.tokenDecimals)
       this.maxCurrentDeposit = result.maxCurrentDeposit
       this.dailyLimit = result.dailyLimit
       this.totalSpentPerDay = result.totalSpentPerDay
@@ -299,6 +331,11 @@ class HomeStore {
       this.validators = await getBridgeValidators(this.homeBridgeValidators)
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
       this.validatorsCount = await this.homeBridgeValidators.methods.validatorCount().call()
+
+      if(this.validators.length !== Number(this.validatorsCount)) {
+        this.homeBridgeValidators = new this.homeWeb3.eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
+        this.validators = await getBridgeValidators(this.homeBridgeValidators)
+      }
     } catch(e){
       console.error(e)
     }
@@ -315,13 +352,15 @@ class HomeStore {
   }
 
   processEvent = (event) => {
-    this.statistics.users.add(event.returnValues.recipient)
+    if(event.returnValues && event.returnValues.recipient) {
+      this.statistics.users.add(event.returnValues.recipient)
+    }
     if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
-      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
     } else if (event.event === "AffirmationCompleted") {
       this.statistics.withdraws++
-      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(Web3Utils.fromWei(event.returnValues.value)))
+      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
     }
   }
 

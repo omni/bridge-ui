@@ -15,6 +15,7 @@ export class App extends React.Component {
 
   componentDidMount() {
     const disclaimerDisplayed = getItem(DISCLAIMER_KEY)
+
     if(!disclaimerDisplayed) {
       this.setState({ showDisclaimer: true })
     }
@@ -32,13 +33,13 @@ export class App extends React.Component {
   render() {
     const { showDisclaimer, showMobileMenu } = this.state
     return (
-      <div>
+      <div className={showMobileMenu ? 'mobile-menu-is-open' : ''}>
         <Route component={Loading}/>
         <Route component={SweetAlert}/>
         <Route render={() =>
           <Header
-            showMobileMenu={showMobileMenu}
             onMenuToggle={this.toggleMobileMenu}
+            showMobileMenu={showMobileMenu}
           />
         }/>
         <div className="app-container">
@@ -52,8 +53,7 @@ export class App extends React.Component {
         <ModalContainer
           showModal={showDisclaimer}
         >
-          <Disclaimer
-            onConfirmation={this.closeDisclaimer} />
+          <Disclaimer onConfirmation={this.closeDisclaimer} />
         </ModalContainer>
         <NoWallet showModal={!showDisclaimer} />
       </div>

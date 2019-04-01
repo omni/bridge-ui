@@ -65,7 +65,7 @@ The same address is used to send a coin from the Home network and receive a toke
 - Wallet Resources
   - [MetaMask](https://consensys.zendesk.com/hc/en-us/categories/360001045692-Using-MetaMask)
   - [Nifty Wallet](https://poanet.zendesk.com/hc/en-us/articles/360008957634-Nifty-Wallet)
-
+  - [AlphaWallet (iOS and Android)](https://alphawallet.github.io/AlphaWallet-Download-Page/)
 ## Getting Started
 
 The following is an example setup using the POA Sokol testnet as the Home network, and the Ethereum Kovan testnet as the Foreign network. The instructions for the Bridge UI are identical for an `ERC20-to-ERC20` configuration, but the smart contract deployment steps will vary.
@@ -75,7 +75,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
 - [poa-bridge-contracts](https://github.com/poanetwork/poa-bridge-contracts)
 - [token-bridge](https://github.com/poanetwork/token-bridge)
 - [node.js](https://nodejs.org/en/download/)
-- [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/)
+- [AlphaWallet](https://alphawallet.github.io/AlphaWallet-Download-Page/) or [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/)
 
 ### Example Setup
 
@@ -88,7 +88,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
     * as the validator's wallet address(es)
 
 3. Fund the test account(s).
-    * Fund Home account(s) using the [POA Sokol Faucet](https://faucet-sokol.herokuapp.com/)
+    * Fund Home account(s) using the [POA Sokol Faucet](https://faucet.poa.network/)
     * Get free Kovan Coins from the [gitter channel](https://gitter.im/kovan-testnet/faucet) or [Iracus faucet](https://github.com/kovan-testnet/faucet) for Foreign account(s). Get 5 Keth to 1 acc, and transfer from there to all other wallets if more than one account is used.
 
 4. Deploy the Sokol <-> Kovan Bridge contracts.
@@ -179,10 +179,12 @@ REACT_APP_FOREIGN_GAS_PRICE_ORACLE_URL | The URL used to get a JSON response fro
 REACT_APP_FOREIGN_GAS_PRICE_SPEED_TYPE | Gas Price speed (slow, standard, fast, instant)
 REACT_APP_FOREIGN_GAS_PRICE_FALLBACK | The gas price (in Wei) that is used if both the oracle and the fall back gas price specified in the Foreign Bridge contract are not available.
 REACT_APP_FOREIGN_GAS_PRICE_UPDATE_INTERVAL | An interval in milliseconds used to get the updated gas price value either from the oracle or from the Foreign Bridge contract.
-REACT_APP_DESCRIPTION | The meta description for the deployed bridge page
+REACT_APP_TITLE | The title for the bridge UI page. `%c` will be replaced by the name of the network.
+REACT_APP_DESCRIPTION | The meta description for the deployed bridge page.
+APP_STYLES | The set of styles to render the bridge UI page. Currently only `classic` is implemented
 
   * Run `npm run start`
-  * Make sure your web3 wallet (Nifty Wallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)
+  * Make sure your web3 wallet (Nifty Wallet, AlphaWallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)
   * Specify an amount and click `Transfer` to complete a cross-chain transaction from Sokol to Kovan
 
 ## Testing

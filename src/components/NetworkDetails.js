@@ -1,7 +1,7 @@
 import React from 'react'
-import copyIcon from '../assets/images/icons/copy.svg'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 import numeral from 'numeral'
+import { CopyIcon } from './icons/CopyIcon'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 export const NetworkDetails = ({
   isHome,
@@ -24,7 +24,7 @@ export const NetworkDetails = ({
   getExplorerAddressUrl
  }) => {
   const networkTitle = isHome ? 'Bridge Home' : 'Bridge Foreign'
-  const logoClass = isHome ? 'home-logo' : 'foreign-logo'
+  const logoClass = isHome ? 'home-logo home-logo-modal' : 'foreign-logo foreign-logo-modal'
   const totalTitle = isHome
     ? nativeSupplyTitle ? `Native Coins Amount` : `Totally minted by the bridge`
     : `${currency} Tokens Amount`
@@ -36,11 +36,7 @@ export const NetworkDetails = ({
   return (
     <div className="network-details">
         <div className="details-logo-container">
-          <div className={logoClass}
-               style={{color: '#5c34a2', textAlign: 'center', fontWeight: 'bold'}}
-          >
-            {currency}
-          </div>
+          <div className={logoClass} />
       </div>
       <div className="details-body">
         <p className="details-data-container">
@@ -50,11 +46,11 @@ export const NetworkDetails = ({
         <p className="details-data-container">
           <span className="details-label">{networkTitle} Address</span>
             <span className="details-description details-copy">
-              <a className="details-description"  href={getExplorerAddressUrl(address)} target="_blank" >
+              <a className="details-description" href={getExplorerAddressUrl(address)} target="_blank" >
                 {address.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={address}>
-                <img className="info-icon-right" src={copyIcon} alt=""/>
+                <span className="copy-icon copy-icon-right"><CopyIcon /></span>
               </CopyToClipboard>
             </span>
         </p>
@@ -78,7 +74,7 @@ export const NetworkDetails = ({
                 {tokenAddress.slice(0,27).concat('...')}
               </a>
               <CopyToClipboard text={tokenAddress}>
-                <img className="info-icon-right" src={copyIcon} alt=""/>
+                <span className="copy-icon copy-icon-right"><CopyIcon /></span>
               </CopyToClipboard>
             </span>
           </p>
@@ -95,9 +91,7 @@ export const NetworkDetails = ({
         </p>
         <p className="details-data-container">
           <span className="details-label">Your {currency} Balance</span>
-          <span className="details-description-black">
-            <strong>{formattedBalance} {currency}</strong>
-          </span>
+          <span className="details-description-black">{formattedBalance} {currency}</span>
         </p>
       </div>
     </div>

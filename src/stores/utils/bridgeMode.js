@@ -11,6 +11,12 @@ export const BRIDGE_MODES = {
   ERC_TO_NATIVE: 'ERC_TO_NATIVE'
 }
 
+export const FEE_MANAGER_MODE = {
+  ONE_DIRECTION: 'ONE_DIRECTION',
+  BOTH_DIRECTIONS: 'BOTH_DIRECTIONS',
+  UNDEFINED: 'UNDEFINED'
+}
+
 export const getBridgeABIs = (bridgeMode) => {
   let HOME_ABI = null
   let FOREIGN_ABI = null
@@ -60,4 +66,15 @@ export const getUnit = (bridgeMode) => {
   }
 
   return { unitHome, unitForeign }
+}
+
+export const decodeFeeManagerMode = (managerModeHash)  => {
+  switch (managerModeHash) {
+    case '0xf2aed8f7':
+      return FEE_MANAGER_MODE.ONE_DIRECTION
+    case '0xd7de965f':
+      return FEE_MANAGER_MODE.BOTH_DIRECTIONS
+    default:
+      throw new Error(`Unrecognized fee manager mode hash: '${managerModeHash}'`)
+  }
 }

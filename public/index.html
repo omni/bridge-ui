@@ -10,43 +10,10 @@
         <meta property="og:url" content="https://poanetwork.github.io/bridge-ui" />
         <meta property="og:type" content="website" />
         <meta property="og:image" content="/images/bridgeogimage.jpg">
-        <!--
-      manifest.json provides metadata used when your web app is added to the
-      homescreen on Android. See https://developers.google.com/web/fundamentals/engage-and-retain/web-app-manifest/
-    -->
+        <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700" rel="stylesheet">
         <link rel="manifest" href="%PUBLIC_URL%/favicons/manifest.json">
         <link rel="shortcut icon" href="%PUBLIC_URL%/favicons/favicon.ico">
-        <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
-
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-        <title>POA Bridge UI app</title>
-        <!-- Start of poanet Zendesk Widget script -->
-        <script>
-            /*<![CDATA[*/
-            window.zE || (function(e, t, s) {
-                var n = window.zE = window.zEmbed = function() {
-                        n._.push(arguments)
-                    },
-                    a = n.s = e.createElement(t),
-                    r = e.getElementsByTagName(t)[0];
-                n.set = function(e) {
-                    n.set._.push(e)
-                }, n._ = [], n.set._ = [], a.async = true, a.setAttribute("charset", "utf-8"), a.src = "https://static.zdassets.com/ekr/asset_composer.js?key=" + s, n.t = +new Date, a.type = "text/javascript", r.parentNode.insertBefore(a,
-                    r)
-            })(document, "script", "bb7f35c0-88a9-46f8-8807-01dd723665ea"); /*]]>*/
-        </script>
-        <!-- End of poanet Zendesk Widget script -->
-        <style>
-            #launcher {
-                bottom: 90px !important;
-            }
-        </style>
+        <title>TokenBridge UI app</title>
     </head>
 
     <body>
@@ -54,16 +21,5 @@
       You need to enable JavaScript to run this app.
     </noscript>
         <div id="root"></div>
-        <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
     </body>
-
 </html>
