@@ -31,6 +31,7 @@ import sleep from './utils/sleep'
 import BN from 'bignumber.js'
 import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
+import { processLargeArrayAsync } from './utils/array'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -345,7 +346,13 @@ class HomeStore {
   async getStatistics() {
     try {
       const events = await getPastEvents(this.homeBridge, 0, 'latest')
-      this.processLargeArrayAsync(events, this.processEvent)
+      processLargeArrayAsync(
+        events,
+        this.processEvent,
+        () => {
+        this.statistics.finished = true
+        this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
+      })
     } catch(e){
       console.error(e)
     }
@@ -362,31 +369,6 @@ class HomeStore {
       this.statistics.withdraws++
       this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
     }
-  }
-
-  processLargeArrayAsync(array, fn, maxTimePerChunk) {
-    maxTimePerChunk = maxTimePerChunk || 16;
-    let index = 0;
-
-    function now() {
-      return new Date().getTime();
-    }
-
-    const doChunk = () => {
-      const startTime = now();
-      while (index < array.length && (now() - startTime) <= maxTimePerChunk) {
-        // callback called with args (value, index, array)
-        fn.call(null, array[index], index, array);
-        ++index;
-      }
-      if (index < array.length) {
-        setTimeout(doChunk, 0);
-      } else {
-        this.statistics.finished = true
-        this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
-      }
-    }
-    doChunk();
   }
 
   getDailyQuotaCompleted() {
