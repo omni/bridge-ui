@@ -5,6 +5,7 @@ import { BridgeStatistics } from './index'
 import { Redirect } from 'react-router'
 import { TransactionsStatistics } from './TransactionsStatistics'
 import { inject, observer } from "mobx-react"
+import { FeeStatistics } from "./FeeStatistics"
 
 @inject("RootStore")
 @observer
@@ -33,6 +34,17 @@ export class StatisticsPage extends React.Component {
               foreignSymbol={foreignStore.symbol}
               foreignSupply={foreignStore.totalSupply} />
           </div>
+          {
+            homeStore.depositFeeCollected.finished
+            && homeStore.withdrawFeeCollected.finished
+            && <div className='statistics-fee-container'>
+              <span className='statistics-bridge-title statistics-title'>Fee Statistics</span>
+              <FeeStatistics
+                depositFeeCollected={homeStore.depositFeeCollected}
+                withdrawFeeCollected={homeStore.withdrawFeeCollected}
+              />
+            </div>
+          }
           <div className='statistics-transaction-container'>
             <div className='statistics-deposit-container'>
               <span className='statistics-deposit-title statistics-title'>Tokens {leftTitle}</span>
