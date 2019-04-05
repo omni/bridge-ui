@@ -3,6 +3,7 @@ import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json
 import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
+import { abi as BaseFeeManager } from '../contracts/BaseFeeManager'
 import { getBlockNumber, getBalance } from './utils/web3'
 import { fromDecimals } from './utils/decimals'
 import {
@@ -24,7 +25,10 @@ import {
   getHomeFee,
   getForeignFee,
   getFeeManagerMode,
-  ZERO_ADDRESS
+  ZERO_ADDRESS,
+  getFeeEvents,
+  getFeeAtBlock,
+  getRewardableData
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -68,6 +72,22 @@ class HomeStore {
     users: new Set(),
     finished: false
   }
+  @observable feeStatistics = {
+    userRequestForSignature: [],
+    affirmationCompleted: []
+  }
+  @observable depositFeeCollected = {
+    value: BN(0),
+    type: '',
+    shouldDisplay: false,
+    finished: false
+  }
+  @observable withdrawFeeCollected = {
+    value: BN(0),
+    type: '',
+    shouldDisplay: false,
+    finished: false
+  }
   feeManager = {};
   networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
@@ -109,6 +129,7 @@ class HomeStore {
     this.getFee()
     this.getValidators()
     this.getStatistics()
+    this.getFeeStatistics()
     setInterval(() => {
       this.getEvents()
       this.getBalance()
@@ -365,9 +386,85 @@ class HomeStore {
     if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
       this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+      this.feeStatistics.userRequestForSignature.push({
+       blockNumber: event.blockNumber,
+       value: BN(fromDecimals(event.returnValues.value,this.tokenDecimals))
+      })
     } else if (event.event === "AffirmationCompleted") {
       this.statistics.withdraws++
       this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+      this.feeStatistics.affirmationCompleted.push({
+        blockNumber: event.blockNumber,
+        value: BN(fromDecimals(event.returnValues.value,this.tokenDecimals))
+      })
+    }
+  }
+
+  async getFeeStatistics() {
+    try {
+      const contract = new this.homeWeb3.eth.Contract(BaseFeeManager, this.HOME_BRIDGE_ADDRESS);
+
+      const [homeFeeUpdatedEvents, foreignFeeUpdatedEvents] = (await Promise.all([
+        getFeeEvents(contract, 'HomeFeeUpdated'),
+        getFeeEvents(contract, 'ForeignFeeUpdated')
+      ]))
+
+      this.feeManager.homeHistoricFee = homeFeeUpdatedEvents
+      this.feeManager.foreignHistoricFee = foreignFeeUpdatedEvents
+      this.calculateCollectedFees()
+    } catch(e){
+      console.error(e)
+      this.getFeeStatistics()
+    }
+  }
+
+  calculateCollectedFees() {
+    if (!this.statistics.finished
+      || !this.rootStore.foreignStore.feeStatistics.finished
+      || !this.feeManager.feeManagerMode
+      || !this.rootStore.foreignStore.feeManager.feeManagerMode) {
+      setTimeout(() => { this.calculateCollectedFees() }, 1000)
+      return
+    }
+
+    const data = getRewardableData(this.feeManager, this.rootStore.foreignStore.feeManager)
+
+    const depositFeeList = data.homeHistoricFee
+    const withdrawFeeList = data.foreignHistoricFee
+    this.depositFeeCollected.type = data.depositSymbol === 'home' ? this.symbol : this.rootStore.foreignStore.symbol
+    this.withdrawFeeCollected.type = data.withdrawSymbol === 'home' ? this.symbol : this.rootStore.foreignStore.symbol
+    this.depositFeeCollected.shouldDisplay = data.displayDeposit
+    this.withdrawFeeCollected.shouldDisplay = data.displayWithdraw
+
+    const depositUserEvents = this.feeStatistics.userRequestForSignature
+    const withdrawUserEvents = this.feeStatistics.affirmationCompleted
+
+    const feeNotAppliedOnValue = this.rootStore.bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC
+      && this.feeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
+
+    processLargeArrayAsync(
+      depositUserEvents,
+      this.calculateValueFee(depositFeeList, this.depositFeeCollected, !feeNotAppliedOnValue),
+      () => {
+        this.depositFeeCollected.finished = true
+      })
+
+    processLargeArrayAsync(
+      withdrawUserEvents,
+      this.calculateValueFee(withdrawFeeList, this.withdrawFeeCollected, false),
+      () => {
+        this.withdrawFeeCollected.finished = true
+      })
+  }
+
+  calculateValueFee = (feeList, feeCollected, feeApplied) => {
+    return (event) => {
+      const fee = getFeeAtBlock(feeList, event.blockNumber)
+      let calculatedFee = event.value.multipliedBy(fee)
+      if (feeApplied) {
+        calculatedFee = calculatedFee.dividedBy(1 - fee)
+      }
+      feeCollected.value = feeCollected.value.plus(calculatedFee)
     }
   }
 

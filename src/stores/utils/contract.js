@@ -32,7 +32,7 @@ export const getCurrentLimit = async (contract,decimals) => {
   }
 }
 
-export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents('allEvents', { fromBlock, toBlock })
+export const getPastEvents = (contract, fromBlock, toBlock, event = 'allEvents') => contract.getPastEvents(event, { fromBlock, toBlock })
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
 
@@ -101,18 +101,87 @@ export const getForeignFee = async (contract) => {
 }
 
 export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {
+  const data = getRewardableData(homeFeeManager, foreignFeeManager)
+  return homeToForeignDirection ? data.homeFee : data.foreignFee
+}
+
+export const getRewardableData = (homeFeeManager, foreignFeeManager) => {
   if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.BOTH_DIRECTIONS) {
-    return homeToForeignDirection ? homeFeeManager.homeFee : homeFeeManager.foreignFee
+    return {
+      homeFee: homeFeeManager.homeFee,
+      foreignFee: homeFeeManager.foreignFee,
+      homeHistoricFee: homeFeeManager.homeHistoricFee,
+      foreignHistoricFee: homeFeeManager.foreignHistoricFee,
+      depositSymbol: 'home',
+      withdrawSymbol: 'home',
+      displayDeposit: true,
+      displayWithdraw: true
+    }
   } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
     && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
-    return homeToForeignDirection ? foreignFeeManager.homeFee : homeFeeManager.foreignFee
+    return {
+      homeFee: foreignFeeManager.homeFee,
+      foreignFee: homeFeeManager.foreignFee,
+      homeHistoricFee: foreignFeeManager.homeHistoricFee,
+      foreignHistoricFee: homeFeeManager.foreignHistoricFee,
+      depositSymbol: 'foreign',
+      withdrawSymbol: 'home',
+      displayDeposit: true,
+      displayWithdraw: true
+    }
   } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
     && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED) {
-    return homeToForeignDirection ? new BN(0) : homeFeeManager.foreignFee
+    return {
+      homeFee: new BN(0),
+      foreignFee: homeFeeManager.foreignFee,
+      homeHistoricFee: [],
+      foreignHistoricFee: homeFeeManager.foreignHistoricFee,
+      depositSymbol: '',
+      withdrawSymbol: 'home',
+      displayDeposit: false,
+      displayWithdraw: true
+    }
   } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED
     && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
-    return homeToForeignDirection ? foreignFeeManager.homeFee : new BN(0)
+    return {
+      homeFee: foreignFeeManager.homeFee,
+      foreignFee: new BN(0),
+      homeHistoricFee: foreignFeeManager.homeHistoricFee,
+      foreignHistoricFee: [],
+      depositSymbol: 'foreign',
+      withdrawSymbol: '',
+      displayDeposit: true,
+      displayWithdraw: false
+    }
   } else {
-    return new BN(0)
+    return {
+      homeFee: new BN(0),
+      foreignFee: new BN(0),
+      depositSymbol: '',
+      withdrawSymbol: '',
+      displayDeposit: false,
+      displayWithdraw: false
+    }
   }
+}
+
+export const getFeeEvents = async (contract, eventName) => {
+  const events = await getPastEvents(contract, 0, 'latest', eventName)
+  return events.map(processFeeEvent)
+}
+
+const processFeeEvent = (event) => {
+  return {
+    blockNumber: event.blockNumber,
+    fee: new BN(fromWei(event.returnValues.fee))
+  }
+}
+
+export const getFeeAtBlock = (feeArray, blockNumber) => {
+  for (let i = feeArray.length - 1; i >= 0; i--) {
+    if (blockNumber > feeArray[i].blockNumber) {
+      return feeArray[i].fee
+    }
+  }
+  return new BN(0)
 }

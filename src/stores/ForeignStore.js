@@ -17,7 +17,8 @@ import {
   getFeeManager,
   getHomeFee,
   getFeeManagerMode,
-  ZERO_ADDRESS
+  ZERO_ADDRESS,
+  getFeeEvents
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -26,6 +27,7 @@ import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import BN from 'bignumber.js'
+import { abi as BaseFeeManager } from "../contracts/BaseFeeManager"
 
 class ForeignStore {
   @observable state = null;
@@ -47,6 +49,11 @@ class ForeignStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
+  @observable feeStatistics = {
+    homeHistoricFee: [],
+    foreignHistoricFee: [],
+    finished: false
+  }
   feeManager = {};
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
@@ -83,6 +90,7 @@ class ForeignStore {
     this.getCurrentLimit()
     this.getFee()
     this.getValidators()
+    this.getFeeStatistics()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -321,6 +329,24 @@ class ForeignStore {
       }
     } catch(e){
       console.error(e)
+    }
+  }
+
+  async getFeeStatistics() {
+    try {
+      const contract = new this.foreignWeb3.eth.Contract(BaseFeeManager, this.FOREIGN_BRIDGE_ADDRESS);
+
+      const [homeFeeUpdatedEvents, foreignFeeUpdatedEvents] = (await Promise.all([
+        getFeeEvents(contract, 'HomeFeeUpdated'),
+        getFeeEvents(contract, 'ForeignFeeUpdated')
+      ]))
+
+      this.feeManager.homeHistoricFee = homeFeeUpdatedEvents
+      this.feeManager.foreignHistoricFee = foreignFeeUpdatedEvents
+      this.feeStatistics.finished = true
+    } catch(e){
+      console.error(e)
+      this.getFeeStatistics()
     }
   }
 }
