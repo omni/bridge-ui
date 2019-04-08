@@ -18,7 +18,7 @@ import {
   getHomeFee,
   getFeeManagerMode,
   ZERO_ADDRESS,
-  getFeeEvents
+  getDeployedAtBlock
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -28,6 +28,8 @@ import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/Rewardable
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import BN from 'bignumber.js'
 import { abi as BaseFeeManager } from "../contracts/BaseFeeManager"
+import { processLargeArrayAsync } from "./utils/array"
+import { fromWei } from "web3-utils"
 
 class ForeignStore {
   @observable state = null;
@@ -54,7 +56,10 @@ class ForeignStore {
     foreignHistoricFee: [],
     finished: false
   }
-  feeManager = {};
+  feeManager = {
+    homeHistoricFee: [],
+    foreignHistoricFee: []
+  };
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
   foreignBridge = {};
@@ -335,18 +340,32 @@ class ForeignStore {
   async getFeeStatistics() {
     try {
       const contract = new this.foreignWeb3.eth.Contract(BaseFeeManager, this.FOREIGN_BRIDGE_ADDRESS);
+      const deployedAtBlock = await getDeployedAtBlock(this.foreignBridge);
+      const events = await getPastEvents(contract, deployedAtBlock, 'latest')
 
-      const [homeFeeUpdatedEvents, foreignFeeUpdatedEvents] = (await Promise.all([
-        getFeeEvents(contract, 'HomeFeeUpdated'),
-        getFeeEvents(contract, 'ForeignFeeUpdated')
-      ]))
-
-      this.feeManager.homeHistoricFee = homeFeeUpdatedEvents
-      this.feeManager.foreignHistoricFee = foreignFeeUpdatedEvents
-      this.feeStatistics.finished = true
+      processLargeArrayAsync(
+        events,
+        this.processEvent,
+        () => {
+          this.feeStatistics.finished = true
+        })
     } catch(e){
       console.error(e)
       this.getFeeStatistics()
+    }
+  }
+
+  processEvent = (event) => {
+    if (event.event === "HomeFeeUpdated") {
+      this.feeManager.homeHistoricFee.push({
+        blockNumber: event.blockNumber,
+        fee: new BN(fromWei(event.returnValues.fee, 'ether'))
+      })
+    } else if (event.event === "ForeignFeeUpdated") {
+      this.feeManager.foreignHistoricFee.push({
+        blockNumber: event.blockNumber,
+        fee: new BN(fromWei(event.returnValues.fee, 'ether'))
+      })
     }
   }
 }

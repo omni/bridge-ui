@@ -165,18 +165,6 @@ export const getRewardableData = (homeFeeManager, foreignFeeManager) => {
   }
 }
 
-export const getFeeEvents = async (contract, eventName) => {
-  const events = await getPastEvents(contract, 0, 'latest', eventName)
-  return events.map(processFeeEvent)
-}
-
-const processFeeEvent = (event) => {
-  return {
-    blockNumber: event.blockNumber,
-    fee: new BN(fromWei(event.returnValues.fee))
-  }
-}
-
 export const getFeeAtBlock = (feeArray, blockNumber) => {
   for (let i = feeArray.length - 1; i >= 0; i--) {
     if (blockNumber > feeArray[i].blockNumber) {
@@ -184,4 +172,12 @@ export const getFeeAtBlock = (feeArray, blockNumber) => {
     }
   }
   return new BN(0)
+}
+
+export const getDeployedAtBlock = async (contract) => {
+  try {
+    return await contract.methods.deployedAtBlock().call()
+  } catch (e) {
+    return 0
+  }
 }
