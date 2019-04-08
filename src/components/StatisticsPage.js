@@ -37,13 +37,11 @@ export class StatisticsPage extends React.Component {
           {
             homeStore.depositFeeCollected.finished
             && homeStore.withdrawFeeCollected.finished
-            && <div className='statistics-fee-container'>
-              <span className='statistics-bridge-title statistics-title'>Fee Statistics</span>
-              <FeeStatistics
+            && (homeStore.depositFeeCollected.shouldDisplay || homeStore.withdrawFeeCollected.shouldDisplay)
+            && <FeeStatistics
                 depositFeeCollected={homeStore.depositFeeCollected}
                 withdrawFeeCollected={homeStore.withdrawFeeCollected}
               />
-            </div>
           }
           <div className='statistics-transaction-container'>
             <div className='statistics-deposit-container'>

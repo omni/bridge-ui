@@ -29,6 +29,9 @@ describe('FeeStatistics', () => {
       />)
 
     // Then
+    const container = queryByTestId('fee-statistics')
+    expect(container).toHaveTextContent('Fee Statistics')
+
     const depositElement = queryByTestId('deposit-fees-block')
     expect(depositElement).toBeTruthy()
     expect(depositElement).toHaveTextContent('Deposit Fees')
@@ -63,6 +66,9 @@ describe('FeeStatistics', () => {
       />)
 
     // Then
+    const container = queryByTestId('fee-statistics')
+    expect(container).toHaveTextContent('Fee Statistics')
+
     const depositElement = queryByTestId('deposit-fees-block')
     expect(depositElement).toBeNull()
 
@@ -94,6 +100,9 @@ describe('FeeStatistics', () => {
       />)
 
     // Then
+    const container = queryByTestId('fee-statistics')
+    expect(container).toHaveTextContent('Fee Statistics')
+
     const depositElement = queryByTestId('deposit-fees-block')
     expect(depositElement).toBeTruthy()
     expect(depositElement).toHaveTextContent('Deposit Fees')
@@ -126,6 +135,9 @@ describe('FeeStatistics', () => {
 
     // Then
     const container = queryByTestId('fee-statistics')
-    expect(container).toBeEmpty()
+    const data = queryByTestId('fee-statistics-data')
+
+    expect(container).not.toHaveTextContent('Fee Statistics')
+    expect(data).toBeEmpty()
   })
 })
