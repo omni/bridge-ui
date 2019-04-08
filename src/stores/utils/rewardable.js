@@ -8,7 +8,7 @@ export const validFee = (fee) => {
 
 export const getFeeAtBlock = (feeArray, blockNumber) => {
   for (let i = feeArray.length - 1; i >= 0; i--) {
-    if (blockNumber > feeArray[i].blockNumber) {
+    if (blockNumber >= feeArray[i].blockNumber) {
       return feeArray[i].fee
     }
   }
