@@ -420,7 +420,7 @@ class HomeStore {
 
   calculateCollectedFees() {
     if (!this.statistics.finished
-      || !this.rootStore.foreignStore.feeStatistics.finished
+      || !this.rootStore.foreignStore.feeUpdatedEventsFinished
       || !this.feeManager.feeManagerMode
       || !this.rootStore.foreignStore.feeManager.feeManagerMode) {
       setTimeout(() => { this.calculateCollectedFees() }, 1000)

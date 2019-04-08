@@ -51,11 +51,7 @@ class ForeignStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
-  @observable feeStatistics = {
-    homeHistoricFee: [],
-    foreignHistoricFee: [],
-    finished: false
-  }
+  @observable feeUpdatedEventsFinished = false
   feeManager = {
     homeHistoricFee: [],
     foreignHistoricFee: []
@@ -95,7 +91,7 @@ class ForeignStore {
     this.getCurrentLimit()
     this.getFee()
     this.getValidators()
-    this.getFeeStatistics()
+    this.getFeeUpdatedEvents()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -337,7 +333,7 @@ class ForeignStore {
     }
   }
 
-  async getFeeStatistics() {
+  async getFeeUpdatedEvents() {
     try {
       const contract = new this.foreignWeb3.eth.Contract(BaseFeeManager, this.FOREIGN_BRIDGE_ADDRESS);
       const deployedAtBlock = await getDeployedAtBlock(this.foreignBridge);
@@ -347,11 +343,11 @@ class ForeignStore {
         events,
         this.processEvent,
         () => {
-          this.feeStatistics.finished = true
+          this.feeUpdatedEventsFinished = true
         })
     } catch(e){
       console.error(e)
-      this.getFeeStatistics()
+      this.getFeeUpdatedEvents()
     }
   }
 
