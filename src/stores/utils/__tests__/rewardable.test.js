@@ -1,4 +1,4 @@
-import { getFeeToApply, validFee } from '../contract'
+import { getFeeToApply, validFee } from '../rewardable'
 import { FEE_MANAGER_MODE } from '../bridgeMode'
 import BN from 'bignumber.js'
 

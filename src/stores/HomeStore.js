@@ -26,8 +26,6 @@ import {
   getForeignFee,
   getFeeManagerMode,
   ZERO_ADDRESS,
-  getFeeAtBlock,
-  getRewardableData,
   getDeployedAtBlock
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
@@ -37,6 +35,7 @@ import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import { processLargeArrayAsync } from './utils/array'
 import { fromWei } from "web3-utils"
+import { calculateValueFee, getRewardableData } from "./utils/rewardable"
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -441,7 +440,7 @@ class HomeStore {
 
       processLargeArrayAsync(
         this.transferEvents.userRequestForSignature,
-        this.calculateValueFee(data.homeHistoricFee, this.depositFeeCollected, feeAppliedOnValue),
+        calculateValueFee(data.homeHistoricFee, this.depositFeeCollected, feeAppliedOnValue),
         () => {
           this.depositFeeCollected.finished = true
         })
@@ -452,23 +451,12 @@ class HomeStore {
     if (this.withdrawFeeCollected.shouldDisplay) {
       processLargeArrayAsync(
         this.transferEvents.affirmationCompleted,
-        this.calculateValueFee(data.foreignHistoricFee, this.withdrawFeeCollected, false),
+        calculateValueFee(data.foreignHistoricFee, this.withdrawFeeCollected, false),
         () => {
           this.withdrawFeeCollected.finished = true
         })
     } else {
       this.withdrawFeeCollected.finished = true
-    }
-  }
-
-  calculateValueFee = (feeList, feeCollected, feeApplied) => {
-    return (event) => {
-      const fee = getFeeAtBlock(feeList, event.blockNumber)
-      let calculatedFee = event.value.multipliedBy(fee)
-      if (feeApplied) {
-        calculatedFee = calculatedFee.dividedBy(1 - fee)
-      }
-      feeCollected.value = feeCollected.value.plus(calculatedFee)
     }
   }
 
