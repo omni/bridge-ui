@@ -356,15 +356,17 @@ class HomeStore {
 
   processEvent = (depositEvent, withdrawEvent) => {
     return (event) => {
-      if(event.returnValues.recipient) {
-        if(event.returnValues && event.returnValues.recipient) {this.statistics.users.add(event.returnValues.recipient)
-      }
-      if(event.event === depositEvent) {
-        this.statistics.deposits++
-        this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
-      } else if (event.event === withdrawEvent) {
-        this.statistics.withdraws++
-        this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+      if (event.returnValues.recipient) {
+        if (event.returnValues && event.returnValues.recipient) {
+          this.statistics.users.add(event.returnValues.recipient)
+        }
+        if (event.event === depositEvent) {
+          this.statistics.deposits++
+          this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value, this.tokenDecimals)))
+        } else if (event.event === withdrawEvent) {
+          this.statistics.withdraws++
+          this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value, this.tokenDecimals)))
+        }
       }
     }
   }
