@@ -342,28 +342,26 @@ class HomeStore {
   async getStatistics() {
     try {
       const deployedAtBlock = await getDeployedAtBlock(this.homeBridge);
-      const events = await getPastEvents(this.homeBridge, deployedAtBlock, 'latest')
-      this.processLargeArrayAsync(events, this.processEvent('UserRequestForSignature', 'AffirmationCompleted'))
-
-      // if contracts started with V1 version we should get that statistics too
-      const homeBridgeV1 = new this.homeWeb3.eth.Contract(HomeBridgeV1Abi, this.HOME_BRIDGE_ADDRESS);
-      const eventsFromV1 = await getPastEvents(homeBridgeV1, deployedAtBlock, 'latest')
-      this.processLargeArrayAsync(eventsFromV1, this.processEvent('Deposit', 'Withdraw'))
+      const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
+      const abi = [...HomeBridgeV1Abi, ...HOME_ABI]
+      const contract = new this.homeWeb3.eth.Contract(abi, this.HOME_BRIDGE_ADDRESS);
+      const events = await getPastEvents(contract, deployedAtBlock, 'latest')
+      this.processLargeArrayAsync(events, this.processEvent())
     } catch(e){
       console.error(e)
     }
   }
 
-  processEvent = (depositEvent, withdrawEvent) => {
+  processEvent = () => {
     return (event) => {
       if (event.returnValues.recipient) {
         if (event.returnValues && event.returnValues.recipient) {
           this.statistics.users.add(event.returnValues.recipient)
         }
-        if (event.event === depositEvent) {
+        if (event.event === 'UserRequestForSignature' || event.event === 'Deposit') {
           this.statistics.deposits++
           this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value, this.tokenDecimals)))
-        } else if (event.event === withdrawEvent) {
+        } else if (event.event === 'AffirmationCompleted' || event.event === 'Withdraw') {
           this.statistics.withdraws++
           this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value, this.tokenDecimals)))
         }
