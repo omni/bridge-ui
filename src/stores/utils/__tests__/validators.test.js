@@ -158,7 +158,7 @@ describe('processValidatorsEvents', () => {
       },
       { // Add rewardable event
         raw: {
-          data: "0x000000000000000000000000f4BEF13F9f4f2B203FAF0C3cBbaAbe1afE056955",
+          data: "0x0000000000000000000000000066938BBE9b31D44DFa8e27A1d675A545DF6ed5",
           topics: [
             "0x8064a302796c89446a96d63470b5b036212da26bd2debe5bec73e0170a9a5e83",
             "0x000000000000000000000000f4BEF13F9f4f2B203FAF0C3cBbaAbe1afE056955"

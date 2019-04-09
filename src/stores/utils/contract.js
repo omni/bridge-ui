@@ -98,7 +98,7 @@ export const parseValidatorEvent = (event) => {
     && event.raw.topics
     && (event.raw.topics[0] === '0xe366c1c0452ed8eec96861e9e54141ebff23c9ec89fe27b996b45f5ec3884987'
       || event.raw.topics[0] === '0x8064a302796c89446a96d63470b5b036212da26bd2debe5bec73e0170a9a5e83')) {
-    const rawAddress = event.raw.data === '0x' ? event.raw.topics[1] : event.raw.data
+    const rawAddress = event.raw.topics.length > 1 ? event.raw.topics[1] : event.raw.data
     const address = '0x' + rawAddress.slice(26)
     event.event = 'ValidatorAdded'
     event.returnValues.validator = address
