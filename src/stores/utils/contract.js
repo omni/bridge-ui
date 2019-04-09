@@ -1,6 +1,6 @@
 import BN from 'bignumber.js'
 import { fromDecimals } from './decimals'
-import Web3Utils from 'web3-utils'
+import { fromWei } from 'web3-utils'
 import { FEE_MANAGER_MODE } from './bridgeMode'
 import BridgeValidatorsV1Abi from './BridgeValidatorsV1.abi'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../../contracts/BridgeValidators'
@@ -35,7 +35,7 @@ export const getCurrentLimit = async (contract,decimals) => {
   }
 }
 
-export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents({ fromBlock, toBlock })
+export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents('allEvents', { fromBlock, toBlock })
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
 
@@ -95,7 +95,7 @@ const processValidatorsEvents = (events) => {
     } else if(event.event === 'ValidatorRemoved') {
       validatorList.delete(event.returnValues.validator)
     }
-  })
+    })
   return Array.from(validatorList)
 }
 
@@ -129,12 +129,12 @@ export const getDeployedAtBlock = async (contract) => {
 
 export const getHomeFee = async (contract) => {
   const feeInWei = await contract.methods.getHomeFee().call()
-  return new BN(Web3Utils.fromWei(feeInWei))
+  return new BN(fromWei(feeInWei.toString()))
 }
 
 export const getForeignFee = async (contract) => {
   const feeInWei = await contract.methods.getForeignFee().call()
-  return new BN(Web3Utils.fromWei(feeInWei))
+  return new BN(fromWei(feeInWei.toString()))
 }
 
 export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {

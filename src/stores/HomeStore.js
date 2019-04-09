@@ -357,7 +357,7 @@ class HomeStore {
   processEvent = (depositEvent, withdrawEvent) => {
     return (event) => {
       if(event.returnValues.recipient) {
-        this.statistics.users.add(event.returnValues.recipient)
+        if(event.returnValues && event.returnValues.recipient) {this.statistics.users.add(event.returnValues.recipient)
       }
       if(event.event === depositEvent) {
         this.statistics.deposits++

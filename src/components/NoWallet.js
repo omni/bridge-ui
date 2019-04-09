@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import noWalletIcon from '../assets/images/i@2x.png'
+import noWalletIcon from '../assets/images/no-wallet-modal/i@3x.png'
 import { ModalContainer } from './ModalContainer'
 import { inject, observer } from 'mobx-react'
 
@@ -28,14 +28,14 @@ export class NoWallet extends Component {
           </div>
           <div className="noWallet-alert-container">
             <h2 className="noWallet-title">Wallet not found</h2>
-            <p className="noWallet-description">A wallet is not installed. Before continue, please install one (Metamask
+            <p className="noWallet-description">A wallet is not installed. Before continue, please install one (AlphaWallet, Metamask
               or Nifty Wallet) and return to this page to continue using the application.</p>
             <p className="noWallet-description">For further information on how to install any of both wallets, please
               click the buttons below.</p>
             <div className="noWallet-buttons">
               <a
                 className="noWallet-metamask"
-                href="https://poanet.zendesk.com/hc/en-us/articles/360007464553-MetaMask"
+                href="https://forum.poa.network/t/wallet-metamask-extension/1819"
                 rel="noopener noreferrer"
                 target="_blank"
               >
@@ -43,11 +43,19 @@ export class NoWallet extends Component {
               </a>
               <a
                 className="noWallet-niftyWallet"
-                href="https://poanet.zendesk.com/hc/en-us/articles/360008957634-Nifty-Wallet"
+                href="https://forum.poa.network/t/nifty-wallet-guide/1789"
                 rel="noopener noreferrer"
                 target="_blank"
               >
                 Nifty Wallet
+              </a>
+              <a
+                  className="noWallet-alphawallet"
+                  href="https://alphawallet.github.io/AlphaWallet-Download-Page/"
+                  rel="noopener noreferrer"
+                  target="_blank"
+              >
+                 AlphaWallet
               </a>
               <button className="noWallet-cancel" onClick={this.handleCancel}>Cancel</button>
             </div>

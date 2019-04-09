@@ -1,7 +1,7 @@
 import React from 'react'
-import Web3Utils from 'web3-utils'
+import { fromWei } from 'web3-utils'
 import numeral from 'numeral'
-import copyIcon from '../../assets/images/icons/copy.svg'
+import { CopyIcon } from '../icons/CopyIcon'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 
 export const Event = ({ color, eventName, transactionHash, recipient, value, blockNumber, txUrl, accountUrl }) => (
@@ -12,7 +12,7 @@ export const Event = ({ color, eventName, transactionHash, recipient, value, blo
         <span>
           <a href={txUrl} target="_blank" className="event-txhash">{transactionHash.slice(0,18).concat('...')}</a>
           <CopyToClipboard text={transactionHash}>
-            <img className="event-copy-tx" src={copyIcon} alt=""/>
+            <span className="copy-icon copy-icon-right"><CopyIcon /></span>
           </CopyToClipboard>
         </span>
       </div>
@@ -22,7 +22,7 @@ export const Event = ({ color, eventName, transactionHash, recipient, value, blo
       </a>
       <span className="event-value value-column">
         {recipient ? <strong className="only-mobile">Value</strong> : ''}
-        {value ? numeral(Web3Utils.fromWei(value)).format('0,0.00', Math.floor) : ''}
+        {value ? numeral(fromWei(value)).format('0,0.00', Math.floor) : ''}
       </span>
       <span className="event-block block-column"><strong className="only-mobile">Block</strong>{blockNumber}</span>
     </div>

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-docker-compose up -d --build
+docker-compose up -d --build --force-recreate
 cd ..
 npm run start:blocks &
 cd e2e-script

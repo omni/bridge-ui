@@ -1,6 +1,6 @@
-const { toWei } = require('web3').utils
+const { toWei } = require('web3-utils')
 
-export async function fetchGasPrice({ bridgeContract, oracleFn }) {
+export async function fetchGasPrice({ oracleFn }) {
   let gasPrice = null
   try {
     gasPrice = await oracleFn()

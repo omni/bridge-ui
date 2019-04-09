@@ -1,11 +1,10 @@
 import React from 'react'
-import { inject, observer } from "mobx-react"
-import pattern from '../assets/images/pattern.svg'
-import { BridgeStatistics } from './index'
-import { TransactionsStatistics } from './TransactionsStatistics'
-import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
 import yn from './utils/yn'
+import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
+import { BridgeStatistics } from './index'
 import { Redirect } from 'react-router'
+import { TransactionsStatistics } from './TransactionsStatistics'
+import { inject, observer } from "mobx-react"
 
 @inject("RootStore")
 @observer
@@ -51,8 +50,8 @@ export class StatisticsPage extends React.Component {
             </div>
           </div>
         </div>
-        <div className='statistics-right-container'>
-          <img className='statistics-right-image' src={pattern} alt=""/>
+        <div className='pattern-background'>
+          <div className="pattern-background-image" />
         </div>
       </div>
     )
