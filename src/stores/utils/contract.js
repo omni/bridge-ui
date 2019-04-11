@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 import { fromDecimals } from './decimals'
 import { fromWei } from 'web3-utils'
 import { FEE_MANAGER_MODE } from './bridgeMode'
-import { abi as BRIDGE_VALIDATORS_ABI } from '../../contracts/BridgeValidators'
+import { abi as rewardableValidatorsAbi } from '../../contracts/RewardableValidators'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -68,13 +68,26 @@ export const totalBurntCoins = async (contract) => {
 }
 
 export const getValidatorList = async (address, eth) => {
-  const validatorsContract = new eth.Contract(BRIDGE_VALIDATORS_ABI, address);
+  const validatorsContract = new eth.Contract(rewardableValidatorsAbi, address)
+  const validators = await validatorList(validatorsContract)
 
-  const deployedAtBlock = await getDeployedAtBlock(validatorsContract);
+  if(validators.length) {
+    return validators
+  }
+
+  const deployedAtBlock = await getDeployedAtBlock(validatorsContract)
   const contract = new eth.Contract([], address)
   const validatorsEvents = await contract.getPastEvents('allEvents', { fromBlock: Number(deployedAtBlock) })
 
   return processValidatorsEvents(validatorsEvents)
+}
+
+export const validatorList = async (contract) => {
+  try {
+    return await contract.methods.validatorList().call()
+  } catch (e) {
+    return []
+  }
 }
 
 export const processValidatorsEvents = (events) => {
