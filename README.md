@@ -22,12 +22,13 @@ For a complete picture of the POA Bridge functionality, it is useful to explore 
 
 ## Bridge UI Application
 
-The UI provides an intuitive interface for assets transfer between networks running the Bridge smart contracts. Users can connect to a web3 wallet such as [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/) and complete the transfer through a web browser.
+The UI provides an intuitive interface for assets transfer between networks running the Bridge smart contracts. Users can connect to a web3 wallet such as [Nifty Wallet](https://github.com/poanetwork/nifty-wallet) or [MetaMask](https://metamask.io/) and complete the transfer through a web browser.
 
 The current implementation allows for several bridge modes.
 
   1. `Native-to-ERC20` Coins on a Home network can be converted to ERC20-compatible tokens on a Foreign network. Coins are locked on the Home side and the corresponding amount of ERC20 tokens are minted on the Foreign side. When the operation is reversed, tokens are burnt on the Foreign side and unlocked in the Home network.
   2. `ERC20-to-ERC20` ERC20-compatible tokens on the Foreign network are locked and minted as ERC20-compatible tokens (ERC677 tokens) on the Home network. When transferred from Home to Foreign, they are burnt on the Home side and unlocked in the Foreign network. This can be considered a form of atomic swap when a user swaps the token "X" in network "A" to the token "Y" in network "B".
+  3. `ERC20-to-Native` Pre-existing tokens in the Foreign network are locked and coins are minted in the Home network. In this mode, the Home network consensus engine invokes Parity's Block Reward contract to mint coins per the bridge contract request. 
 
   ![Bridge UI](bridge-ui.png)
 
@@ -50,7 +51,7 @@ The wallet must be funded to cover gas costs related to the transfer. With the N
 - Click the `Transfer` button.
 - Confirm the transaction via the web3 wallet. 
 
-The same address is used to send a coin from the Home network and receive a token on the Foreign Network. In order to send assets in the opposite direction, change the network in the web3 wallet. This will change the bridge interface to show the selected network on the left side of the bridge.
+The same address is used to send a coin from the Home network and receive a token on the Foreign Network. In order to send assets in the opposite direction, change the network in the web3 wallet. This changes the bridge interface to show the selected network on the left side of the bridge.
 
 ![Web3 Wallet Change Network](web3wallet_network.gif)
 
@@ -66,6 +67,7 @@ The same address is used to send a coin from the Home network and receive a toke
   - [MetaMask](https://consensys.zendesk.com/hc/en-us/categories/360001045692-Using-MetaMask)
   - [Nifty Wallet](https://poanet.zendesk.com/hc/en-us/articles/360008957634-Nifty-Wallet)
   - [AlphaWallet (iOS and Android)](https://alphawallet.github.io/AlphaWallet-Download-Page/)
+
 ## Getting Started
 
 The following is an example setup using the POA Sokol testnet as the Home network, and the Ethereum Kovan testnet as the Foreign network. The instructions for the Bridge UI are identical for an `ERC20-to-ERC20` configuration, but the smart contract deployment steps will vary.
@@ -75,7 +77,7 @@ The following is an example setup using the POA Sokol testnet as the Home networ
 - [poa-bridge-contracts](https://github.com/poanetwork/poa-bridge-contracts)
 - [token-bridge](https://github.com/poanetwork/token-bridge)
 - [node.js](https://nodejs.org/en/download/)
-- [AlphaWallet](https://alphawallet.github.io/AlphaWallet-Download-Page/) or [Nifty Wallet](https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en) or [MetaMask](https://metamask.io/)
+- [AlphaWallet](https://alphawallet.github.io/AlphaWallet-Download-Page/) or [Nifty Wallet](https://github.com/poanetwork/nifty-wallet) or [MetaMask](https://metamask.io/)
 
 ### Example Setup
 
@@ -137,12 +139,13 @@ If successful, you will see bridge processes run when you issue a command. For e
     * `git clone https://github.com/poanetwork/bridge-ui.git`  
     * `cd bridge-ui`
     * Update submodules  
-`git submodule update --init --recursive --remote` 
+`git submodule update --init --recursive` 
     * Install dependencies  
 `npm install`  
-    * Create a .env file from the example file[.env.example](.env.example)  
+_**Note**: The bridge UI configuration should be performed with an unprivileged Linux account or with the following flag `npm install --unsafe-perm`. [More information](https://docs.npmjs.com/misc/scripts#user)_
+    * Create a .env file from the example file [.env.example](.env.example)  
 `cp .env.example .env`  
-    * Insert the addresses from the bridgeDeploymentResults.json file into the .env file.
+    * Insert the addresses from the bridgeDeploymentResults.json file (from step 4) into the .env file. No other changes are needed, see [Env Parameter Details](#env-parameter-details) for information about each parameter.
 `cat ../poa-bridge-contracts/deploy/bridgeDeploymentResults.json`  
 ```bash
     # HomeBridge address in bridgeDeploymentResults.json
@@ -154,7 +157,12 @@ If successful, you will see bridge processes run when you issue a command. For e
     # public RPC node for Home network 
     REACT_APP_HOME_HTTP_PARITY_URL=https://sokol.poa.network 
 ```
-Explanation:
+
+  * Run `npm run start`
+  * Make sure your web3 wallet (Nifty Wallet, AlphaWallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)
+  * Specify an amount and click `Transfer` to complete a cross-chain transaction from Sokol to Kovan
+
+### Env Parameter Details
 
 Name | Description
 --------- | -------
@@ -183,9 +191,6 @@ REACT_APP_TITLE | The title for the bridge UI page. `%c` will be replaced by the
 REACT_APP_DESCRIPTION | The meta description for the deployed bridge page.
 APP_STYLES | The set of styles to render the bridge UI page. Currently only `classic` is implemented
 
-  * Run `npm run start`
-  * Make sure your web3 wallet (Nifty Wallet, AlphaWallet or MetaMask) is funded and connected to the POA Sokol Network (see step 2)
-  * Specify an amount and click `Transfer` to complete a cross-chain transaction from Sokol to Kovan
 
 ## Testing
 
