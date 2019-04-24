@@ -90,7 +90,11 @@ class HomeStore {
   }
   feeManager = {
     homeHistoricFee: [],
-    foreignHistoricFee: []
+    foreignHistoricFee: [],
+    totalFeeDistributedFromSignatures: BN(0),
+    totalFeeDistributedFromAffirmation: BN(0),
+    feeDistributedFromSignaturesEvents: 0,
+    feeDistributedFromAffirmationEvents: 0
   };
   networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
@@ -410,6 +414,12 @@ class HomeStore {
         blockNumber: event.blockNumber,
         fee: new BN(fromWei(event.returnValues.fee, 'ether'))
       })
+    } else if (event.event === "FeeDistributedFromSignatures") {
+      this.feeManager.feeDistributedFromSignaturesEvents++
+      this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
+    } else if (event.event === "FeeDistributedFromAffirmation") {
+      this.feeManager.feeDistributedFromAffirmationEvents++
+      this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     } else if (event.event === "ForeignFeeUpdated") {
       this.feeManager.foreignHistoricFee.push({
         blockNumber: event.blockNumber,
@@ -420,7 +430,7 @@ class HomeStore {
 
   calculateCollectedFees() {
     if (!this.statistics.finished
-      || !this.rootStore.foreignStore.feeUpdatedEventsFinished
+      || !this.rootStore.foreignStore.feeEventsFinished
       || !this.feeManager.feeManagerMode
       || !this.rootStore.foreignStore.feeManager.feeManagerMode) {
       setTimeout(() => { this.calculateCollectedFees() }, 1000)
@@ -435,26 +445,44 @@ class HomeStore {
     this.withdrawFeeCollected.shouldDisplay = data.displayWithdraw
 
     if (this.depositFeeCollected.shouldDisplay) {
-      const feeAppliedOnValue = !(this.rootStore.bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC)
-        || !(this.feeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION)
+      this.depositFeeCollected.value = data.depositSymbol === 'home'
+        ? this.feeManager.totalFeeDistributedFromSignatures
+        : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromSignatures
 
-      processLargeArrayAsync(
-        this.transferEvents.userRequestForSignature,
-        calculateValueFee(data.homeHistoricFee, this.depositFeeCollected, feeAppliedOnValue),
-        () => {
-          this.depositFeeCollected.finished = true
-        })
+      const feeDistributedFromSignaturesEvents = data.depositSymbol === 'home'
+        ? this.feeManager.feeDistributedFromSignaturesEvents
+        : this.rootStore.foreignStore.feeManager.feeDistributedFromSignaturesEvents
+
+      if (this.transferEvents.userRequestForSignature.length > feeDistributedFromSignaturesEvents) {
+        const feeAppliedOnValue = !(this.rootStore.bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC)
+          || !(this.feeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION)
+
+        processLargeArrayAsync(
+          this.transferEvents.userRequestForSignature,
+          calculateValueFee(data.homeHistoricFee, this.depositFeeCollected, feeAppliedOnValue),
+          () => {
+            this.depositFeeCollected.finished = true
+          })
+      } else {
+        this.depositFeeCollected.finished = true
+      }
     } else {
       this.depositFeeCollected.finished = true
     }
 
     if (this.withdrawFeeCollected.shouldDisplay) {
-      processLargeArrayAsync(
-        this.transferEvents.affirmationCompleted,
-        calculateValueFee(data.foreignHistoricFee, this.withdrawFeeCollected, false),
-        () => {
-          this.withdrawFeeCollected.finished = true
-        })
+      this.withdrawFeeCollected.value = this.feeManager.totalFeeDistributedFromAffirmation
+
+      if (this.transferEvents.affirmationCompleted.length > this.feeManager.feeDistributedFromAffirmationEvents) {
+        processLargeArrayAsync(
+          this.transferEvents.affirmationCompleted,
+          calculateValueFee(data.foreignHistoricFee, this.withdrawFeeCollected, false),
+          () => {
+            this.withdrawFeeCollected.finished = true
+          })
+      } else {
+        this.withdrawFeeCollected.finished = true
+      }
     } else {
       this.withdrawFeeCollected.finished = true
     }

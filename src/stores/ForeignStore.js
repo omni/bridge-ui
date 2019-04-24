@@ -30,6 +30,7 @@ import BN from 'bignumber.js'
 import { abi as BaseFeeManager } from "../contracts/BaseFeeManager"
 import { processLargeArrayAsync } from "./utils/array"
 import { fromWei } from "web3-utils"
+import { fromDecimals } from "./utils/decimals"
 
 class ForeignStore {
   @observable state = null;
@@ -51,10 +52,12 @@ class ForeignStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
-  @observable feeUpdatedEventsFinished = false
+  @observable feeEventsFinished = false
   feeManager = {
     homeHistoricFee: [],
-    foreignHistoricFee: []
+    foreignHistoricFee: [],
+    totalFeeDistributedFromSignatures: BN(0),
+    feeDistributedFromSignaturesEvents: 0
   };
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
@@ -91,7 +94,7 @@ class ForeignStore {
     this.getCurrentLimit()
     this.getFee()
     this.getValidators()
-    this.getFeeUpdatedEvents()
+    this.getFeeEvents()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -333,9 +336,11 @@ class ForeignStore {
     }
   }
 
-  async getFeeUpdatedEvents() {
+  async getFeeEvents() {
     try {
-      const contract = new this.foreignWeb3.eth.Contract(BaseFeeManager, this.FOREIGN_BRIDGE_ADDRESS);
+      const { FOREIGN_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
+      const abi = [...FOREIGN_ABI, ...BaseFeeManager]
+      const contract = new this.foreignWeb3.eth.Contract(abi, this.FOREIGN_BRIDGE_ADDRESS);
       const deployedAtBlock = await getDeployedAtBlock(this.foreignBridge);
       const events = await getPastEvents(contract, deployedAtBlock, 'latest')
 
@@ -343,16 +348,19 @@ class ForeignStore {
         events,
         this.processEvent,
         () => {
-          this.feeUpdatedEventsFinished = true
+          this.feeEventsFinished = true
         })
     } catch(e){
       console.error(e)
-      this.getFeeUpdatedEvents()
+      this.getFeeEvents()
     }
   }
 
   processEvent = (event) => {
-    if (event.event === "HomeFeeUpdated") {
+    if (event.event === "FeeDistributedFromSignatures") {
+      this.feeManager.feeDistributedFromSignaturesEvents++
+      this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
+    } else if (event.event === "HomeFeeUpdated") {
       this.feeManager.homeHistoricFee.push({
         blockNumber: event.blockNumber,
         fee: new BN(fromWei(event.returnValues.fee, 'ether'))
