@@ -57,7 +57,9 @@ class ForeignStore {
     homeHistoricFee: [],
     foreignHistoricFee: [],
     totalFeeDistributedFromSignatures: BN(0),
-    feeDistributedFromSignaturesEvents: 0
+    totalFeeDistributedFromAffirmation: BN(0),
+    feeDistributedFromSignaturesEvents: 0,
+    feeDistributedFromAffirmationEvents: 0
   };
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
@@ -360,6 +362,9 @@ class ForeignStore {
     if (event.event === "FeeDistributedFromSignatures") {
       this.feeManager.feeDistributedFromSignaturesEvents++
       this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
+    } else if (event.event === "FeeDistributedFromAffirmation") {
+      this.feeManager.feeDistributedFromAffirmationEvents++
+      this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     } else if (event.event === "HomeFeeUpdated") {
       this.feeManager.homeHistoricFee.push({
         blockNumber: event.blockNumber,

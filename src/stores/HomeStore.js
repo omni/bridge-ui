@@ -471,7 +471,9 @@ class HomeStore {
     }
 
     if (this.withdrawFeeCollected.shouldDisplay) {
-      this.withdrawFeeCollected.value = this.feeManager.totalFeeDistributedFromAffirmation
+      this.withdrawFeeCollected.value = data.withdrawSymbol === 'home'
+        ? this.feeManager.totalFeeDistributedFromAffirmation
+        : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromAffirmation
 
       if (this.transferEvents.affirmationCompleted.length > this.feeManager.feeDistributedFromAffirmationEvents) {
         processLargeArrayAsync(
