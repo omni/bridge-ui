@@ -1,14 +1,8 @@
 import BN from 'bignumber.js';
 import { fromDecimals } from './decimals'
 import { fromWei } from 'web3-utils'
-import { FEE_MANAGER_MODE } from './bridgeMode'
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-export const validFee = (fee) => {
-  const zeroBN = new BN(0)
-  return !zeroBN.eq(fee)
-}
 
 export const getMaxPerTxLimit = async (contract,decimals) => {
   const maxPerTx = await contract.methods.maxPerTx().call()
@@ -32,7 +26,7 @@ export const getCurrentLimit = async (contract,decimals) => {
   }
 }
 
-export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents('allEvents', { fromBlock, toBlock })
+export const getPastEvents = (contract, fromBlock, toBlock, event = 'allEvents') => contract.getPastEvents(event, { fromBlock, toBlock })
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
 
@@ -100,19 +94,10 @@ export const getForeignFee = async (contract) => {
   return new BN(fromWei(feeInWei.toString()))
 }
 
-export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {
-  if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.BOTH_DIRECTIONS) {
-    return homeToForeignDirection ? homeFeeManager.homeFee : homeFeeManager.foreignFee
-  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
-    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
-    return homeToForeignDirection ? foreignFeeManager.homeFee : homeFeeManager.foreignFee
-  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
-    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED) {
-    return homeToForeignDirection ? new BN(0) : homeFeeManager.foreignFee
-  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED
-    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
-    return homeToForeignDirection ? foreignFeeManager.homeFee : new BN(0)
-  } else {
-    return new BN(0)
+export const getDeployedAtBlock = async (contract) => {
+  try {
+    return await contract.methods.deployedAtBlock().call()
+  } catch (e) {
+    return 0
   }
 }
