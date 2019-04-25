@@ -3,7 +3,6 @@ import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json
 import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
-import { abi as BaseFeeManager } from '../contracts/BaseFeeManager'
 import { getBlockNumber, getBalance } from './utils/web3'
 import { fromDecimals } from './utils/decimals'
 import {
@@ -34,8 +33,7 @@ import BN from 'bignumber.js'
 import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import { processLargeArrayAsync } from './utils/array'
-import { fromWei } from "web3-utils"
-import { calculateValueFee, getRewardableData } from "./utils/rewardable"
+import { getRewardableData } from "./utils/rewardable"
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -72,10 +70,6 @@ class HomeStore {
     users: new Set(),
     finished: false
   }
-  @observable transferEvents = {
-    userRequestForSignature: [],
-    affirmationCompleted: []
-  }
   @observable depositFeeCollected = {
     value: BN(0),
     type: '',
@@ -89,12 +83,8 @@ class HomeStore {
     finished: false
   }
   feeManager = {
-    homeHistoricFee: [],
-    foreignHistoricFee: [],
     totalFeeDistributedFromSignatures: BN(0),
-    totalFeeDistributedFromAffirmation: BN(0),
-    feeDistributedFromSignaturesEvents: 0,
-    feeDistributedFromAffirmationEvents: 0
+    totalFeeDistributedFromAffirmation: BN(0)
   };
   networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
@@ -373,11 +363,8 @@ class HomeStore {
 
   async getStatistics() {
     try {
-      const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
-      const abi = [...HOME_ABI, ...BaseFeeManager]
-      const contract = new this.homeWeb3.eth.Contract(abi, this.HOME_BRIDGE_ADDRESS);
       const deployedAtBlock = await getDeployedAtBlock(this.homeBridge);
-      const events = await getPastEvents(contract, deployedAtBlock, 'latest')
+      const events = await getPastEvents(this.homeBridge, deployedAtBlock, 'latest')
       processLargeArrayAsync(
         events,
         this.processEvent,
@@ -398,33 +385,13 @@ class HomeStore {
     if(event.event === "UserRequestForSignature") {
       this.statistics.deposits++
       this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
-      this.transferEvents.userRequestForSignature.push({
-       blockNumber: event.blockNumber,
-       value: BN(fromDecimals(event.returnValues.value,this.tokenDecimals))
-      })
     } else if (event.event === "AffirmationCompleted") {
       this.statistics.withdraws++
       this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
-      this.transferEvents.affirmationCompleted.push({
-        blockNumber: event.blockNumber,
-        value: BN(fromDecimals(event.returnValues.value,this.tokenDecimals))
-      })
-    } else if (event.event === "HomeFeeUpdated") {
-      this.feeManager.homeHistoricFee.push({
-        blockNumber: event.blockNumber,
-        fee: new BN(fromWei(event.returnValues.fee, 'ether'))
-      })
     } else if (event.event === "FeeDistributedFromSignatures") {
-      this.feeManager.feeDistributedFromSignaturesEvents++
       this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     } else if (event.event === "FeeDistributedFromAffirmation") {
-      this.feeManager.feeDistributedFromAffirmationEvents++
       this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
-    } else if (event.event === "ForeignFeeUpdated") {
-      this.feeManager.foreignHistoricFee.push({
-        blockNumber: event.blockNumber,
-        fee: new BN(fromWei(event.returnValues.fee, 'ether'))
-      })
     }
   }
 
@@ -444,50 +411,16 @@ class HomeStore {
     this.depositFeeCollected.shouldDisplay = data.displayDeposit
     this.withdrawFeeCollected.shouldDisplay = data.displayWithdraw
 
-    if (this.depositFeeCollected.shouldDisplay) {
-      this.depositFeeCollected.value = data.depositSymbol === 'home'
-        ? this.feeManager.totalFeeDistributedFromSignatures
-        : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromSignatures
+    this.depositFeeCollected.value = data.depositSymbol === 'home'
+      ? this.feeManager.totalFeeDistributedFromSignatures
+      : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromSignatures
 
-      const feeDistributedFromSignaturesEvents = data.depositSymbol === 'home'
-        ? this.feeManager.feeDistributedFromSignaturesEvents
-        : this.rootStore.foreignStore.feeManager.feeDistributedFromSignaturesEvents
+    this.withdrawFeeCollected.value = data.withdrawSymbol === 'home'
+      ? this.feeManager.totalFeeDistributedFromAffirmation
+      : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromAffirmation
 
-      if (this.transferEvents.userRequestForSignature.length > feeDistributedFromSignaturesEvents) {
-        const feeAppliedOnValue = !(this.rootStore.bridgeMode === BRIDGE_MODES.NATIVE_TO_ERC)
-          || !(this.feeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION)
-
-        processLargeArrayAsync(
-          this.transferEvents.userRequestForSignature,
-          calculateValueFee(data.homeHistoricFee, this.depositFeeCollected, feeAppliedOnValue),
-          () => {
-            this.depositFeeCollected.finished = true
-          })
-      } else {
-        this.depositFeeCollected.finished = true
-      }
-    } else {
-      this.depositFeeCollected.finished = true
-    }
-
-    if (this.withdrawFeeCollected.shouldDisplay) {
-      this.withdrawFeeCollected.value = data.withdrawSymbol === 'home'
-        ? this.feeManager.totalFeeDistributedFromAffirmation
-        : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromAffirmation
-
-      if (this.transferEvents.affirmationCompleted.length > this.feeManager.feeDistributedFromAffirmationEvents) {
-        processLargeArrayAsync(
-          this.transferEvents.affirmationCompleted,
-          calculateValueFee(data.foreignHistoricFee, this.withdrawFeeCollected, false),
-          () => {
-            this.withdrawFeeCollected.finished = true
-          })
-      } else {
-        this.withdrawFeeCollected.finished = true
-      }
-    } else {
-      this.withdrawFeeCollected.finished = true
-    }
+    this.depositFeeCollected.finished = true
+    this.withdrawFeeCollected.finished = true
   }
 
   getDailyQuotaCompleted() {

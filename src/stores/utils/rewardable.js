@@ -6,29 +6,9 @@ export const validFee = (fee) => {
   return !zeroBN.eq(fee)
 }
 
-export const getFeeAtBlock = (feeArray, blockNumber) => {
-  for (let i = feeArray.length - 1; i >= 0; i--) {
-    if (blockNumber >= feeArray[i].blockNumber) {
-      return feeArray[i].fee
-    }
-  }
-  return new BN(0)
-}
-
 export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {
   const data = getRewardableData(homeFeeManager, foreignFeeManager)
   return homeToForeignDirection ? data.homeFee : data.foreignFee
-}
-
-export const calculateValueFee = (feeList, feeCollected, feeApplied) => {
-  return (event) => {
-    const fee = getFeeAtBlock(feeList, event.blockNumber)
-    let calculatedFee = event.value.multipliedBy(fee)
-    if (feeApplied) {
-      calculatedFee = calculatedFee.dividedBy(1 - fee)
-    }
-    feeCollected.value = feeCollected.value.plus(calculatedFee)
-  }
 }
 
 export const getRewardableData = (homeFeeManager, foreignFeeManager) => {

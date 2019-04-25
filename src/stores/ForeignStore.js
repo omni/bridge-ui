@@ -27,9 +27,7 @@ import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import BN from 'bignumber.js'
-import { abi as BaseFeeManager } from "../contracts/BaseFeeManager"
 import { processLargeArrayAsync } from "./utils/array"
-import { fromWei } from "web3-utils"
 import { fromDecimals } from "./utils/decimals"
 
 class ForeignStore {
@@ -54,12 +52,8 @@ class ForeignStore {
   @observable tokenAddress = '';
   @observable feeEventsFinished = false
   feeManager = {
-    homeHistoricFee: [],
-    foreignHistoricFee: [],
     totalFeeDistributedFromSignatures: BN(0),
-    totalFeeDistributedFromAffirmation: BN(0),
-    feeDistributedFromSignaturesEvents: 0,
-    feeDistributedFromAffirmationEvents: 0
+    totalFeeDistributedFromAffirmation: BN(0)
   };
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
@@ -340,11 +334,8 @@ class ForeignStore {
 
   async getFeeEvents() {
     try {
-      const { FOREIGN_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
-      const abi = [...FOREIGN_ABI, ...BaseFeeManager]
-      const contract = new this.foreignWeb3.eth.Contract(abi, this.FOREIGN_BRIDGE_ADDRESS);
       const deployedAtBlock = await getDeployedAtBlock(this.foreignBridge);
-      const events = await getPastEvents(contract, deployedAtBlock, 'latest')
+      const events = await getPastEvents(this.foreignBridge, deployedAtBlock, 'latest')
 
       processLargeArrayAsync(
         events,
@@ -360,21 +351,9 @@ class ForeignStore {
 
   processEvent = (event) => {
     if (event.event === "FeeDistributedFromSignatures") {
-      this.feeManager.feeDistributedFromSignaturesEvents++
       this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     } else if (event.event === "FeeDistributedFromAffirmation") {
-      this.feeManager.feeDistributedFromAffirmationEvents++
       this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
-    } else if (event.event === "HomeFeeUpdated") {
-      this.feeManager.homeHistoricFee.push({
-        blockNumber: event.blockNumber,
-        fee: new BN(fromWei(event.returnValues.fee, 'ether'))
-      })
-    } else if (event.event === "ForeignFeeUpdated") {
-      this.feeManager.foreignHistoricFee.push({
-        blockNumber: event.blockNumber,
-        fee: new BN(fromWei(event.returnValues.fee, 'ether'))
-      })
     }
   }
 }
