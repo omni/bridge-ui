@@ -132,14 +132,6 @@ export const getFeeManager = async (contract) => {
 
 export const getFeeManagerMode = (contract) => contract.methods.getFeeManagerMode().call()
 
-export const getDeployedAtBlock = async (contract) => {
- try {
-  return await contract.methods.deployedAtBlock().call()
- } catch (e) {
-   return 0
- }
-}
-
 export const getHomeFee = async (contract) => {
   const feeInWei = await contract.methods.getHomeFee().call()
   return new BN(fromWei(feeInWei.toString()))
