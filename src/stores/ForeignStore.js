@@ -12,19 +12,18 @@ import {
   getSymbol,
   getDecimals,
   getErc20TokenAddress,
-  getBridgeValidators,
   getName,
   getFeeManager,
   getHomeFee,
   getFeeManagerMode,
   ZERO_ADDRESS,
-  getDeployedAtBlock
+  getDeployedAtBlock,
+  getValidatorList
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
 import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
-import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import BN from 'bignumber.js'
 import { processLargeArrayAsync } from "./utils/array"
@@ -319,14 +318,11 @@ class ForeignStore {
     try {
       const foreignValidatorsAddress = await this.foreignBridge.methods.validatorContract().call()
       this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
-      this.validators = await getBridgeValidators(this.foreignBridgeValidators)
+
       this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
       this.validatorsCount = await this.foreignBridgeValidators.methods.validatorCount().call()
 
-      if(this.validators.length !== Number(this.validatorsCount)) {
-        this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
-        this.validators = await getBridgeValidators(this.foreignBridgeValidators)
-      }
+      this.validators = await getValidatorList(foreignValidatorsAddress, this.foreignWeb3.eth)
     } catch(e){
       console.error(e)
     }

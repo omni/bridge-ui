@@ -16,7 +16,6 @@
     "mobx-react": "^5.0.0",
     "mocha": "^5.1.1",
     "node-sass-chokidar": "^1.0.1",
-    "nodemon": "^1.17.1",
     "numeral": "^2.0.6",
     "react": "^16.2.0",
     "react-app-rewire-mobx": "^1.0.7",
@@ -51,6 +50,7 @@
   },
   "devDependencies": {
     "jest-dom": "^3.0.1",
+    "nodemon": "^1.18.11",
     "react-testing-library": "^5.4.4"
   },
   "browserslist": [

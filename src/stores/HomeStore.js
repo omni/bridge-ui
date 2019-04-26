@@ -1,6 +1,5 @@
 import { action, observable } from 'mobx';
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators.json'
-import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import { abi as ERC677_ABI } from '../contracts/ERC677BridgeToken.json'
 import { abi as BLOCK_REWARD_ABI } from '../contracts/IBlockReward'
 import { getBlockNumber, getBalance } from './utils/web3'
@@ -18,13 +17,13 @@ import {
   getBalanceOf,
   mintedTotally,
   totalBurntCoins,
-  getBridgeValidators,
   getName,
   getFeeManager,
   getHomeFee,
   getForeignFee,
   getFeeManagerMode,
   ZERO_ADDRESS,
+  getValidatorList,
   getDeployedAtBlock
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
@@ -34,6 +33,7 @@ import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import { processLargeArrayAsync } from './utils/array'
 import { getRewardableData } from "./utils/rewardable"
+import HomeBridgeV1Abi from './utils/HomeBridgeV1.abi'
 
 async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
@@ -347,31 +347,30 @@ class HomeStore {
     try {
       const homeValidatorsAddress = await this.homeBridge.methods.validatorContract().call()
       this.homeBridgeValidators = new this.homeWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-      this.validators = await getBridgeValidators(this.homeBridgeValidators)
+
       this.requiredSignatures = await this.homeBridgeValidators.methods.requiredSignatures().call()
       this.validatorsCount = await this.homeBridgeValidators.methods.validatorCount().call()
 
-      if(this.validators.length !== Number(this.validatorsCount)) {
-        this.homeBridgeValidators = new this.homeWeb3.eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, homeValidatorsAddress);
-        this.validators = await getBridgeValidators(this.homeBridgeValidators)
-      }
+      this.validators = await getValidatorList(homeValidatorsAddress, this.homeWeb3.eth)
     } catch(e){
       console.error(e)
     }
   }
 
-
   async getStatistics() {
     try {
       const deployedAtBlock = await getDeployedAtBlock(this.homeBridge);
-      const events = await getPastEvents(this.homeBridge, deployedAtBlock, 'latest')
+      const { HOME_ABI } = getBridgeABIs(this.rootStore.bridgeMode)
+      const abi = [...HomeBridgeV1Abi, ...HOME_ABI]
+      const contract = new this.homeWeb3.eth.Contract(abi, this.HOME_BRIDGE_ADDRESS);
+      const events = await getPastEvents(contract, deployedAtBlock, 'latest')
       processLargeArrayAsync(
         events,
         this.processEvent,
         () => {
-        this.statistics.finished = true
-        this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
-      })
+          this.statistics.finished = true
+          this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
+        })
     } catch(e){
       console.error(e)
       this.getStatistics()
@@ -382,10 +381,10 @@ class HomeStore {
     if(event.returnValues && event.returnValues.recipient) {
       this.statistics.users.add(event.returnValues.recipient)
     }
-    if(event.event === "UserRequestForSignature") {
+    if(event.event === "UserRequestForSignature" || event.event === 'Deposit') {
       this.statistics.deposits++
       this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
-    } else if (event.event === "AffirmationCompleted") {
+    } else if (event.event === "AffirmationCompleted" || event.event === 'Withdraw') {
       this.statistics.withdraws++
       this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
     } else if (event.event === "FeeDistributedFromSignatures") {
