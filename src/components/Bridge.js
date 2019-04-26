@@ -11,7 +11,7 @@ import { BridgeNetwork } from './index'
 import { ModalContainer } from './ModalContainer'
 import { NetworkDetails } from './NetworkDetails'
 import { TransferAlert } from './TransferAlert'
-import { getFeeToApply, validFee } from '../stores/utils/contract'
+import { getFeeToApply, validFee } from '../stores/utils/rewardable'
 import { inject, observer } from "mobx-react";
 import { toDecimals } from '../stores/utils/decimals'
 

@@ -31,6 +31,8 @@ import sleep from './utils/sleep'
 import BN from 'bignumber.js'
 import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
+import { processLargeArrayAsync } from './utils/array'
+import { getRewardableData } from "./utils/rewardable"
 import HomeBridgeV1Abi from './utils/HomeBridgeV1.abi'
 
 async function asyncForEach(array, callback) {
@@ -68,7 +70,22 @@ class HomeStore {
     users: new Set(),
     finished: false
   }
-  feeManager = {};
+  @observable depositFeeCollected = {
+    value: BN(0),
+    type: '',
+    shouldDisplay: false,
+    finished: false
+  }
+  @observable withdrawFeeCollected = {
+    value: BN(0),
+    type: '',
+    shouldDisplay: false,
+    finished: false
+  }
+  feeManager = {
+    totalFeeDistributedFromSignatures: BN(0),
+    totalFeeDistributedFromAffirmation: BN(0)
+  };
   networkName = process.env.REACT_APP_HOME_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0
   homeBridge = {};
@@ -109,6 +126,7 @@ class HomeStore {
     this.getFee()
     this.getValidators()
     this.getStatistics()
+    this.calculateCollectedFees()
     setInterval(() => {
       this.getEvents()
       this.getBalance()
@@ -346,52 +364,62 @@ class HomeStore {
       const abi = [...HomeBridgeV1Abi, ...HOME_ABI]
       const contract = new this.homeWeb3.eth.Contract(abi, this.HOME_BRIDGE_ADDRESS);
       const events = await getPastEvents(contract, deployedAtBlock, 'latest')
-      this.processLargeArrayAsync(events, this.processEvent())
+      processLargeArrayAsync(
+        events,
+        this.processEvent,
+        () => {
+          this.statistics.finished = true
+          this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
+        })
     } catch(e){
       console.error(e)
+      this.getStatistics()
     }
   }
 
-  processEvent = () => {
-    return (event) => {
-      if (event.returnValues.recipient) {
-        if (event.returnValues && event.returnValues.recipient) {
-          this.statistics.users.add(event.returnValues.recipient)
-        }
-        if (event.event === 'UserRequestForSignature' || event.event === 'Deposit') {
-          this.statistics.deposits++
-          this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value, this.tokenDecimals)))
-        } else if (event.event === 'AffirmationCompleted' || event.event === 'Withdraw') {
-          this.statistics.withdraws++
-          this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value, this.tokenDecimals)))
-        }
-      }
+  processEvent = (event) => {
+    if(event.returnValues && event.returnValues.recipient) {
+      this.statistics.users.add(event.returnValues.recipient)
+    }
+    if(event.event === "UserRequestForSignature" || event.event === 'Deposit') {
+      this.statistics.deposits++
+      this.statistics.depositsValue = this.statistics.depositsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+    } else if (event.event === "AffirmationCompleted" || event.event === 'Withdraw') {
+      this.statistics.withdraws++
+      this.statistics.withdrawsValue = this.statistics.withdrawsValue.plus(BN(fromDecimals(event.returnValues.value,this.tokenDecimals)))
+    } else if (event.event === "FeeDistributedFromSignatures") {
+      this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
+    } else if (event.event === "FeeDistributedFromAffirmation") {
+      this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     }
   }
 
-  processLargeArrayAsync(array, fn, maxTimePerChunk) {
-    maxTimePerChunk = maxTimePerChunk || 16;
-    let index = 0;
-
-    function now() {
-      return new Date().getTime();
+  calculateCollectedFees() {
+    if (!this.statistics.finished
+      || !this.rootStore.foreignStore.feeEventsFinished
+      || !this.feeManager.feeManagerMode
+      || !this.rootStore.foreignStore.feeManager.feeManagerMode) {
+      setTimeout(() => { this.calculateCollectedFees() }, 1000)
+      return
     }
 
-    const doChunk = () => {
-      const startTime = now();
-      while (index < array.length && (now() - startTime) <= maxTimePerChunk) {
-        // callback called with args (value, index, array)
-        fn.call(null, array[index], index, array);
-        ++index;
-      }
-      if (index < array.length) {
-        setTimeout(doChunk, 0);
-      } else {
-        this.statistics.finished = true
-        this.statistics.totalBridged = this.statistics.depositsValue.plus(this.statistics.withdrawsValue)
-      }
-    }
-    doChunk();
+    const data = getRewardableData(this.feeManager, this.rootStore.foreignStore.feeManager)
+
+    this.depositFeeCollected.type = data.depositSymbol === 'home' ? this.symbol : this.rootStore.foreignStore.symbol
+    this.withdrawFeeCollected.type = data.withdrawSymbol === 'home' ? this.symbol : this.rootStore.foreignStore.symbol
+    this.depositFeeCollected.shouldDisplay = data.displayDeposit
+    this.withdrawFeeCollected.shouldDisplay = data.displayWithdraw
+
+    this.depositFeeCollected.value = data.depositSymbol === 'home'
+      ? this.feeManager.totalFeeDistributedFromSignatures
+      : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromSignatures
+
+    this.withdrawFeeCollected.value = data.withdrawSymbol === 'home'
+      ? this.feeManager.totalFeeDistributedFromAffirmation
+      : this.rootStore.foreignStore.feeManager.totalFeeDistributedFromAffirmation
+
+    this.depositFeeCollected.finished = true
+    this.withdrawFeeCollected.finished = true
   }
 
   getDailyQuotaCompleted() {

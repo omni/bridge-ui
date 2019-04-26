@@ -17,6 +17,7 @@ import {
   getHomeFee,
   getFeeManagerMode,
   ZERO_ADDRESS,
+  getDeployedAtBlock,
   getValidatorList
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
@@ -25,6 +26,8 @@ import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import BN from 'bignumber.js'
+import { processLargeArrayAsync } from "./utils/array"
+import { fromDecimals } from "./utils/decimals"
 
 class ForeignStore {
   @observable state = null;
@@ -46,7 +49,11 @@ class ForeignStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
-  feeManager = {};
+  @observable feeEventsFinished = false
+  feeManager = {
+    totalFeeDistributedFromSignatures: BN(0),
+    totalFeeDistributedFromAffirmation: BN(0)
+  };
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
   foreignBridge = {};
@@ -82,6 +89,7 @@ class ForeignStore {
     this.getCurrentLimit()
     this.getFee()
     this.getValidators()
+    this.getFeeEvents()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -317,6 +325,31 @@ class ForeignStore {
       this.validators = await getValidatorList(foreignValidatorsAddress, this.foreignWeb3.eth)
     } catch(e){
       console.error(e)
+    }
+  }
+
+  async getFeeEvents() {
+    try {
+      const deployedAtBlock = await getDeployedAtBlock(this.foreignBridge);
+      const events = await getPastEvents(this.foreignBridge, deployedAtBlock, 'latest')
+
+      processLargeArrayAsync(
+        events,
+        this.processEvent,
+        () => {
+          this.feeEventsFinished = true
+        })
+    } catch(e){
+      console.error(e)
+      this.getFeeEvents()
+    }
+  }
+
+  processEvent = (event) => {
+    if (event.event === "FeeDistributedFromSignatures") {
+      this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
+    } else if (event.event === "FeeDistributedFromAffirmation") {
+      this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     }
   }
 }
