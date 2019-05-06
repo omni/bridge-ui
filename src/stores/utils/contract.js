@@ -2,6 +2,7 @@ import BN from 'bignumber.js'
 import { fromDecimals } from './decimals'
 import { fromWei } from 'web3-utils'
 import { abi as rewardableValidatorsAbi } from '../../contracts/RewardableValidators'
+import { ERC_TYPES } from "./bridgeMode"
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
@@ -147,5 +148,18 @@ export const getDeployedAtBlock = async (contract) => {
     return await contract.methods.deployedAtBlock().call()
   } catch (e) {
     return 0
+  }
+}
+
+export const getTokenType = async (contract, bridgeAddress) => {
+  try {
+    const bridgeContract = await contract.methods.bridgeContract().call()
+    if (bridgeContract === bridgeAddress) {
+      return ERC_TYPES.ERC677
+    } else {
+      return ERC_TYPES.ERC20
+    }
+  } catch (e) {
+    return ERC_TYPES.ERC20
   }
 }

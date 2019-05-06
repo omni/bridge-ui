@@ -18,7 +18,8 @@ import {
   getFeeManagerMode,
   ZERO_ADDRESS,
   getDeployedAtBlock,
-  getValidatorList
+  getValidatorList,
+  getTokenType
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
@@ -50,6 +51,7 @@ class ForeignStore {
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
   @observable feeEventsFinished = false
+  @observable tokenType = ''
   feeManager = {
     totalFeeDistributedFromSignatures: BN(0),
     totalFeeDistributedFromAffirmation: BN(0)
@@ -132,6 +134,7 @@ class ForeignStore {
         ? await getErc20TokenAddress(this.foreignBridge)
         : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
+      this.tokenType = await getTokenType(this.tokenContract, this.FOREIGN_BRIDGE_ADDRESS)
       const alternativeContract = new this.foreignWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
       try {
         this.symbol =await getSymbol(this.tokenContract)
