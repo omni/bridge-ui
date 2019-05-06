@@ -34,7 +34,7 @@ export const NetworkDetails = ({
     : numeral(balance).format('0,0.000', Math.floor)
 
   return (
-    <div className="network-details">
+    <div className="network-details" data-testid="network-details">
         <div className="details-logo-container">
           <div className={logoClass} />
       </div>
