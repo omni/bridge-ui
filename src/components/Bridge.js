@@ -4,7 +4,7 @@ import { toHex } from 'web3-utils'
 import foreignLogoPurple from '../assets/images/logos/logo-poa-20-purple@2x.png'
 import homeLogoPurple from '../assets/images/logos/logo-poa-sokol-purple@2x.png'
 import swal from 'sweetalert'
-import { BRIDGE_MODES } from '../stores/utils/bridgeMode'
+import { BRIDGE_MODES, ERC_TYPES } from '../stores/utils/bridgeMode'
 import { BridgeAddress } from './index'
 import { BridgeForm } from './index'
 import { BridgeNetwork } from './index'
@@ -111,8 +111,8 @@ export class Bridge extends React.Component {
   }
 
   async _sendToForeign(amount){
-    const { web3Store, foreignStore, alertStore, txStore, bridgeMode } = this.props.RootStore
-    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
+    const { web3Store, foreignStore, alertStore, txStore } = this.props.RootStore
+    const isExternalErc20 = foreignStore.tokenType === ERC_TYPES.ERC20
     const { isLessThan, isGreaterThan } = this
     if(web3Store.metamaskNet.id.toString() !== web3Store.foreignNet.id.toString()){
       swal("Error", `Please switch wallet to ${web3Store.foreignNet.name} network`, "error")
@@ -257,8 +257,8 @@ export class Bridge extends React.Component {
   }
 
   loadForeignDetails = () => {
-    const { web3Store, foreignStore, bridgeMode } = this.props.RootStore
-    const isExternalErc20 = bridgeMode === BRIDGE_MODES.ERC_TO_ERC || bridgeMode === BRIDGE_MODES.ERC_TO_NATIVE
+    const { web3Store, foreignStore } = this.props.RootStore
+    const isExternalErc20 = foreignStore.tokenType === ERC_TYPES.ERC20
     const foreignURL = new URL(web3Store.FOREIGN_HTTP_PARITY_URL)
     const foreignDisplayUrl = `${foreignURL.protocol}//${foreignURL.hostname}`
 

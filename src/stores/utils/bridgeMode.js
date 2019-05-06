@@ -17,6 +17,11 @@ export const FEE_MANAGER_MODE = {
   UNDEFINED: 'UNDEFINED'
 }
 
+export const ERC_TYPES = {
+  ERC677: 'ERC677',
+  ERC20: 'ERC20'
+}
+
 export const getBridgeABIs = (bridgeMode) => {
   let HOME_ABI = null
   let FOREIGN_ABI = null
