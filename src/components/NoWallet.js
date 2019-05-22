@@ -51,7 +51,7 @@ export class NoWallet extends Component {
               </a>
               <a
                   className="noWallet-alphawallet"
-                  href="https://alphawallet.github.io/AlphaWallet-Download-Page/"
+                  href="https://alphawallet.com/"
                   rel="noopener noreferrer"
                   target="_blank"
               >
