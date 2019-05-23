@@ -12,20 +12,23 @@ import {
   getSymbol,
   getDecimals,
   getErc20TokenAddress,
-  getBridgeValidators,
   getName,
   getFeeManager,
   getHomeFee,
   getFeeManagerMode,
-  ZERO_ADDRESS
+  ZERO_ADDRESS,
+  getDeployedAtBlock,
+  getValidatorList,
+  getTokenType
 } from './utils/contract'
 import { balanceLoaded, removePendingTransaction } from './utils/testUtils'
 import sleep from './utils/sleep'
 import { getBridgeABIs, getUnit, BRIDGE_MODES, decodeFeeManagerMode, FEE_MANAGER_MODE } from './utils/bridgeMode'
 import { abi as BRIDGE_VALIDATORS_ABI } from '../contracts/BridgeValidators'
-import { abi as REWARDABLE_BRIDGE_VALIDATORS_ABI } from '../contracts/RewardableValidators.json'
 import ERC20Bytes32Abi from './utils/ERC20Bytes32.abi'
 import BN from 'bignumber.js'
+import { processLargeArrayAsync } from "./utils/array"
+import { fromDecimals } from "./utils/decimals"
 
 class ForeignStore {
   @observable state = null;
@@ -47,7 +50,12 @@ class ForeignStore {
   @observable dailyLimit = 0
   @observable totalSpentPerDay = 0
   @observable tokenAddress = '';
-  feeManager = {};
+  @observable feeEventsFinished = false
+  @observable tokenType = ''
+  feeManager = {
+    totalFeeDistributedFromSignatures: BN(0),
+    totalFeeDistributedFromAffirmation: BN(0)
+  };
   networkName = process.env.REACT_APP_FOREIGN_NETWORK_NAME || 'Unknown'
   filteredBlockNumber = 0;
   foreignBridge = {};
@@ -83,6 +91,7 @@ class ForeignStore {
     this.getCurrentLimit()
     this.getFee()
     this.getValidators()
+    this.getFeeEvents()
     setInterval(() => {
       this.getBlockNumber()
       this.getEvents()
@@ -125,6 +134,7 @@ class ForeignStore {
         ? await getErc20TokenAddress(this.foreignBridge)
         : await getErc677TokenAddress(this.foreignBridge)
       this.tokenContract = new this.foreignWeb3.eth.Contract(ERC677_ABI, this.tokenAddress);
+      this.tokenType = await getTokenType(this.tokenContract, this.FOREIGN_BRIDGE_ADDRESS)
       const alternativeContract = new this.foreignWeb3.eth.Contract(ERC20Bytes32Abi, this.tokenAddress);
       try {
         this.symbol =await getSymbol(this.tokenContract)
@@ -311,16 +321,38 @@ class ForeignStore {
     try {
       const foreignValidatorsAddress = await this.foreignBridge.methods.validatorContract().call()
       this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
-      this.validators = await getBridgeValidators(this.foreignBridgeValidators)
+
       this.requiredSignatures = await this.foreignBridgeValidators.methods.requiredSignatures().call()
       this.validatorsCount = await this.foreignBridgeValidators.methods.validatorCount().call()
 
-      if(this.validators.length !== Number(this.validatorsCount)) {
-        this.foreignBridgeValidators = new this.foreignWeb3.eth.Contract(REWARDABLE_BRIDGE_VALIDATORS_ABI, foreignValidatorsAddress);
-        this.validators = await getBridgeValidators(this.foreignBridgeValidators)
-      }
+      this.validators = await getValidatorList(foreignValidatorsAddress, this.foreignWeb3.eth)
     } catch(e){
       console.error(e)
+    }
+  }
+
+  async getFeeEvents() {
+    try {
+      const deployedAtBlock = await getDeployedAtBlock(this.foreignBridge);
+      const events = await getPastEvents(this.foreignBridge, deployedAtBlock, 'latest')
+
+      processLargeArrayAsync(
+        events,
+        this.processEvent,
+        () => {
+          this.feeEventsFinished = true
+        })
+    } catch(e){
+      console.error(e)
+      this.getFeeEvents()
+    }
+  }
+
+  processEvent = (event) => {
+    if (event.event === "FeeDistributedFromSignatures") {
+      this.feeManager.totalFeeDistributedFromSignatures = this.feeManager.totalFeeDistributedFromSignatures.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
+    } else if (event.event === "FeeDistributedFromAffirmation") {
+      this.feeManager.totalFeeDistributedFromAffirmation = this.feeManager.totalFeeDistributedFromAffirmation.plus(BN(fromDecimals(event.returnValues.feeAmount, this.tokenDecimals)))
     }
   }
 }

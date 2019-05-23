@@ -1,14 +1,10 @@
-import BN from 'bignumber.js';
+import BN from 'bignumber.js'
 import { fromDecimals } from './decimals'
 import { fromWei } from 'web3-utils'
-import { FEE_MANAGER_MODE } from './bridgeMode'
+import { abi as rewardableValidatorsAbi } from '../../contracts/RewardableValidators'
+import { ERC_TYPES } from "./bridgeMode"
 
 export const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-export const validFee = (fee) => {
-  const zeroBN = new BN(0)
-  return !zeroBN.eq(fee)
-}
 
 export const getMaxPerTxLimit = async (contract,decimals) => {
   const maxPerTx = await contract.methods.maxPerTx().call()
@@ -32,7 +28,7 @@ export const getCurrentLimit = async (contract,decimals) => {
   }
 }
 
-export const getPastEvents = (contract, fromBlock, toBlock) => contract.getPastEvents('allEvents', { fromBlock, toBlock })
+export const getPastEvents = (contract, fromBlock, toBlock, event = 'allEvents') => contract.getPastEvents(event, { fromBlock, toBlock })
 
 export const getErc677TokenAddress = (contract) => contract.methods.erc677token().call()
 
@@ -66,16 +62,63 @@ export const totalBurntCoins = async (contract) => {
   return new BN(burntCoins)
 }
 
-export const getBridgeValidators = async (bridgeValidatorContract) => {
-    let ValidatorAdded = await bridgeValidatorContract.getPastEvents('ValidatorAdded', {fromBlock: 0});
-    let ValidatorRemoved = await bridgeValidatorContract.getPastEvents('ValidatorRemoved', {fromBlock: 0});
-    let addedValidators = ValidatorAdded.map(val => {
-      return val.returnValues.validator
+export const getValidatorList = async (address, eth) => {
+  const validatorsContract = new eth.Contract(rewardableValidatorsAbi, address)
+  const validators = await validatorList(validatorsContract)
+
+  if(validators.length) {
+    return validators
+  }
+
+  const deployedAtBlock = await getDeployedAtBlock(validatorsContract)
+  const contract = new eth.Contract([], address)
+  const validatorsEvents = await contract.getPastEvents('allEvents', { fromBlock: Number(deployedAtBlock) })
+
+  return processValidatorsEvents(validatorsEvents)
+}
+
+export const validatorList = async (contract) => {
+  try {
+    return await contract.methods.validatorList().call()
+  } catch (e) {
+    return []
+  }
+}
+
+export const processValidatorsEvents = (events) => {
+  const validatorList = new Set()
+  events.forEach(event => {
+    parseValidatorEvent(event)
+
+    if(event.event === 'ValidatorAdded') {
+      validatorList.add(event.returnValues.validator)
+    } else if(event.event === 'ValidatorRemoved') {
+      validatorList.delete(event.returnValues.validator)
+    }
     })
-    const removedValidators = ValidatorRemoved.map(val => {
-      return val.returnValues.validator
-    })
-    return addedValidators.filter(val => !removedValidators.includes(val));
+
+  return Array.from(validatorList)
+}
+
+export const parseValidatorEvent = (event) => {
+  if (event.event === undefined
+    && event.raw
+    && event.raw.topics
+    && (event.raw.topics[0] === '0xe366c1c0452ed8eec96861e9e54141ebff23c9ec89fe27b996b45f5ec3884987'
+      || event.raw.topics[0] === '0x8064a302796c89446a96d63470b5b036212da26bd2debe5bec73e0170a9a5e83')) {
+    const rawAddress = event.raw.topics.length > 1 ? event.raw.topics[1] : event.raw.data
+    const address = '0x' + rawAddress.slice(26)
+    event.event = 'ValidatorAdded'
+    event.returnValues.validator = address
+  } else if (event.event === undefined
+    && event.raw
+    && event.raw.topics
+    && event.raw.topics[0] === "0xe1434e25d6611e0db941968fdc97811c982ac1602e951637d206f5fdda9dd8f1") {
+    const rawAddress = event.raw.data === '0x' ? event.raw.topics[1] : event.raw.data
+    const address = '0x' + rawAddress.slice(26)
+    event.event = 'ValidatorRemoved'
+    event.returnValues.validator = address
+  }
 }
 
 export const getName = (contract) => contract.methods.name().call()
@@ -100,19 +143,23 @@ export const getForeignFee = async (contract) => {
   return new BN(fromWei(feeInWei.toString()))
 }
 
-export const getFeeToApply = (homeFeeManager, foreignFeeManager, homeToForeignDirection) => {
-  if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.BOTH_DIRECTIONS) {
-    return homeToForeignDirection ? homeFeeManager.homeFee : homeFeeManager.foreignFee
-  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
-    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
-    return homeToForeignDirection ? foreignFeeManager.homeFee : homeFeeManager.foreignFee
-  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION
-    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED) {
-    return homeToForeignDirection ? new BN(0) : homeFeeManager.foreignFee
-  } else if(homeFeeManager.feeManagerMode === FEE_MANAGER_MODE.UNDEFINED
-    && foreignFeeManager.feeManagerMode === FEE_MANAGER_MODE.ONE_DIRECTION) {
-    return homeToForeignDirection ? foreignFeeManager.homeFee : new BN(0)
-  } else {
-    return new BN(0)
+export const getDeployedAtBlock = async (contract) => {
+  try {
+    return await contract.methods.deployedAtBlock().call()
+  } catch (e) {
+    return 0
+  }
+}
+
+export const getTokenType = async (contract, bridgeAddress) => {
+  try {
+    const bridgeContract = await contract.methods.bridgeContract().call()
+    if (bridgeContract === bridgeAddress) {
+      return ERC_TYPES.ERC677
+    } else {
+      return ERC_TYPES.ERC20
+    }
+  } catch (e) {
+    return ERC_TYPES.ERC20
   }
 }

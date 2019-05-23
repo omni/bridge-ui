@@ -1,142 +1,63 @@
-import { getFeeToApply, validFee } from '../contract'
-import { FEE_MANAGER_MODE } from '../bridgeMode'
-import BN from 'bignumber.js'
+import { getTokenType } from '../contract'
+import { ERC_TYPES } from '../bridgeMode'
 
-describe('getFeeToApply', function () {
-  it('should work for ERC_TO_NATIVE bridge mode from home to foreign ', async () => {
+describe('getTokenType', () => {
+  it('should return ERC677 if bridgeContract is equal to bridgeAddress', async () => {
     // Given
-    const homeFeeManager = {
-      feeManagerMode: FEE_MANAGER_MODE.BOTH_DIRECTIONS,
-      homeFee: new BN(0.01),
-      foreignFee: new BN(0.02),
+    const bridgeAddress = '0xCecBE80Ed3548dE11D7d2D922a36576eA40C4c26'
+    const contract = {
+      methods: {
+        bridgeContract: () => {
+          return {
+            call: () => Promise.resolve(bridgeAddress)
+          }
+        }
+      }
     }
-
-    const foreignFeeManager =  {
-      feeManagerMode: FEE_MANAGER_MODE.UNDEFINED,
-      homeFee: new BN(0),
-      foreignFee: new BN(0),
-    }
-
-    const homeToForeignDirection = true
 
     // When
-    const result = getFeeToApply(homeFeeManager, foreignFeeManager, homeToForeignDirection)
+    const type = await getTokenType(contract, bridgeAddress)
 
     // Then
-    expect(validFee(result)).toBeTruthy()
-    expect(result).toBe(homeFeeManager.homeFee)
+    expect(type).toEqual(ERC_TYPES.ERC677)
   })
-  it('should work for ERC_TO_NATIVE bridge mode from foreign to home', async () => {
+  it('should return ERC20 if bridgeContract is not equal to bridgeAddress', async () => {
     // Given
-    const homeFeeManager = {
-      feeManagerMode: FEE_MANAGER_MODE.BOTH_DIRECTIONS,
-      homeFee: new BN(0.01),
-      foreignFee: new BN(0.02),
+    const bridgeAddress = '0xCecBE80Ed3548dE11D7d2D922a36576eA40C4c26'
+    const contract = {
+      methods: {
+        bridgeContract: () => {
+          return {
+            call: () => Promise.resolve('0xBFCb120F7B1de491262CA4D9D8Eba70438b6896E')
+          }
+        }
+      }
     }
-
-    const foreignFeeManager =  {
-      feeManagerMode: FEE_MANAGER_MODE.UNDEFINED,
-      homeFee: new BN(0),
-      foreignFee: new BN(0),
-    }
-
-    const homeToForeignDirection = false
 
     // When
-    const result = getFeeToApply(homeFeeManager, foreignFeeManager, homeToForeignDirection)
+    const type = await getTokenType(contract, bridgeAddress)
 
     // Then
-    expect(validFee(result)).toBeTruthy()
-    expect(result).toBe(homeFeeManager.foreignFee)
+    expect(type).toEqual(ERC_TYPES.ERC20)
   })
-  it('should work for NATIVE_TO_ERC bridge mode from home to foreign', async () => {
+  it('should return ERC20 if bridgeContract is not present', async () => {
     // Given
-    const homeFeeManager = {
-      feeManagerMode: FEE_MANAGER_MODE.ONE_DIRECTION,
-      homeFee: new BN(0),
-      foreignFee: new BN(0.02),
+    const bridgeAddress = '0xCecBE80Ed3548dE11D7d2D922a36576eA40C4c26'
+    const contract = {
+      methods: {
+        bridgeContract: () => {
+          return {
+            call: () => Promise.reject()
+          }
+        }
+      }
     }
-
-    const foreignFeeManager =  {
-      feeManagerMode: FEE_MANAGER_MODE.ONE_DIRECTION,
-      homeFee: new BN(0.01),
-      foreignFee: new BN(0),
-    }
-
-    const homeToForeignDirection = true
 
     // When
-    const result = getFeeToApply(homeFeeManager, foreignFeeManager, homeToForeignDirection)
+    const type = await getTokenType(contract, bridgeAddress)
 
     // Then
-    expect(validFee(result)).toBeTruthy()
-    expect(result).toBe(foreignFeeManager.homeFee)
-  })
-  it('should work for NATIVE_TO_ERC bridge mode from foreign to home', async () => {
-    // Given
-    const homeFeeManager = {
-      feeManagerMode: FEE_MANAGER_MODE.ONE_DIRECTION,
-      homeFee: new BN(0),
-      foreignFee: new BN(0.02),
-    }
-
-    const foreignFeeManager =  {
-      feeManagerMode: FEE_MANAGER_MODE.ONE_DIRECTION,
-      homeFee: new BN(0.01),
-      foreignFee: new BN(0),
-    }
-
-    const homeToForeignDirection = false
-
-    // When
-    const result = getFeeToApply(homeFeeManager, foreignFeeManager, homeToForeignDirection)
-
-    // Then
-    expect(validFee(result)).toBeTruthy()
-    expect(result).toBe(homeFeeManager.foreignFee)
-  })
-  it('should return no valid fee if no fee manager set from home to foreign', async () => {
-    // Given
-    const homeFeeManager = {
-      feeManagerMode: FEE_MANAGER_MODE.UNDEFINED,
-      homeFee: new BN(0),
-      foreignFee: new BN(0),
-    }
-
-    const foreignFeeManager =  {
-      feeManagerMode: FEE_MANAGER_MODE.UNDEFINED,
-      homeFee: new BN(0),
-      foreignFee: new BN(0),
-    }
-
-    const homeToForeignDirection = true
-
-    // When
-    const result = getFeeToApply(homeFeeManager, foreignFeeManager, homeToForeignDirection)
-
-    // Then
-    expect(validFee(result)).toBeFalsy()
-  })
-  it('should return no valid fee if no fee manager set from home to foreign', async () => {
-    // Given
-    const homeFeeManager = {
-      feeManagerMode: FEE_MANAGER_MODE.UNDEFINED,
-      homeFee: new BN(0),
-      foreignFee: new BN(0),
-    }
-
-    const foreignFeeManager =  {
-      feeManagerMode: FEE_MANAGER_MODE.UNDEFINED,
-      homeFee: new BN(0),
-      foreignFee: new BN(0),
-    }
-
-    const homeToForeignDirection = false
-
-    // When
-    const result = getFeeToApply(homeFeeManager, foreignFeeManager, homeToForeignDirection)
-
-    // Then
-    expect(validFee(result)).toBeFalsy()
+    expect(type).toEqual(ERC_TYPES.ERC20)
   })
 })
+
