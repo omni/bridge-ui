@@ -9,13 +9,12 @@ RUN mkdir submodules && \
   mv poa-bridge-contracts submodules && \
   cd submodules/poa-bridge-contracts && \
   git fetch && \
-  git checkout 2.3.1
+  git checkout 2.3.2
 
 RUN cd submodules/poa-bridge-contracts && \
   npm install && \
   ./node_modules/.bin/truffle compile && \
   cd deploy && \
-  rm package-lock.json && \
   npm install
 COPY deploy.sh .
 COPY contracts.env submodules/poa-bridge-contracts/deploy/
