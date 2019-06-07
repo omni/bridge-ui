@@ -17,7 +17,7 @@ class GasPriceStore {
       console.log(data)
       this.gasPrices = data;
     }).catch((e) => {
-      this.alertStore.pushError(`Gas price oracle is not available`)
+      this.alertStore.pushError(`Gas price oracle is not available, please try returning to this page after a couple of minutes.`)
     })
   }
 
