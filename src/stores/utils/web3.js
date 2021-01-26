@@ -5,28 +5,29 @@ const getWeb3 = () => {
   return new Promise(function (resolve, reject) {
     // Wait for loading completion to avoid race conditions with web3 injection timing.
     window.addEventListener('load', function () {
-      let web3 = window.web3
-
       // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-      if (typeof web3 !== 'undefined') {
+      if (typeof window.ethereum !== 'undefined') {
         // Use Mist/MetaMask's provider.
-        web3 = new window.Web3(web3.currentProvider)
-        web3.version.getNetwork((err, netId) => {
-          const netIdName = getNetworkName(netId)
-          console.log(`This is ${netIdName} network.`, netId)
-          document.title = `${netIdName} - Bridge UI dApp`
-          const defaultAccount = web3.eth.defaultAccount || null;
-          if(defaultAccount === null){
-            reject({message: 'Please unlock your metamask and refresh the page'})
-          }
-          const results = {
-            web3Instance: new Web3(web3.currentProvider),
-            netIdName,
-            netId,
-            injectedWeb3: true,
-            defaultAccount
-          }
-          resolve(results)
+        window.ethereum.request({ method: 'eth_requestAccounts' }).then(accounts => {
+          window.ethereum.request({ method: 'eth_chainId' }).then(chainId => {
+            const netId = parseInt(chainId.slice(2), 16)
+            const netIdName = getNetworkName(netId)
+            console.log(`This is ${netIdName} network.`, netId)
+            document.title = `${netIdName} - Bridge UI dApp`
+            const defaultAccount = accounts[0] || null;
+            if(defaultAccount === null){
+              reject({message: 'Please unlock your metamask and refresh the page'})
+            }
+            const results = {
+              web3Instance: new Web3(window.ethereum),
+              netIdName,
+              netId,
+              injectedWeb3: true,
+              defaultAccount
+            }
+            resolve(results)
+          })
+          window.ethereum.on('chainChanged', () => window.location.reload())
         })
 
       } else {
@@ -57,8 +58,8 @@ const explorers = {
   3: 'https://ropsten.etherscan.io/',
   4: 'https://rinkeby.etherscan.io/',
   42:'https://kovan.etherscan.io/',
-  77:'https://sokol-explorer.poa.network/',
-  99:'https://poaexplorer.com/'
+  77:'https://blockscout.com/poa/sokol/',
+  99:'https://blockscout.com/poa/core/'
 }
 
 export const getExplorerUrl = (id) => explorers[id]
