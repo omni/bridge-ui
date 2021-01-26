@@ -29,7 +29,6 @@ const getWeb3 = () => {
           })
           window.ethereum.on('chainChanged', () => window.location.reload())
         })
-
       } else {
         // Fallback to localhost if no web3 injection.
         const errorMsg = `Metamask is not installed. Please go to
@@ -64,7 +63,7 @@ const explorers = {
 
 export const getExplorerUrl = (id) => explorers[id]
 
-export const getAddressUrl = (id) => getExplorerUrl(id) + (id.toString() === '77' ? 'account/' : 'address/')
+export const getAddressUrl = (id) => getExplorerUrl(id) + 'address/'
 
 export const getNetworkName = (id) => networks[id] || 'Unknown'
 

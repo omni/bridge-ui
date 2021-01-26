@@ -187,7 +187,9 @@ export class Bridge extends React.Component {
         await this._sendToHome(amount)
       }
     } catch(e) {
-      alertStore.setLoading(false)
+      if(!e.message.includes('not mined within 50 blocks') && !e.message.includes('Failed to subscribe to new newBlockHeaders')) {
+        alertStore.setLoading(false)
+      }
     }
   }
 
