@@ -22,7 +22,7 @@ class GasPriceStore {
   }
 
   @computed get gasPriceInHex() {
-    const toWei = Web3Utils.toWei(this.gasPrices[GAS_PRICE_SPEED_TYPE].toString(), 'gwei')
+    const toWei = Web3Utils.toWei(Math.floor(this.gasPrices[GAS_PRICE_SPEED_TYPE]).toString(), 'gwei')
     return Web3Utils.toHex(toWei)
   }
 }

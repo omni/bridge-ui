@@ -93,4 +93,4 @@ export const estimateGas = async (web3, to, gasPrice, from, value, data) =>{
   return Web3Utils.toHex(gas.toString())
 }
 
-export const getGasPrices = () => fetch('https://gasprice-netlify.netlify.app/.netlify/functions/hello').then(response => response.json())
+export const getGasPrices = () => fetch('https://blockscout.com/eth/mainnet/api/v1/gas-price-oracle').then(response => response.json())
