@@ -32,8 +32,6 @@ export class App extends React.Component {
     const { showDisclaimer, showMobileMenu } = this.state
     return (
       <div>
-        <Route component={Loading}/>
-        <Route component={SweetAlert}/>
         <Route render={() =>
           <Header
             showMobileMenu={showMobileMenu}
@@ -41,16 +39,9 @@ export class App extends React.Component {
           />
         }/>
         <div className="app-container">
-          {showMobileMenu && <Route render={() => <div className="mobile-menu-open"/>}/>}
-          <Route exact path="/" component={Bridge}/>
-          <Route exact path="/events" component={RelayEvents}/>
-          <Route exact path="/status" component={StatusPage}/>
-          <Route exact path="/statistics" component={StatisticsPage}/>
         </div>
         <Route component={Footer}/>
-        <ModalContainer
-          showModal={showDisclaimer}
-        >
+        <ModalContainer showModal>
           <Disclaimer
             onConfirmation={this.closeDisclaimer} />
         </ModalContainer>

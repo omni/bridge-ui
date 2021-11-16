@@ -20,8 +20,8 @@ class Web3Store {
   @observable foreignNet = {id: '', name: ''};
   @observable metamaskNet = {id: '', name: ''};
 
-  HOME_HTTP_PARITY_URL = process.env.REACT_APP_HOME_HTTP_PARITY_URL;
-  FOREIGN_HTTP_PARITY_URL = process.env.REACT_APP_FOREIGN_HTTP_PARITY_URL;
+  HOME_HTTP_PARITY_URL = ''
+  FOREIGN_HTTP_PARITY_URL = ''
 
   constructor(rootStore) {
     this.alertStore = rootStore.alertStore;

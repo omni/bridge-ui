@@ -9,12 +9,11 @@ import { getAddressUrl } from '../stores/utils/web3'
 export class Wallet extends React.Component {
   render() {
     const { web3Store, homeStore, foreignStore, alertStore } = this.props.RootStore
-    const isHome = web3Store.metamaskNet.id.toString() === web3Store.homeNet.id.toString()
-    const explorerPath = getAddressUrl(web3Store.metamaskNet.id)
-    const completed = isHome ? homeStore.getDailyQuotaCompleted() : foreignStore.getDailyQuotaCompleted()
+    const explorerPath = ''
+    const completed = '0'
     const width = `${completed}%`
 
-    const wallet = web3Store.defaultAccount.address !== '' && web3Store.defaultAccount.address !== undefined
+    const wallet = ''
       ? (<a
           href={explorerPath+web3Store.defaultAccount.address}
           target="_blank"
@@ -33,7 +32,7 @@ export class Wallet extends React.Component {
           {wallet}
         </div>
         <div className="daily-quota-container">
-          {web3Store.metamaskNet.id && <div className="daily-quota-progress" style={{width}} />}
+          {<div className="daily-quota-progress" style={{width}} />}
         </div>
       </div>
     )
