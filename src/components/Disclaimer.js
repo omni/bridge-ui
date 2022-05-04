@@ -25,14 +25,8 @@ export class Disclaimer extends React.Component {
           <p className="disclaimer-description">
             The POA-POA20 bridge is no longer in operation.
             <br/>
-            However, you can swap POA or POA20 for STAKE tokens.
-            <br/>
-            <br/>
-            See the instructions:
-            <ul>
-            <li><a href="https://www.poa.network/how-to-swap">Swap POA</a></li>
-            <li><a href="https://www.poa.network/poa20-swap">Swap POA20 on Ethereum</a></li>
-            </ul>
+            POA Network merged with the Gnosis Chain. <a href="https://www.poa.network/">More information</a> about the merger.
+            Meanwhile, POA or POA20 swap to STAKE token has ended on May 5th 2022.
           </p>
         </div>
       </div>
